@@ -25,13 +25,13 @@ namespace GlobalArticleDatabase.Controllers
         /// </summary>
         [Route("articles")]
         [HttpPost]
-        public async Task<CreateArticlesResponse> Create(CreateArticlesRequest request)
+        public async Task<CreateArticleResponse> Create(CreateArticleRequest request)
         {
-            var result = await _articlesService.Create(request.Articles);
+            var result = await _articlesService.Create(request);
 
-            return new CreateArticlesResponse
+            return new CreateArticleResponse
             {
-                Articles = result
+                Article = result
             };
         }
 

@@ -61,7 +61,7 @@ namespace DataAccess.DbContext.MongoDB.Implementations
 
         public async Task CreateIndices()
         {
-            await CreateIndexIfNotExits<Article>(Articles, "IDX_ARTICLES_AUTHOR", x => x.Author, true, true);
+            await CreateIndexIfNotExits<Article>(Articles, "IDX_ARTICLES_AUTHOR", x => x.Author, false, true);
             await CreateIndexIfNotExits<Article>(Articles, "IDX_ARTICLES_CATEGORY", x => x.Category, false, true);
             await CreateIndexIfNotExits<Article>(Articles, "IDX_ARTICLES_TITLE", x => x.Title, false, true, true);
             await CreateIndexIfNotExits<Article>(Articles, "IDX_ARTICLES_DATE", x => x.Date, false, true);

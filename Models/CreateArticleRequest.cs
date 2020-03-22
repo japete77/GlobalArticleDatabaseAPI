@@ -3,7 +3,7 @@
     /// <summary>
     /// Article entry
     /// </summary>
-    public class CreateArticle
+    public class CreateArticleRequest
     {
         /// <summary>
         /// Article metadata

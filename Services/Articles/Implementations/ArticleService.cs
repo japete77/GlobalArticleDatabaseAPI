@@ -1,10 +1,16 @@
-﻿using DataAccess.DbContext.MongoDB.Interfaces;
+﻿using Amazon;
+using Amazon.Runtime;
+using Amazon.S3;
+using Amazon.S3.Model;
+using Config.Interfaces;
+using DataAccess.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabase.Services.Articles.Interfaces;
 using GlobalArticleDatabaseAPI.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,22 +19,80 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
     public class ArticleService : IArticleService
     {
         IDbContextMongoDb _dbContext { get; }
+        ISettings _settings { get; }
 
-        public ArticleService(IDbContextMongoDb dbContext)
+        public ArticleService(IDbContextMongoDb dbContext, ISettings settings)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
-        public async Task<List<Article>> Create(List<CreateArticle> request)
+        public async Task<Article> Create(CreateArticleRequest request)
         {
-            var articles = request.Select(s => s.Article).ToList();
-            await _dbContext.Articles.InsertManyAsync(articles);
+            await _dbContext.Articles.InsertOneAsync(request.Article);
 
-            // Create text file
+            var credentials = new BasicAWSCredentials(_settings.AWSAccessKey, _settings.AWSSecretKey);
 
-            // Create image file
+            IAmazonS3 clientS3 = new AmazonS3Client(
+                credentials,
+                RegionEndpoint.EUWest1
+            );
 
-            return articles;
+            // Create text file in S3
+            if (!string.IsNullOrEmpty(request.Text))
+            {
+                var textFile = $"{request.Article.Id}-{request.Article.Language}.txt";
+                var responseTextFile = await clientS3.PutObjectAsync(
+                    new PutObjectRequest
+                    {
+                        BucketName = _settings.AWSBucket,
+                        Key = textFile,
+                        ContentBody = request.Text
+                    }
+                );
+
+                if (responseTextFile.HttpStatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    // Clean up
+                    await Delete(request.Article.Id.ToString());
+
+                    throw new Exception($"Error uploading article {request.Article.Id} to storage");
+                }
+
+                request.Article.TextLink = $"{_settings.S3Url}/{textFile}";
+            }
+
+            // Create image file in S3
+            if (!string.IsNullOrEmpty(request.ImageBase64))
+            {
+                using MemoryStream imageData = new MemoryStream();
+                var bytes = Convert.FromBase64String(request.ImageBase64);
+                imageData.Write(bytes, 0, bytes.Length);
+                imageData.Flush();
+
+                var imageFile = $"{request.Article.Id}.jpg";
+                var responseImageFile = await clientS3.PutObjectAsync(
+                    new PutObjectRequest
+                    {
+                        BucketName = _settings.AWSBucket,
+                        Key = imageFile,
+                        InputStream = imageData
+                    }
+                );
+
+                if (responseImageFile.HttpStatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    // Clean up
+                    await Delete(request.Article.Id.ToString());
+
+                    throw new Exception($"Error uploading image {request.Article.Id} to storage");
+                }
+
+                request.Article.HasImage = true;
+                request.Article.ImageLink = $"{_settings.S3Url}/{imageFile}";
+            }
+
+            return request.Article;
         }
 
         public async Task Delete(string id)
@@ -37,9 +101,17 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
                 Builders<Article>.Filter.Eq(f => f.Id, new ObjectId(id))
             );
 
-            // Delete text files
+            var credentials = new BasicAWSCredentials(_settings.AWSAccessKey, _settings.AWSSecretKey);
 
-            // Delete images
+            IAmazonS3 clientS3 = new AmazonS3Client(
+                credentials,
+                RegionEndpoint.EUWest1
+            );
+
+            // TODO: Delete text files
+
+            // Delete image
+            await clientS3.DeleteAsync(_settings.AWSBucket, $"{id}.jpg", null);
         }
 
         public async Task<Article> Get(string id)
@@ -48,11 +120,19 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
                 Builders<Article>.Filter.Eq(f => f.Id, new ObjectId(id))
             );
 
-            // Add text link
+            var article = await result.FirstOrDefaultAsync();
 
-            // Add image link
+            if (article != null)
+            {
+                article.TextLink = $"{_settings.S3Url}/{article.Id}-{article.Language}.txt";
 
-            return await result.FirstOrDefaultAsync();
+                if (article.HasImage)
+                {
+                    article.ImageLink = $"{_settings.S3Url}/{article.Id}.jpg";
+                }
+            }
+
+            return article;
         }
 
         public async Task<ArticleSearchResponse> Search(ArticleFilter filter, int page, int pageSize)
@@ -74,6 +154,15 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
             );
 
             var results = await result.ToListAsync();
+
+            results.ForEach(article =>
+            {
+                article.TextLink = $"{_settings.S3Url}/{article.Id}-{article.Language}.txt";
+                if (article.HasImage)
+                {
+                    article.ImageLink = $"{_settings.S3Url}/{article.Id}.jpg";
+                }
+            });
 
             return new ArticleSearchResponse
             {

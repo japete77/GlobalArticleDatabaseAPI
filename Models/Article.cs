@@ -68,11 +68,13 @@ namespace GlobalArticleDatabaseAPI.Models
         /// <summary>
         /// Link to the source text
         /// </summary>
+        [BsonIgnore]
         public string TextLink { get; set; }
 
         /// <summary>
         /// Link to the article image
         /// </summary>
+        [BsonIgnore]
         public string ImageLink { get; set; }
     }
 }

@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace GlobalArticleDatabaseAPI.Models
 {
-    public class CreateArticlesRequest
+    public class CreateArticleResponse
     {
-        public List<CreateArticle> Articles { get; set; }
+        public Article Article { get; set; }
     }
 }

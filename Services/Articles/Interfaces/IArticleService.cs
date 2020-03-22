@@ -6,7 +6,7 @@ namespace GlobalArticleDatabase.Services.Articles.Interfaces
 {
     public interface IArticleService
     {
-        Task<List<Article>> Create(List<CreateArticle> request);
+        Task<Article> Create(CreateArticleRequest request);
         Task Delete(string id);
         Task<Article> Get(string id);
         Task<ArticleSearchResponse> Search(ArticleFilter filter, int page, int pageSize);
