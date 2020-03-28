@@ -4,6 +4,8 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -219,7 +221,7 @@ namespace GlobalArticleDatabaseApiTests
                 $"/api/v1/article/{dataUpdate.Article.Id}"
             );
 
-            Assert.True(httpResponseDelete.StatusCode == System.Net.HttpStatusCode.OK, $"Error in deleting article response: {httpResponseUpdate.StatusCode}");
+            Assert.True(httpResponseDelete.StatusCode == System.Net.HttpStatusCode.OK, $"Error in deleting article response: {httpResponseDelete.StatusCode}");
 
             // Check article deleted
             using var httpResponseRetrieveDeleted = await CallApiAsync(
@@ -268,10 +270,10 @@ namespace GlobalArticleDatabaseApiTests
             HttpClient httpGet = new HttpClient();
 
             var getTextResponse = await httpGet.GetAsync(dataCreate.Article.TextLink);
-            Assert.True(getTextResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving text file: {httpResponseCreate.StatusCode}");
+            Assert.True(getTextResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving text file: {getTextResponse.StatusCode}");
 
             var getImageResponse = await httpGet.GetAsync(dataCreate.Article.ImageLink);
-            Assert.True(getImageResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving image file: {httpResponseCreate.StatusCode}");
+            Assert.True(getImageResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving image file: {getImageResponse.StatusCode}");
 
             // Update article text
             using var httpResponseUpdateText = await CallApiAsync<UpdateArticleTextRequest>(
@@ -283,10 +285,10 @@ namespace GlobalArticleDatabaseApiTests
                     Text = textUpdated,
                 }
             );
-            Assert.True(httpResponseUpdateText.StatusCode == System.Net.HttpStatusCode.OK, $"Error updating article text: {httpResponseCreate.StatusCode}");
+            Assert.True(httpResponseUpdateText.StatusCode == System.Net.HttpStatusCode.OK, $"Error updating article text: {httpResponseUpdateText.StatusCode}");
 
             var getTextUpdatedResponse = await httpGet.GetAsync(dataCreate.Article.TextLink);
-            Assert.True(getTextUpdatedResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving text file: {httpResponseCreate.StatusCode}");
+            Assert.True(getTextUpdatedResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving text file: {getTextUpdatedResponse.StatusCode}");
             
             var updatedTextContent =  await getTextUpdatedResponse.Content.ReadAsStringAsync();
             Assert.True(updatedTextContent == textUpdated, "Text not updated");
@@ -302,10 +304,10 @@ namespace GlobalArticleDatabaseApiTests
                 }
             );
 
-            Assert.True(httpResponseUpdateImage.StatusCode == System.Net.HttpStatusCode.OK, $"Error updating article text: {httpResponseCreate.StatusCode}");
+            Assert.True(httpResponseUpdateImage.StatusCode == System.Net.HttpStatusCode.OK, $"Error updating article text: {httpResponseUpdateImage.StatusCode}");
 
             var getImageUpdatedResponse = await httpGet.GetAsync(dataCreate.Article.ImageLink);
-            Assert.True(getImageUpdatedResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving text file: {httpResponseCreate.StatusCode}");
+            Assert.True(getImageUpdatedResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving text file: {getImageUpdatedResponse.StatusCode}");
             
             byte[] remoteImage = await getImageUpdatedResponse.Content.ReadAsByteArrayAsync();
             byte[] updatedImageContent = Convert.FromBase64String(imageBase64Updated);
@@ -318,7 +320,7 @@ namespace GlobalArticleDatabaseApiTests
                 $"/api/v1/article/{dataCreate.Article.Id}"
             );
 
-            Assert.True(httpResponseDelete.StatusCode == System.Net.HttpStatusCode.OK, $"Error in deleting article response: {httpResponseCreate.StatusCode}");
+            Assert.True(httpResponseDelete.StatusCode == System.Net.HttpStatusCode.OK, $"Error in deleting article response: {httpResponseDelete.StatusCode}");
 
             // Check article deleted and text, images deleted from S3
             using var httpResponseRetrieveDeleted = await CallApiAsync(
@@ -329,7 +331,52 @@ namespace GlobalArticleDatabaseApiTests
             Assert.True(httpResponseRetrieveDeleted.StatusCode == System.Net.HttpStatusCode.NotFound, $"Error checking article 'Not Found' after deleting it");
         }
 
-        public bool ArrayEquals(byte[] a1, byte[] b1)
+        [Fact]
+        [Trait("Category", "IntegrationTest")]
+        public async Task Article_CreateWithTranslations_TranslationsIgnored()
+        {
+            var article = new ArticleModelBuilder()
+                .WithRandomValues()
+                .Build();
+
+            article.Translations = new List<Translation>
+            {
+                new TranslationModelBuilder()
+                    .WithRandomValues()
+                    .Build()
+            };
+
+            using var client = _webAppContext.GetAnonymousClient();
+
+            // Create article
+            using var httpResponseCreate = await CallApiAsync<CreateArticleRequest>(
+                client.PostAsync,
+                $"/api/v1/article",
+                new CreateArticleRequest
+                {
+                    Article = article
+                }
+            );
+
+            Assert.True(httpResponseCreate.StatusCode == System.Net.HttpStatusCode.OK, $"Error in create article response: {httpResponseCreate.StatusCode}");
+
+            var dataCreate = await GetResponse<CreateArticleResponse>(httpResponseCreate.Content);
+
+            Assert.True(dataCreate != null, "No data received");
+            Assert.True(dataCreate.Article != null, "No article created");
+            Assert.True(dataCreate.Article.Translations == null || dataCreate.Article.Translations.Count == 0, "Translations not ignored");
+
+            // Delete
+            using var httpResponseDelete = await CallApiAsync(
+                client.DeleteAsync,
+                $"/api/v1/article/{dataCreate.Article.Id}"
+            );
+
+            Assert.True(httpResponseDelete.StatusCode == System.Net.HttpStatusCode.OK, $"Error in deleting article response: {httpResponseDelete.StatusCode}");
+
+        }
+
+        private bool ArrayEquals(byte[] a1, byte[] b1)
         {
             int i;
             if (a1.Length == b1.Length)
@@ -346,16 +393,6 @@ namespace GlobalArticleDatabaseApiTests
             }
 
             return false;
-        }
-
-        private bool DateEquals(DateTime a, DateTime b)
-        {
-            return a.Year == b.Year &&
-                a.Month == b.Month &&
-                a.Day == b.Day &&
-                a.Hour == b.Hour &&
-                a.Minute == b.Minute &&
-                a.Second == b.Second;
         }
     }
 }

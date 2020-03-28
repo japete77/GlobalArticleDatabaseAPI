@@ -74,6 +74,6 @@ namespace GlobalArticleDatabaseAPI.DbContext.Models
         /// <summary>
         /// Article translations
         /// </summary>
-        public List<TranslationEntity> Translatations { get; set; }
+        public List<TranslationEntity> Translations { get; set; }
     }
 }

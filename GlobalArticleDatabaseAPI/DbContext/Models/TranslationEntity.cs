@@ -8,14 +8,29 @@ namespace GlobalArticleDatabaseAPI.DbContext.Models
     public class TranslationEntity
     {
         /// <summary>
-        /// Language of the translation
+        /// Title of the article
         /// </summary>
-        public string Language { get; set; }
+        public string Title { get; set; }
+
+        /// <summary>
+        /// Subtitle of the article
+        /// </summary>
+        public string Subtitle { get; set; }
+
+        /// <summary>
+        /// Brief summary of the article content
+        /// </summary>
+        public string Summary { get; set; }
 
         /// <summary>
         /// Translation date
         /// </summary>
         public DateTime Date { get; set; }
+
+        /// <summary>
+        /// Language of the translation
+        /// </summary>
+        public string Language { get; set; }
 
         /// <summary>
         /// Translation status (Outstanding, Assigned, In progress, Pending review, Reviewed, Completed)

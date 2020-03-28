@@ -46,6 +46,8 @@ namespace GlobalArticleDatabase.Controllers
         [HttpPut]
         public async Task<UpdateArticleResponse> Update(UpdateArticleRequest request)
         {
+            request.ValidateAndThrow();
+
             var result = await _articlesService.Update(request);
 
             return new UpdateArticleResponse
@@ -83,7 +85,7 @@ namespace GlobalArticleDatabase.Controllers
         /// </summary>
         [Route("article/{id}")]
         [HttpGet]
-        public async Task<Article> Get(string id)
+        public async Task<Article> Get([Required]string id)
         {
             return await _articlesService.Get(id);
         }
@@ -104,7 +106,7 @@ namespace GlobalArticleDatabase.Controllers
         /// <param name="id">Article unique id</param>
         [Route("article/{id}")]
         [HttpDelete]
-        public async Task Delete(string id)
+        public async Task Delete([Required]string id)
         {
             await _articlesService.Delete(id);
         }

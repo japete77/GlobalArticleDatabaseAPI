@@ -34,5 +34,15 @@ namespace GlobalArticleDatabaseApiTests
 
             return JsonConvert.DeserializeObject<T>(contentResponse);
         }
+
+        public bool DateEquals(DateTime a, DateTime b)
+        {
+            return a.Year == b.Year &&
+                a.Month == b.Month &&
+                a.Day == b.Day &&
+                a.Hour == b.Hour &&
+                a.Minute == b.Minute &&
+                a.Second == b.Second;
+        }
     }
 }

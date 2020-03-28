@@ -11,6 +11,7 @@ namespace DataAccess.DbContext.MongoDB.Interfaces
         Task<bool> GetConnectionStatusAsync();
         void Connect(string database, string dbServer = null);
         IMongoCollection<ArticleEntity> Articles { get; }
+        IMongoCollection<BsonDocument> GetGenericArticlesCollection();
         bool IsValidCollectionName(string collectionName);
         Task DropDatabaseAsync(string name, CancellationToken cancellationToken = default);
         Task CreateIndices();

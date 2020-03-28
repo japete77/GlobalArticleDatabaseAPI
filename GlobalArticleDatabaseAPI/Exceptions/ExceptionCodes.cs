@@ -44,6 +44,10 @@
         // Article exceptions
         public static int ARTICLE_NOT_FOUND = -6000;
 
+        // Article exceptions
+        public static int TRANSLATION_ALREADY_EXISTS = -7000;
+        public static int TRANSLATION_NOT_FOUND = -7001;
+
         // Validation
         public static int VALIDATION_ERROR = -7000;
     }

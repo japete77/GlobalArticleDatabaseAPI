@@ -40,6 +40,7 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
         {
             request.Article.HasImage = !string.IsNullOrEmpty(request.ImageBase64);
             request.Article.HasText = !string.IsNullOrEmpty(request.Text);
+            request.Article.Translations = null; // Ignore translations when creating the article
 
             var articleEntity = _mapper.Map<ArticleEntity>(request.Article);
 

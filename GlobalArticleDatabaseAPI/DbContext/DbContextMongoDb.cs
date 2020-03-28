@@ -120,6 +120,11 @@ namespace DataAccess.DbContext.MongoDB.Implementations
             }
         }
 
+        public IMongoCollection<BsonDocument> GetGenericArticlesCollection()
+        {
+            return GetCollection<BsonDocument>("articles");
+        }
+
         private IMongoCollection<T> GetCollection<T>(string collectionName)
         {
             return _database.GetCollection<T>(collectionName);
@@ -130,6 +135,22 @@ namespace DataAccess.DbContext.MongoDB.Implementations
             if (!BsonClassMap.IsClassMapRegistered(typeof(ArticleEntity)))
             {
                 BsonClassMap.RegisterClassMap<ArticleEntity>(cm =>
+                {
+                    cm.AutoMap();
+                });
+            }
+
+            if (!BsonClassMap.IsClassMapRegistered(typeof(TranslationEntity)))
+            {
+                BsonClassMap.RegisterClassMap<TranslationEntity>(cm =>
+                {
+                    cm.AutoMap();
+                });
+            }
+
+            if (!BsonClassMap.IsClassMapRegistered(typeof(PublicationEntity)))
+            {
+                BsonClassMap.RegisterClassMap<PublicationEntity>(cm =>
                 {
                     cm.AutoMap();
                 });

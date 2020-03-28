@@ -5,7 +5,7 @@ namespace GlobalArticleDatabaseAPI.Models
     /// <summary>
     /// Create new translation request
     /// </summary>
-    public class CreateTranslationRequest : BaseModel<CreateTranslationRequest, CreateTranslationRequestValidator>
+    public class UpdateTranslationRequest : BaseModel<UpdateTranslationRequest, UpdateTranslationRequestValidator>
     {
         /// <summary>
         /// Article unique id
@@ -13,24 +13,17 @@ namespace GlobalArticleDatabaseAPI.Models
         public string ArticleId { get; set; }
 
         /// <summary>
-        /// Translation content
-        /// </summary>
-        public string Text { get; set; }
-
-        /// <summary>
         /// Translation to be created
         /// </summary>
         public Translation Translation { get; set; }
     }
 
-    public class CreateTranslationRequestValidator : AbstractValidator<CreateTranslationRequest>
+    public class UpdateTranslationRequestValidator : AbstractValidator<UpdateTranslationRequest>
     {
-        public CreateTranslationRequestValidator()
+        public UpdateTranslationRequestValidator()
         {
             RuleFor(model => model.ArticleId).NotEmpty();
-            RuleFor(model => model.Text).NotEmpty();
             RuleFor(model => model.Translation).NotEmpty();
-            RuleFor(model => model.Translation.Title).NotEmpty();
             RuleFor(model => model.Translation.Date).NotEmpty();
             RuleFor(model => model.Translation.Language).NotEmpty();
             RuleFor(model => model.Translation.Status).NotEmpty();

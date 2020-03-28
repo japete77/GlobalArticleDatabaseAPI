@@ -14,6 +14,7 @@ namespace GlobalArticleDatabase.Configuration.AutofacModules
         {
             builder.RegisterType<Settings>().As<ISettings>().InstancePerLifetimeScope();
             builder.RegisterType<ArticleService>().As<IArticleService>().InstancePerLifetimeScope();
+            builder.RegisterType<TranslationService>().As<ITranslationService>().InstancePerLifetimeScope();
             builder.RegisterType<S3Client>().As<IS3Client>().InstancePerLifetimeScope();
         }
     }

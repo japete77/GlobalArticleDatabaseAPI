@@ -8,6 +8,21 @@ namespace GlobalArticleDatabaseAPI.Models
     public class Translation
     {
         /// <summary>
+        /// Title of the article
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        /// Subtitle of the article
+        /// </summary>
+        public string Subtitle { get; set; }
+
+        /// <summary>
+        /// Brief summary of the article content
+        /// </summary>
+        public string Summary { get; set; }
+
+        /// <summary>
         /// Translation date
         /// </summary>
         public DateTime Date { get; set; }
