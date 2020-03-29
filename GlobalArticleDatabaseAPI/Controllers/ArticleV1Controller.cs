@@ -40,7 +40,7 @@ namespace GlobalArticleDatabase.Controllers
         }
 
         /// <summary>
-        /// Create article
+        /// Update article
         /// </summary>
         [Route("article")]
         [HttpPut]
@@ -69,7 +69,7 @@ namespace GlobalArticleDatabase.Controllers
         }
 
         /// <summary>
-        /// Update article text
+        /// Update article image
         /// </summary>
         [Route("article/image")]
         [HttpPut]

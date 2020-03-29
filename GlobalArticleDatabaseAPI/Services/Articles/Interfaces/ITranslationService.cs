@@ -1,15 +1,13 @@
 ﻿using GlobalArticleDatabaseAPI.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GlobalArticleDatabaseAPI.Services.Articles.Interfaces
 {
     public interface ITranslationService
     {
-        Task Create(string articleId, Translation translation);
-        Task Update(string articleId, Translation translation);
+        Task Create(CreateTranslationRequest request);
+        Task Update(UpdateTranslationRequest request);
+        Task UpdateText(UpdateTranslationTextRequest request);
         Task Delete(string articleId, string language);
     }
 }

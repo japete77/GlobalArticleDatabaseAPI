@@ -87,10 +87,6 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
 
                 article.ImageLink = GetImageLink(article);
             }
-            else
-            {
-                article.HasImage = false;
-            }
 
             return article;
         }
@@ -200,6 +196,17 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
                 if (article.HasImage)
                 {
                     article.ImageLink = GetImageLink(article);
+                }
+
+                if (article.Translations != null)
+                {
+                    article.Translations.ForEach(item =>
+                    {
+                        if (item.HasText)
+                        {
+                            item.TextLink = GetTranslationTextLink(article, item);
+                        }
+                    });
                 }
 
                 return article;
@@ -400,6 +407,11 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
         private string GetTextLink(Article article)
         {
             return $"{_settings.S3Url}/{article.Id}.txt";
+        }
+
+        private string GetTranslationTextLink(Article article, Translation translation)
+        {
+            return $"{_settings.S3Url}/{article.Id}-{translation.Language}.txt";
         }
 
         private string GetImageFilename(Article article)

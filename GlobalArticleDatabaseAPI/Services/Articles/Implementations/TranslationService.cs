@@ -9,8 +9,6 @@ using GlobalArticleDatabaseAPI.Services.Articles.Interfaces;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
@@ -30,58 +28,80 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
             _s3Client = s3Client ?? throw new ArgumentNullException(nameof(s3Client));
         }
 
-        public async Task Create(string articleId, Translation translation)
+        public async Task Create(CreateTranslationRequest request)
         {
-            var exists = await Exists(articleId, translation.Language);
+            var exists = await Exists(request.ArticleId, request.Translation.Language);
 
-            if (exists) throw new DuplicateKeyException(ExceptionCodes.TRANSLATION_ALREADY_EXISTS, $"Translation with languag '{translation.Language}' already exists");
+            if (exists) throw new DuplicateKeyException(ExceptionCodes.TRANSLATION_ALREADY_EXISTS, $"Translation with language '{request.Translation.Language}' already exists");
 
             var matchConditions = new FilterDefinition<BsonDocument>[]
             {
                 new BsonDocument(
                     "_id",
-                    new ObjectId(articleId)
+                    new ObjectId(request.ArticleId)
                 ),
             };
+
+            request.Translation.HasText = !string.IsNullOrEmpty(request.Text);
 
             await _dbContext.GetGenericArticlesCollection().UpdateOneAsync(
                 Builders<BsonDocument>.Filter.And(matchConditions),
                 Builders<BsonDocument>.Update.Push(
                     BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations),
-                    translation
+                    _mapper.Map<TranslationEntity>(request.Translation)
                 ),
                 new UpdateOptions { IsUpsert = false }
             );
+
+            if (request.Translation.HasText)
+            {
+                var s3Client = _s3Client.GetClient();
+
+                var result = await s3Client.PutObjectAsync(new Amazon.S3.Model.PutObjectRequest
+                {
+                    BucketName = _settings.AWSBucket,
+                    Key = GetTranslationTextFilename(request.ArticleId, request.Translation),
+                    ContentBody = request.Text
+                });
+
+                if (result.HttpStatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    // Rollback
+                    await Delete(request.ArticleId, request.Translation.Language);
+
+                    throw new InternalException(ExceptionCodes.TRANSLATION_ERROR_UPLOADING_TEXT, $"Error uploading translation with language '{request.Translation.Language}'");
+                }
+            }
         }
 
-        public async Task Update(string articleId, Translation translation)
+        public async Task Update(UpdateTranslationRequest request)
         {
-            var exists = await Exists(articleId, translation.Language);
+            var exists = await Exists(request.ArticleId, request.Translation.Language);
 
-            if (!exists) throw new DuplicateKeyException(ExceptionCodes.TRANSLATION_NOT_FOUND, $"Translation with languag '{translation.Language}' not found");
+            if (!exists) throw new DuplicateKeyException(ExceptionCodes.TRANSLATION_NOT_FOUND, $"Translation with language '{request.Translation.Language}' not found", null, (int)System.Net.HttpStatusCode.NotFound);
 
             var matchConditions = new FilterDefinition<BsonDocument>[]
             {
                 new BsonDocument(
                     "_id",
-                    new ObjectId(articleId)
+                    new ObjectId(request.ArticleId)
                 ),
                 new BsonDocument(
                     BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations),
-                    new BsonDocument("$elemMatch", new BsonDocument(BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Language), translation.Language))
+                    new BsonDocument("$elemMatch", new BsonDocument(BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Language), request.Translation.Language))
                 ),
             };
 
             var updateDefinition = new BsonDocument(
                 "$set", new BsonDocument
                 {
-                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Title)}", NormalizeNull(translation.Title) },
-                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Subtitle)}", NormalizeNull(translation.Subtitle) },
-                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Summary)}", NormalizeNull(translation.Summary) },
-                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Date)}", translation.Date },
-                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.ReviewedBy)}", NormalizeNull(translation.ReviewedBy) },
-                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Status)}", NormalizeNull(translation.Status) },
-                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.TranslatedBy)}", NormalizeNull(translation.TranslatedBy) },
+                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Title)}", NormalizeNull(request.Translation.Title) },
+                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Subtitle)}", NormalizeNull(request.Translation.Subtitle) },
+                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Summary)}", NormalizeNull(request.Translation.Summary) },
+                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Date)}", request.Translation.Date },
+                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.ReviewedBy)}", NormalizeNull(request.Translation.ReviewedBy) },
+                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Status)}", NormalizeNull(request.Translation.Status) },
+                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.TranslatedBy)}", NormalizeNull(request.Translation.TranslatedBy) },
                 }
             );
 
@@ -109,12 +129,63 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                         language
                     )
                 )
-            ); 
+            );
 
             await _dbContext.GetGenericArticlesCollection().UpdateOneAsync(
                 Builders<BsonDocument>.Filter.And(matchConditions),
                 deleteDefinition
             );
+
+            var s3Client = _s3Client.GetClient();
+
+            await s3Client.DeleteAsync(
+                _settings.AWSBucket,
+                GetTranslationTextFilename(articleId, new Translation { Language = language }),
+                null
+            );
+        }
+
+        public async Task UpdateText(UpdateTranslationTextRequest request)
+        {
+            // Update HasText flag
+            var matchConditions = new FilterDefinition<BsonDocument>[]
+            {
+                new BsonDocument(
+                    "_id",
+                    new ObjectId(request.ArticleId)
+                ),
+                new BsonDocument(
+                    BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations),
+                    new BsonDocument("$elemMatch", new BsonDocument(BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Language), request.Language))
+                ),
+            };
+
+            var updateDefinition = new BsonDocument(
+                "$set", new BsonDocument
+                {
+                    { $"{BsonPropertyHelper.GetPropertyName<ArticleEntity>(f => f.Translations)}.$.{BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.HasText)}", true }
+                }
+            );
+
+            await _dbContext.GetGenericArticlesCollection().UpdateOneAsync(
+                Builders<BsonDocument>.Filter.And(matchConditions),
+                updateDefinition
+            );
+
+            // Update file
+            var s3Client = _s3Client.GetClient();
+
+            var result = await s3Client.PutObjectAsync(new Amazon.S3.Model.PutObjectRequest
+            {
+                BucketName = _settings.AWSBucket,
+                Key = GetTranslationTextFilename(request.ArticleId, new Translation { Language = request.Language }),
+                ContentBody = request.Text
+            });
+
+            if (result.HttpStatusCode != System.Net.HttpStatusCode.OK)
+            {
+                throw new InternalException(ExceptionCodes.TRANSLATION_ERROR_UPLOADING_TEXT, $"Error uploading translation with language '{request.Language}'");
+            }
         }
 
         private async Task<bool> Exists(string articleId, string language)
@@ -144,6 +215,16 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
         {
             if (string.IsNullOrEmpty(value)) return "";
             return value;
+        }
+
+        private string GetTranslationTextFilename(string articleId, Translation translation)
+        {
+            return $"{articleId}-{translation.Language}.txt";
+        }
+
+        private string GetTranslationTextLink(string articleId, Translation translation)
+        {
+            return $"{_settings.S3Url}/{articleId}-{translation.Language}.txt";
         }
     }
 }

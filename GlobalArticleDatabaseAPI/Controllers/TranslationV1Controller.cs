@@ -34,7 +34,7 @@ namespace GlobalArticleDatabaseAPI.Controllers
         {
             request.ValidateAndThrow();
 
-            await _translationService.Create(request.ArticleId, request.Translation);
+            await _translationService.Create(request);
         }
 
         /// <summary>
@@ -47,11 +47,24 @@ namespace GlobalArticleDatabaseAPI.Controllers
         {
             request.ValidateAndThrow();
 
-            await _translationService.Update(request.ArticleId, request.Translation);
+            await _translationService.Update(request);
         }
 
         /// <summary>
-        /// Update translation
+        /// Update translation text
+        /// </summary>
+        /// <param name="request">Request to update translation</param>
+        [Route("translation/text")]
+        [HttpPut]
+        public async Task UpdateText(UpdateTranslationTextRequest request)
+        {
+            request.ValidateAndThrow();
+
+            await _translationService.UpdateText(request);
+        }
+        
+        /// <summary>
+        /// Delete translation
         /// </summary>
         [Route("translation")]
         [HttpDelete]

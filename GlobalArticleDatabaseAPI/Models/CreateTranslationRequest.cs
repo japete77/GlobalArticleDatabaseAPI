@@ -28,7 +28,6 @@ namespace GlobalArticleDatabaseAPI.Models
         public CreateTranslationRequestValidator()
         {
             RuleFor(model => model.ArticleId).NotEmpty();
-            RuleFor(model => model.Text).NotEmpty();
             RuleFor(model => model.Translation).NotEmpty();
             RuleFor(model => model.Translation.Title).NotEmpty();
             RuleFor(model => model.Translation.Date).NotEmpty();

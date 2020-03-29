@@ -34,6 +34,18 @@ namespace GlobalArticleDatabaseApiTests.Builders
             return this;
         }
 
+        public TranslationModelBuilder WithHasText(bool hasText)
+        {
+            _translation.HasText = hasText;
+            return this;
+        }
+
+        public TranslationModelBuilder WithTextLink(string textLink)
+        {
+            _translation.TextLink = textLink;
+            return this;
+        }
+
         public TranslationModelBuilder WithTitle(string title)
         {
             _translation.Title = title;

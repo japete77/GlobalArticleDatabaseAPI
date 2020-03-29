@@ -48,6 +48,11 @@ namespace GlobalArticleDatabaseAPI.DbContext.Models
         public string ReviewedBy { get; set; }
 
         /// <summary>
+        /// Indicates of the translation has text
+        /// </summary>
+        public bool HasText { get; set; }
+
+        /// <summary>
         /// Publications registry
         /// </summary>
         public List<PublicationEntity> Publications { get; set; }
