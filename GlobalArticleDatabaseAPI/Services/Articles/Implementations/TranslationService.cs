@@ -61,7 +61,8 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 {
                     BucketName = _settings.AWSBucket,
                     Key = GetTranslationTextFilename(request.ArticleId, request.Translation),
-                    ContentBody = request.Text
+                    ContentBody = request.Text,
+                    ContentType = "text/html; charset=utf-8"
                 });
 
                 if (result.HttpStatusCode != System.Net.HttpStatusCode.OK)

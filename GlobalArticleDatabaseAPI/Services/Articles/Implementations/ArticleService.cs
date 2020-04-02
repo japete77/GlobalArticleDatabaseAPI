@@ -327,9 +327,9 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
                     filters.Add(Builders<ArticleEntity>.Filter.Eq(f => f.Category, filter.Category));
                 }
 
-                if (filter.Title != null)
+                if (filter.Text != null)
                 {
-                    filters.Add(Builders<ArticleEntity>.Filter.Text(filter.Title, new TextSearchOptions { CaseSensitive = false, DiacriticSensitive = false }));
+                    filters.Add(Builders<ArticleEntity>.Filter.Text(filter.Text, new TextSearchOptions { CaseSensitive = false, DiacriticSensitive = false }));
                 }
 
                 if (filter.From.HasValue)
@@ -346,11 +346,21 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
                 {
                     filters.Add(Builders<ArticleEntity>.Filter.Eq(f => f.Language, filter.Language));
                 }
+
                 if (filter.Owner != null)
                 {
                     filters.Add(Builders<ArticleEntity>.Filter.Eq(f => f.Owner, filter.Owner));
                 }
 
+                if (filter.TranslationLanguage != null)
+                {
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.Language == filter.TranslationLanguage));
+                }
+
+                if (filter.PublishedBy != null)
+                {
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.Publications.Any(a => a.Publisher == filter.PublishedBy)));
+                }
             }
 
             if (filters.Count > 0)
@@ -391,7 +401,8 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
                     {
                         BucketName = _settings.AWSBucket,
                         Key = filename,
-                        ContentBody = content
+                        ContentBody = content,
+                        ContentType = "text/html; charset=utf-8"
                     }
                 );
             }

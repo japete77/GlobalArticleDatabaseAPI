@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using Google.Api.Gax.ResourceNames;
 using Google.Cloud.Translate.V3;
 using HtmlAgilityPack;
@@ -19,7 +20,18 @@ namespace DesiringGodArticlesCrawler
         static void Main(string[] args)
         {
             //ExtractSpanishArticlesFromDG("/Users/juanpablogonzalezjara/Desktop/articles/spanish_articles.json");
-            GetAuthors("/Users/juanpablogonzalezjara/Desktop/articles/authors.json");
+            // GetAuthors("/Users/juanpablogonzalezjara/Desktop/articles/authors.json");
+            //var builder = new Automation.ArticlesBuilder();
+            //builder.CreateArticles();
+
+            List<Article> articles = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:\temp\pxe\articles\spanish_articles.json"));
+
+            var articlesPiper = articles.Where(w => w.Author == "John Piper" && w.Link.Contains("/articles/")).ToList();
+
+            var extractor = new ArticleExtractor();
+
+            var textEnglish = extractor.Extract(articlesPiper.First().Link.Replace("?lang=es", ""));
+            var textSpanish = extractor.Extract(articlesPiper.First().Link);
         }
 
         static void GetAuthors(string filename)
@@ -286,7 +298,6 @@ namespace DesiringGodArticlesCrawler
                     {
                         var articleHtml = new HtmlDocument();
                         articleHtml.LoadHtml(node.InnerHtml);
-
 
                         var type = articleHtml.DocumentNode.SelectSingleNode("//div[@class='card--resource__labels-label']")?.InnerText;
                         var author = articleHtml.DocumentNode.SelectSingleNode("//div[@class='card__author']")?.InnerText;
