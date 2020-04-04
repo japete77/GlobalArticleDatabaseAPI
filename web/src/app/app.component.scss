@@ -1,0 +1,141 @@
+@import '~@covalent/highlight/highlight-theme';
+
+.filter-panel {
+    margin: 15px;
+}
+
+.mat-expansion-panel-spacing {
+    margin: 0;
+}
+
+.search-wrapper {
+    margin: 10px 20px 10px 5px;
+    font-size: medium;
+}
+.mat-expansion-indicator {
+    :after {
+        color: white !important;
+    }
+}
+
+.mat-expansion {
+    &-indicator {
+        &:after {
+            color: white !important;
+        }
+    }
+
+    &-panel {        
+        border-radius: 0 !important;
+
+        &-header {
+            background-color: mat-color($mat-blue-grey, 700) !important;
+            color: white;    
+        }
+    }
+}
+
+.article-card {
+    display: inline-block;
+    max-width: 400px;
+    background-color: white;
+    &--dummy {
+        background-color: transparent;
+    }
+}
+
+// .example-card {
+//     display: inline-block;
+//     max-width: 400px;
+//     height: 500px;
+//     background-color: white;
+// }
+
+.image-container {
+    text-align: center;
+    height: 220px;
+    background-color: #cccccc;
+    &--dummy {
+        background-color: transparent;
+    }
+}
+
+.image-container img {
+    max-height:100%;
+    max-width: 100%;
+}
+
+.title--no-overflow {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 350px;
+}
+
+.mat-card-content {
+    min-height: 100px;
+    max-height: 100px;
+}
+
+.article-date {
+    color: #b6b6b6;
+    margin-bottom: 5px;
+    font-size: small;
+}
+
+.mat-radio-button ~ .mat-radio-button {
+    margin-left: 16px;
+}
+
+.sort-item {
+    height: 30px;
+    margin-top: 20px;
+    &-label {
+        margin-right: 120px;
+    }
+
+    &-updown {
+        float: right;
+    }
+}
+
+.cards-viewport {
+    height: 100%;
+    width: 100%;
+}
+
+.view-more {
+    text-align: center;
+    height: 100px;
+    margin-top: 50px;
+}
+
+.mat-card-content {
+    display: inline-grid;
+}
+
+
+.actions {
+    &--left {
+        padding: 0 10px 0 10px;
+        float: left;
+    }
+    &--right {
+        padding: 0 10px 0 10px;
+        float: right;
+    }
+}
+
+.filter-field {
+    width: 100%;
+    padding-top: 5px;
+}
+
+.mat-expansion-panel-body {
+    padding: 16px;
+}
+
+.action-row {
+    height: 20px;
+    display: flow-root;
+}

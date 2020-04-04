@@ -1,0 +1,116 @@
+<td-layout class='layout-nav-list-demo' sidenavWidth='280px'>
+  <td-layout-nav-list toolbarTitle="Global Article Database" navigationRoute="/" opened="true" mode="side">
+    <div td-sidenav-content>
+      <div class="search-wrapper">
+        <td-search-box backIcon="arrow_back" placeholder="Search here..." [(ngModel)]="searchText"
+          [showUnderline]="true" [alwaysVisible]="true" (search)="textChange()" (clear)="textChange()">
+        </td-search-box>
+      </div>
+      <mat-accordion multi="true">
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            Filtered by
+          </mat-expansion-panel-header>
+          <mat-form-field class="filter-field">
+            <input #author type="text" placeholder="Select Author" (keydown.enter)="filterChanged()" aria-label="Author"
+              matInput [formControl]="authorControl" [matAutocomplete]="autoAuthor">
+            <mat-autocomplete #autoAuthor="matAutocomplete" (optionSelected)="filterChanged()">
+              <mat-option *ngFor="let author of filteredAuthors | async" [value]="author">
+                {{author}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-form-field class="filter-field">
+            <input #category type="text" placeholder="Select Category" (keydown.enter)="filterChanged()"
+              aria-label="Category" matInput [formControl]="categoryControl" [matAutocomplete]="autoCategory">
+            <mat-autocomplete #autoCategory="matAutocomplete" (optionSelected)="filterChanged()">
+              <mat-option *ngFor="let category of filteredCategories | async" [value]="category">
+                {{category}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-form-field class="filter-field">
+            <input #topic type="text" placeholder="Select Topic" (keydown.enter)="filterChanged()" aria-label="Topic"
+              matInput [formControl]="topicControl" [matAutocomplete]="autoTopic">
+            <mat-autocomplete #autoTopic="matAutocomplete" (optionSelected)="filterChanged()">
+              <mat-option *ngFor="let topic of filteredTopics | async" [value]="topic">
+                {{topic}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+          <mat-form-field class="filter-field">
+            <input #source type="text" placeholder="Select Source" (keydown.enter)="filterChanged()" aria-label="Source"
+              matInput [formControl]="ownerControl" [matAutocomplete]="autoOwner">
+            <mat-autocomplete #autoOwner="matAutocomplete" (optionSelected)="filterChanged()">
+              <mat-option *ngFor="let owner of filteredOwners | async" [value]="owner">
+                {{owner}}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            Sorted by
+          </mat-expansion-panel-header>
+          <div class="sort-item">
+            <label class="sort-item-label">Date</label>
+            <mat-radio-group class="sort-item-updown" aria-label="Select an option" [(ngModel)]="sortByDate"
+              (change)="sortChange($event)">
+              <mat-radio-button value="0">Asc</mat-radio-button>
+              <mat-radio-button value="1">Desc</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div class="sort-item">
+            <label class="sort-item-label">Author</label>
+            <mat-radio-group class="sort-item-updown" aria-label="Select an option" [(ngModel)]="sortByAuthor"
+              (change)="sortChange($event)">
+              <mat-radio-button value="2">Asc</mat-radio-button>
+              <mat-radio-button value="3">Desc</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div class="sort-item">
+            <label class="sort-item-label">Source</label>
+            <mat-radio-group class="sort-item-updown" aria-label="Select an option" [(ngModel)]="sortBySource"
+              (change)="sortChange($event)">
+              <mat-radio-button value="4">Asc</mat-radio-button>
+              <mat-radio-button value="5">Desc</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </div>
+    <div td-toolbar-content>
+    </div>
+    <mat-card *ngFor="let article of articles" class="article-card">
+      <mat-card-header>
+        <mat-card-title class="title--no-overflow" title="{{article.title}}">{{article.title}}</mat-card-title>
+        <mat-card-subtitle class="title--no-overflow" title="{{article.subtitle}}">
+          {{article.subtitle ? article.subtitle : '-'}}</mat-card-subtitle>
+      </mat-card-header>
+      <div class="image-container">
+        <img mat-card-image src="{{article.imageLink}}">
+      </div>
+      <mat-card-content>
+        <div class="article-date">{{article.date | date : 'mediumDate' }}</div>
+        <p>
+          {{article.summary}}
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <div class="action-row">
+          <div class="actions--left">{{article.author}}</div>
+          <div class="actions--right">{{article.topics.join(', ')}}</div>
+        </div>
+        <div class="action-row">
+          <div class="actions--left"><a href="{{article.sourceLink}}" target="_blank">{{article.owner}}</a></div>
+          <div class="actions--right"><span class="flag-icon flag-icon-us"></span><span class="flag-icon flag-icon-es"></span></div>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+    <div *tdLoading="'loading'; type:'circular'; mode:'indeterminate'; strategy:'replace'; color:'primary'">
+      <div *ngIf="showMore" class="view-more">
+        <button mat-raised-button color="primary" (click)="loadMore()">More Articles</button>
+      </div>
+    </div>
+  </td-layout-nav-list>
+</td-layout>
