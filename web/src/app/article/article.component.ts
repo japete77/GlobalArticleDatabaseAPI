@@ -14,6 +14,11 @@ import { TdLoadingService } from '@covalent/core/loading';
 export class ArticleComponent implements OnInit {
 
   article: Article;
+  authors: string[];
+  categories: string[];
+  owners: string[];
+  topics: string[];
+
   text: string;
   translatedTexts = [];
 
@@ -28,7 +33,11 @@ export class ArticleComponent implements OnInit {
     private appService: ApplicationService,
     private loadingService: TdLoadingService
   ) { 
-    this.article = data;
+    this.article = data.article;
+    this.authors = data.authors;
+    this.categories = data.categories;
+    this.owners = data.owners;
+    this.topics = data.topics;
   }
 
   ngOnInit(): void {

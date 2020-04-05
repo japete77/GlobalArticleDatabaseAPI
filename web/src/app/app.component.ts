@@ -11,6 +11,7 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ArticleComponent } from './article/article.component';
+import { ArticleContext } from './models/article-context';
 
 @Component({
   selector: 'app-root',
@@ -173,7 +174,13 @@ export class AppComponent implements OnInit {
 
   openArticle(article: Article) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = article;
+    dialogConfig.data = {
+      article: article,
+      authors: this.authors,
+      categories: this.categories,
+      owners: this.owners,
+      topics: this.topics
+    };
     const dialogRef = this.dialog.open(ArticleComponent, dialogConfig);
 
     dialogRef.updateSize("80vw");

@@ -1,9 +1,16 @@
-.article-field {
-    margin-right: 20px;
+.article {
+    &-field {
+        margin-right: 20px;
+        width: 250px;
 
-    &--full {
-        width: 100%;
+        &--full {
+            width: 100%;
+        }
     }
+}
+
+.mat-form-field {
+    font-size: 1.2em;
 }
 
 .chip-list {
