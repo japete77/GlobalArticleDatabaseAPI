@@ -52,6 +52,7 @@
 // }
 
 .image-container {
+    cursor: pointer; 
     text-align: center;
     height: 220px;
     background-color: #cccccc;
@@ -138,4 +139,14 @@
 .action-row {
     height: 20px;
     display: flow-root;
+}
+
+.flag-icon {
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.mat-icon-logo {
+    height: 48px !important;
+    width: 48px !important;
 }

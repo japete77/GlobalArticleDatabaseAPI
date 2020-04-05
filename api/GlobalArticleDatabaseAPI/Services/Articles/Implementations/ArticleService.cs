@@ -112,6 +112,34 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
             return request.Article;
         }
 
+        public async Task<string> GetText(string id, string language = null)
+        {
+            string responseBody = "";
+            try
+            {
+                GetObjectRequest request = new GetObjectRequest
+                {
+                    BucketName = _settings.AWSBucket,
+                    Key = language == null ? $"{id}.txt" : $"{id}-{language}.txt"
+                };
+
+                var client = _s3Client.GetClient();
+
+                using (GetObjectResponse response = await client.GetObjectAsync(request))
+                using (Stream responseStream = response.ResponseStream)
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    responseBody = reader.ReadToEnd();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new InvalidArgumentException(ExceptionCodes.ARTICLE_TEXT_RETRIEVING_ERROR, $"Error retrieving article text with id {id} and language {language}", e, StatusCodes.Status500InternalServerError);
+            }
+
+            return responseBody;
+        }
+
         public async Task UpdateText(UpdateArticleTextRequest request)
         {
             await _dbContext.Articles.UpdateOneAsync(

@@ -1,0 +1,109 @@
+<div *tdLoading="'loading-text'; type:'circular'; mode:'indeterminate'; strategy:'replace'; color:'primary'">
+    <table cellspacing="0">
+        <tr>
+            <td>
+                <mat-form-field class="article-field">
+                    <mat-label>Author</mat-label>
+                    <input matInput value="{{article.author}}" [(ngModel)]="article.author">
+                </mat-form-field>
+            </td>
+            <td>
+                <mat-form-field class="article-field">
+                    <mat-label>Category</mat-label>
+                    <input matInput value="{{article.category}}" [(ngModel)]="article.category">
+                </mat-form-field>
+            </td>
+            <td>
+                <mat-form-field class="article-field">
+                    <mat-label>Source</mat-label>
+                    <input matInput value="{{article.owner}}" [(ngModel)]="article.owner">
+                </mat-form-field>
+            </td>
+            <td>
+                <mat-form-field>
+                    <mat-label>Cration Date</mat-label>
+                    <input matInput [matDatepicker]="dp3" disabled value="{{article.date}}">
+                    <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                    <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                </mat-form-field>
+            </td>
+        </tr>
+    </table>
+    <mat-form-field class="form--full">
+        <mat-chip-list #topicList aria-label="Topics">
+            <mat-chip *ngFor="let topic of article.topics" [selectable]="selectable" [removable]="removable"
+                (removed)="remove(topic)">
+                {{topic}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="Topics" [matChipInputFor]="topicList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                (matChipInputTokenEnd)="add($event)">
+        </mat-chip-list>
+    </mat-form-field>
+    <mat-form-field class="form--full">
+        <mat-label>Source Link</mat-label>
+        <input matInput value="{{article.sourceLink}}">
+    </mat-form-field>
+    <mat-dialog-content class="mat-typography">
+        <mat-tab-group>
+            <mat-tab class="tab-content">
+                <ng-template mat-tab-label>
+                    <span [ngClass]="['flag-icon', 'flag-icon-' + article.language]"></span>
+                </ng-template>
+                &nbsp;
+                <mat-form-field class="article-field--full">
+                    <mat-label>Title</mat-label>
+                    <input matInput [(ngModel)]="article.title" value="{{article.title}}">
+                </mat-form-field>
+                <mat-form-field class="article-field--full">
+                    <mat-label>Subtitle</mat-label>
+                    <input matInput [(ngModel)]="article.subtitle" value="{{article.subtitle}}">
+                </mat-form-field>
+                <mat-form-field class="article-field--full">
+                    <mat-label>Summary</mat-label>
+                    <textarea class="form-textarea" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                        cdkAutosizeMinRows="1" [(ngModel)]="article.summary" value="{{article.summary}}">
+                </textarea>
+                </mat-form-field>
+                <mat-form-field class="article-field--full">
+                    <mat-label>Text</mat-label>
+                    <textarea class="form-textarea" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                        cdkAutosizeMinRows="1" [(ngModel)]="text" value="{{text}}">
+                </textarea>
+                </mat-form-field>
+            </mat-tab>
+            <mat-tab class="tab-content" *ngFor="let translation of article.translations">
+                <ng-template mat-tab-label>
+                    <span [ngClass]="['flag-icon', 'flag-icon-' + translation.language]"></span>
+                </ng-template>
+                &nbsp;
+                <mat-form-field class="article-field--full">
+                    <mat-label>Title</mat-label>
+                    <input matInput [(ngModel)]="translation.title" value="{{translation.title}}">
+                </mat-form-field>
+                <mat-form-field class="article-field--full">
+                    <mat-label>Subtitle</mat-label>
+                    <input matInput [(ngModel)]="translation.subtitle" value="{{translation.subtitle}}">
+                </mat-form-field>
+                <mat-form-field class="article-field--full">
+                    <mat-label>Summary</mat-label>
+                    <textarea class="form-textarea" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                        cdkAutosizeMinRows="1" [(ngModel)]="translation.summary" value="{{translation.summary}}">
+                </textarea>
+                </mat-form-field>
+                <mat-form-field class="article-field--full">
+                    <mat-label>Text</mat-label>
+                    <textarea class="form-textarea" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+                        cdkAutosizeMinRows="1" [(ngModel)]="translatedTexts[translation.language]"
+                        value="{{translatedTexts[translation.language]}}">
+                </textarea>
+                </mat-form-field>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-raised-button color="primary">Update</button>
+        <button mat-raised-button mat-dialog-close>Close</button>
+    </mat-dialog-actions>
+</div>

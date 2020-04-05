@@ -27,12 +27,19 @@ import { DatePipe } from '@angular/common'
 import { MatRadioModule } from '@angular/material/radio';
 import { MatButtonModule } from '@angular/material/button';
 import { MatGridListModule } from '@angular/material/grid-list';
-
+import { ArticleComponent } from './article/article.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @NgModule({
 
   declarations: [
-    AppComponent
+    AppComponent,
+    ArticleComponent
   ],
   imports: [
     BrowserModule,
@@ -56,7 +63,13 @@ import { MatGridListModule } from '@angular/material/grid-list';
     CovalentLoadingModule,
     MatRadioModule,
     MatButtonModule,
-    MatGridListModule
+    MatGridListModule,
+    MatDialogModule,
+    MatTabsModule,
+    MatChipsModule,
+    MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   schemas: [ 
     CUSTOM_ELEMENTS_SCHEMA 

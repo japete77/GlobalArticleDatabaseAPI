@@ -1,5 +1,5 @@
 <td-layout class='layout-nav-list-demo' sidenavWidth='280px'>
-  <td-layout-nav-list toolbarTitle="Global Article Database" navigationRoute="/" opened="true" mode="side">
+  <td-layout-nav-list logo="assets:gadb" toolbarTitle="Global Article Database" navigationRoute="/" opened="true" mode="side">
     <div td-sidenav-content>
       <div class="search-wrapper">
         <td-search-box backIcon="arrow_back" placeholder="Search here..." [(ngModel)]="searchText"
@@ -87,7 +87,7 @@
         <mat-card-subtitle class="title--no-overflow" title="{{article.subtitle}}">
           {{article.subtitle ? article.subtitle : '-'}}</mat-card-subtitle>
       </mat-card-header>
-      <div class="image-container">
+      <div class="image-container" (click)="openArticle(article)">
         <img mat-card-image src="{{article.imageLink}}">
       </div>
       <mat-card-content>
@@ -103,7 +103,10 @@
         </div>
         <div class="action-row">
           <div class="actions--left"><a href="{{article.sourceLink}}" target="_blank">{{article.owner}}</a></div>
-          <div class="actions--right"><span class="flag-icon flag-icon-us"></span><span class="flag-icon flag-icon-es"></span></div>
+          <div class="actions--right">
+            <span [ngClass]="['flag-icon', 'flag-icon-' + article.language]"></span>
+            <span *ngFor="let translation of article.translations" [ngClass]="['flag-icon', 'flag-icon-' + translation.language]"></span>
+          </div>
         </div>
       </mat-card-actions>
     </mat-card>

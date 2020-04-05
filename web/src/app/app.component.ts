@@ -7,7 +7,10 @@ import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 
 import { startWith, map } from 'rxjs/operators';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { ArticleComponent } from './article/article.component';
 
 @Component({
   selector: 'app-root',
@@ -19,8 +22,13 @@ export class AppComponent implements OnInit {
   constructor(
     private appService: ApplicationService,
     private loadingService: TdLoadingService,
-    ) { }
-
+    private _iconRegistry: MatIconRegistry, 
+    private _domSanitizer:DomSanitizer,
+    public dialog: MatDialog) {
+    this._iconRegistry.addSvgIconInNamespace('assets', 'gadb',
+    this._domSanitizer.bypassSecurityTrustResourceUrl('assets/gadb.svg'));
+  }
+  
   authorControl = new FormControl();
   categoryControl = new FormControl();
   topicControl = new FormControl();
@@ -161,5 +169,17 @@ export class AppComponent implements OnInit {
   clearResults() {
     this.currentPage = 1;
     this.articles = [];
+  }
+
+  openArticle(article: Article) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = article;
+    const dialogRef = this.dialog.open(ArticleComponent, dialogConfig);
+
+    dialogRef.updateSize("80vw");
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 }

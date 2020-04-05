@@ -84,4 +84,10 @@ export class ApplicationService {
       `${environment.gadb_api_base}articles${query}`
     );
   }
+
+  getArticleText(id: string, language?: string) {
+    var url = `${environment.gadb_api_base}article/${id}/text`
+    if (language) url += `?language=${language}`;
+    return this.http.get<string>(url);
+  }
 }

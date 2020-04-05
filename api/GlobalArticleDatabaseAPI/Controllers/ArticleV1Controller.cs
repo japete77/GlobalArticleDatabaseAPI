@@ -59,6 +59,16 @@ namespace GlobalArticleDatabase.Controllers
         /// <summary>
         /// Update article text
         /// </summary>
+        [Route("article/{id}/text")]
+        [HttpGet]
+        public async Task<string> GetText(string id, string language)
+        {
+            return await _articlesService.GetText(id, language);
+        }
+
+        /// <summary>
+        /// Update article text
+        /// </summary>
         [Route("article/text")]
         [HttpPut]
         public async Task UpdateText(UpdateArticleTextRequest request)
