@@ -185,8 +185,16 @@ export class AppComponent implements OnInit {
 
     dialogRef.updateSize("80vw");
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+    dialogRef.afterClosed().subscribe((result: ArticleContext) => {
+      if (result) {
+        console.log(`article updated: ${JSON.stringify(result.article) != JSON.stringify(result.articleUpdated)}`); 
+        console.log(`text updated: ${result.text != result.textUpdated}`);
+        
+        result.article.translations.forEach(item => {
+          console.log(`translation ${item.language} updated ${JSON.stringify(item) != JSON.stringify(result.articleUpdated.translations.find(s => s.language == item.language))}`);
+          console.log(`translation ${item.language} text updated ${result.translationText[item.language] != result.translationTextUpdated[item.language]}`);
+        });  
+      }
     });
   }
 }

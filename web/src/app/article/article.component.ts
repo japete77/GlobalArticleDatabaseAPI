@@ -5,6 +5,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { ApplicationService } from 'src/services/gadb.service';
 import { TdLoadingService } from '@covalent/core/loading';
+import { ArticleContext } from '../models/article-context';
 
 @Component({
   selector: 'app-article',
@@ -13,14 +14,10 @@ import { TdLoadingService } from '@covalent/core/loading';
 })
 export class ArticleComponent implements OnInit {
 
-  article: Article;
   authors: string[];
   categories: string[];
   owners: string[];
   topics: string[];
-
-  text: string;
-  translatedTexts = [];
 
   visible = true;
   selectable = true;
@@ -29,11 +26,17 @@ export class ArticleComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) data, 
+    @Inject(MAT_DIALOG_DATA) public data: ArticleContext, 
     private appService: ApplicationService,
     private loadingService: TdLoadingService
   ) { 
-    this.article = data.article;
+    data.articleUpdated = JSON.parse(JSON.stringify(data.article));
+    data.translationText = [];
+    data.translationTextUpdated = [];
+    data.articleUpdated.translations.forEach(item => {
+      data.translationText[item.language] = '';
+      data.translationTextUpdated[item.language] = '';
+    });
     this.authors = data.authors;
     this.categories = data.categories;
     this.owners = data.owners;
@@ -43,16 +46,18 @@ export class ArticleComponent implements OnInit {
   ngOnInit(): void {
     this.loadingService.register("loading-text")
 
-    this.appService.getArticleText(this.article.id)
+    this.appService.getArticleText(this.data.articleUpdated.id)
       .subscribe(data => {
-        this.text = data;
+        this.data.text = data;
+        this.data.textUpdated = data;
         this.loadingService.resolve("loading-text");
       });
 
-    this.article.translations.forEach(item => {
-      this.appService.getArticleText(this.article.id, item.language)
+    this.data.articleUpdated.translations.forEach(item => {
+      this.appService.getArticleText(this.data.articleUpdated.id, item.language)
       .subscribe(data => {
-        this.translatedTexts[item.language] = data;
+        this.data.translationText[item.language] = data;
+        this.data.translationTextUpdated[item.language] = data;
       });
     });
   }
@@ -63,7 +68,7 @@ export class ArticleComponent implements OnInit {
 
     // Add our fruit
     if ((value || '').trim()) {
-      this.article.topics.push(value.trim());
+      this.data.articleUpdated.topics.push(value.trim());
     }
 
     // Reset the input value
@@ -73,10 +78,10 @@ export class ArticleComponent implements OnInit {
   }
 
   remove(topic: string): void {
-    const index = this.article.topics.indexOf(topic);
+    const index = this.data.articleUpdated.topics.indexOf(topic);
 
     if (index >= 0) {
-      this.article.topics.splice(index, 1);
+      this.data.articleUpdated.topics.splice(index, 1);
     }
   }
 }
