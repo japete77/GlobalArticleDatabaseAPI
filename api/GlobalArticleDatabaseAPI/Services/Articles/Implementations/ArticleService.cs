@@ -1,7 +1,4 @@
-﻿using Amazon;
-using Amazon.Runtime;
-using Amazon.S3;
-using Amazon.S3.Model;
+﻿using Amazon.S3.Model;
 using AutoMapper;
 using Config.Interfaces;
 using Core.Exceptions;
@@ -53,7 +50,7 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
             if (!string.IsNullOrEmpty(request.Text))
             {
                 var result = await UploadS3File(
-                    GetTextFilename(article), 
+                    GetTextFilename(article),
                     request.Text
                 );
 
@@ -71,11 +68,11 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
             // Create image file in S3
             if (!string.IsNullOrEmpty(request.ImageBase64))
             {
-               var result = await UploadS3File(
-                    GetImageFilename(article),
-                    request.ImageBase64,
-                    true
-                );
+                var result = await UploadS3File(
+                     GetImageFilename(article),
+                     request.ImageBase64,
+                     true
+                 );
 
                 if (!result)
                 {
@@ -149,7 +146,7 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
             );
 
             await UploadS3File(
-                GetTextFilename(new Article { Id = request.Id }), 
+                GetTextFilename(new Article { Id = request.Id }),
                 request.Text
             );
         }

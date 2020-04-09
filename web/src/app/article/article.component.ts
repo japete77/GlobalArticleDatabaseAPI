@@ -6,6 +6,7 @@ import {COMMA, ENTER} from '@angular/cdk/keycodes';
 import { ApplicationService } from 'src/services/gadb.service';
 import { TdLoadingService } from '@covalent/core/loading';
 import { ArticleContext } from '../models/article-context';
+import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 
 @Component({
   selector: 'app-article',
@@ -60,6 +61,12 @@ export class ArticleComponent implements OnInit {
         this.data.translationTextUpdated[item.language] = data;
       });
     });
+  }
+
+  articleCreationDateChange(event) {
+    // var a = event.value.toDateString();
+    // this.data.articleUpdated.date = new Date(a);
+    // console.log(event);
   }
 
   add(event: MatChipInputEvent): void {

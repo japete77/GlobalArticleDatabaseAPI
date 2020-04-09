@@ -185,15 +185,52 @@ export class AppComponent implements OnInit {
 
     dialogRef.updateSize("80vw");
 
-    dialogRef.afterClosed().subscribe((result: ArticleContext) => {
-      if (result) {
-        console.log(`article updated: ${JSON.stringify(result.article) != JSON.stringify(result.articleUpdated)}`); 
-        console.log(`text updated: ${result.text != result.textUpdated}`);
+    dialogRef.afterClosed().subscribe((data: ArticleContext) => {
+      
+      var allPromises = [];
+
+      if (data) {
+        const updateArticle = JSON.stringify(data.article) != JSON.stringify(data.articleUpdated);
         
-        result.article.translations.forEach(item => {
-          console.log(`translation ${item.language} updated ${JSON.stringify(item) != JSON.stringify(result.articleUpdated.translations.find(s => s.language == item.language))}`);
-          console.log(`translation ${item.language} text updated ${result.translationText[item.language] != result.translationTextUpdated[item.language]}`);
-        });  
+        if (updateArticle) {
+          allPromises.push(this.appService.updateArticle(data.articleUpdated).toPromise());
+        }
+
+        if (data.text != data.textUpdated) {
+          allPromises.push(this.appService.updateArticleText(data.articleUpdated.id, data.textUpdated).toPromise());
+        }
+        
+        data.article.translations.forEach(item => {
+
+          if (JSON.stringify(item) != JSON.stringify(data.articleUpdated.translations.find(s => s.language == item.language))) {
+            allPromises.push(this.appService.updateTranslation(data.articleUpdated.id, data.articleUpdated.translations.find(s => s.language == item.language)).toPromise());
+          }
+
+          if (data.translationText[item.language] != data.translationTextUpdated[item.language]) {
+            allPromises.push(this.appService.updateTranslationText(data.articleUpdated.id, data.translationTextUpdated[item.language], item.language).toPromise());
+          }
+
+        });
+
+        if (allPromises.length > 0) {
+          Promise.all(allPromises).then(() => {
+            article.author = data.articleUpdated.author;
+            article.category = data.articleUpdated.category;
+            article.date = data.articleUpdated.date;
+            article.hasImage = data.articleUpdated.hasImage;
+            article.hasText = data.articleUpdated.hasText;
+            article.imageLink = data.articleUpdated.imageLink;
+            article.language = data.articleUpdated.language;
+            article.owner = data.articleUpdated.owner;
+            article.sourceLink = data.articleUpdated.sourceLink;
+            article.subtitle = data.articleUpdated.subtitle;
+            article.summary = data.articleUpdated.summary;
+            article.textLink = data.articleUpdated.textLink;
+            article.title = data.articleUpdated.title;
+            article.topics = data.articleUpdated.topics;
+            article.translations = data.articleUpdated.translations;
+          });
+        }        
       }
     });
   }

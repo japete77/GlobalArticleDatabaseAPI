@@ -3,6 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { GetListResponse } from 'src/app/models/get-list-response';
 import { ArticleSearchResponse } from 'src/app/models/article-search-response';
+import { Article } from 'src/app/models/article';
+import { UpdateArticleRequest } from 'src/app/models/update-article-request';
+import { UpdateArticleTextRequest } from 'src/app/models/update-article-text-request';
+import { Translation } from 'src/app/models/translation';
+import { UpdateTranslationRequest } from 'src/app/models/update-translation-request';
+import { identifierModuleUrl } from '@angular/compiler';
+import { UpdateTranslationTextRequest } from 'src/app/models/update-translation-text-request';
 
 @Injectable({ providedIn: "root" })
 export class ApplicationService {
@@ -89,5 +96,37 @@ export class ApplicationService {
     var url = `${environment.gadb_api_base}article/${id}/text`
     if (language) url += `?language=${language}`;
     return this.http.get<string>(url);
+  }
+
+  updateArticle(article: Article) {
+    var body: UpdateArticleRequest = { article: article };
+    return this.http.put(
+      `${environment.gadb_api_base}article`,
+      body
+    );
+  }
+
+  updateArticleText(id: string, text: string) {
+    var body: UpdateArticleTextRequest = { id: id, text: text };
+    return this.http.put(
+      `${environment.gadb_api_base}article/text`,
+      body
+    );
+  }
+
+  updateTranslation(articleId: string, translation: Translation) {
+    var body: UpdateTranslationRequest = { articleId: articleId, translation: translation };
+    return this.http.put(
+      `${environment.gadb_api_base}translation`,
+      body
+    );
+  }
+
+  updateTranslationText(articleId: string, text: string, language: string) {
+    var body: UpdateTranslationTextRequest = { articleId: articleId, text: text, language: language };
+    return this.http.put(
+      `${environment.gadb_api_base}translation/text`,
+      body
+    );
   }
 }
