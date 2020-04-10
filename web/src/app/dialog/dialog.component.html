@@ -1,0 +1,9 @@
+<div class="dialog-wrapper">
+    <h3 *ngIf="data.title" mat-dialog-title>{{data.title}}</h3>
+    <div mat-dialog-content>
+        <p>{{data.message}}</p>
+    </div>
+    <div mat-dialog-actions>
+        <button mat-raised-button color="primary" [mat-dialog-close] cdkFocusInitial>Accept</button>
+    </div>
+</div>

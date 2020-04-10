@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA, APP_INITIALIZER } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,7 +17,7 @@ import { CovalentDynamicFormsModule } from '@covalent/dynamic-forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule, MatFormField } from '@angular/material/form-field';
 import { CovalentChipsModule } from '@covalent/core/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { CovalentSearchModule } from '@covalent/core/search';
@@ -34,12 +34,29 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { AppConfig } from './helpers/app-config';
+import { JwtInterceptor } from './helpers/jwt.interceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { RefreshTokenComponent } from './refresh-token/refresh-token.component';
+import { ArticlesComponent } from './articles/articles.component';
+import { LoginComponent } from './login/login.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { DialogComponent } from './dialog/dialog.component';
+import { MatMenuModule } from '@angular/material/menu';
+
+export function initializeApp(appConfig: AppConfig) {
+  return () => appConfig.load();
+}
 
 @NgModule({
 
   declarations: [
     AppComponent,
-    ArticleComponent
+    ArticleComponent,
+    RefreshTokenComponent,
+    ArticlesComponent,
+    LoginComponent,
+    DialogComponent
   ],
   imports: [
     BrowserModule,
@@ -69,12 +86,24 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatChipsModule,
     MatIconModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    FlexLayoutModule,
+    MatMenuModule
   ],
   schemas: [ 
     CUSTOM_ELEMENTS_SCHEMA 
   ],
-  providers: [DatePipe],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
+    DatePipe,
+    AppConfig,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [AppConfig],
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

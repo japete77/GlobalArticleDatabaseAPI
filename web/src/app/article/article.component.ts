@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Article } from '../models/article';
 import { MatChipInputEvent } from '@angular/material/chips';
-import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { ApplicationService } from 'src/services/gadb.service';
 import { TdLoadingService } from '@covalent/core/loading';
 import { ArticleContext } from '../models/article-context';

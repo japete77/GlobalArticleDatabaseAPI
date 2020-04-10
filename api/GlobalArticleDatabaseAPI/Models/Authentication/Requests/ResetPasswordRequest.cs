@@ -19,10 +19,6 @@ namespace GlobalArticleDatabaseAPI.Models
         /// New user password
         /// </summary>
         public string NewPassword { get; set; }
-        /// <summary>
-        /// User tenant
-        /// </summary>
-        public string Tenant { get; set; }
     }
 
     /// <summary>
@@ -38,7 +34,6 @@ namespace GlobalArticleDatabaseAPI.Models
             RuleFor(model => model.ResetPasswordToken).NotEmpty();
             RuleFor(model => model.Email).NotEmpty().EmailAddress();
             RuleFor(model => model.NewPassword).NotEmpty();
-            RuleFor(model => model.Tenant).NotEmpty();
         }
     }
 }

@@ -11,10 +11,6 @@ namespace GlobalArticleDatabaseAPI.Models
         /// User email address
         /// </summary>
         public string Email { get; set; }
-        /// <summary>
-        /// User tenant
-        /// </summary>
-        public string Tenant { get; set; }
     }
 
     /// <summary>
@@ -28,7 +24,6 @@ namespace GlobalArticleDatabaseAPI.Models
         public ForgotPasswordRequestValidator()
         {
             RuleFor(model => model.Email).NotEmpty().EmailAddress();
-            RuleFor(model => model.Tenant).NotEmpty();
         }
     }
 }

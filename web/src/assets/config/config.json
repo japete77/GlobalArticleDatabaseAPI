@@ -1,0 +1,6 @@
+{
+    "api_base_url": "http://localhost:5000",
+    "api_version": "/api/v1",
+    "app_renew_before_mins": 5
+  }
+  
