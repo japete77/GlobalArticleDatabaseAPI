@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace GlobalArticleDatabase.Helpers
+namespace GlobalArticleDatabaseAPI.Helpers
 {
     public static class FormatNumberHelper
     {

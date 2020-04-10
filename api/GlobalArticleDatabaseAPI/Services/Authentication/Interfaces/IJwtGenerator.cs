@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace GlobalArticleDatabase.Services.Authentication.Interfaces
+namespace GlobalArticleDatabaseAPI.Services.Authentication.Interfaces
 {
     public interface IJwtGenerator
     {

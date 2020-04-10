@@ -3,16 +3,16 @@ using Autofac.Configuration;
 using AutoMapper;
 using Config.Implementations;
 using FluentValidation;
-using GlobalArticleDatabase.Api.Identity.Implementation;
-using GlobalArticleDatabase.DataAccess.Repositories.MongoDB;
-using GlobalArticleDatabase.DbContext.MongoDB.Implementations;
-using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
-using GlobalArticleDatabase.Filters;
-using GlobalArticleDatabase.Helper;
-using GlobalArticleDatabase.Helpers;
-using GlobalArticleDatabase.Helpers.Framework.Helpers.Threads;
-using GlobalArticleDatabase.Middleware;
-using GlobalArticleDatabase.Modules;
+using GlobalArticleDatabaseAPI.Api.Identity.Implementation;
+using GlobalArticleDatabaseAPI.DataAccess.Repositories.MongoDB;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Implementations;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabaseAPI.Filters;
+using GlobalArticleDatabaseAPI.Helper;
+using GlobalArticleDatabaseAPI.Helpers;
+using GlobalArticleDatabaseAPI.Helpers.Framework.Helpers.Threads;
+using GlobalArticleDatabaseAPI.Middleware;
+using GlobalArticleDatabaseAPI.Modules;
 using GlobalArticleDatabaseAPI.Configuration.AutoMapperProfiles;
 using GlobalArticleDatabaseAPI.Models;
 using Microsoft.AspNetCore.Builder;
@@ -38,7 +38,7 @@ using System.Reflection;
  * More information about configuring project: https://github.com/drwatson1/AspNet-Core-REST-Service/wiki
  */
 
-namespace GlobalArticleDatabase
+namespace GlobalArticleDatabaseAPI
 {
     public class Startup
     {

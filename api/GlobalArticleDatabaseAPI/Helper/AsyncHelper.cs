@@ -1,4 +1,4 @@
-﻿namespace GlobalArticleDatabase.Helpers
+﻿namespace GlobalArticleDatabaseAPI.Helpers
 {
     using System;
     using System.Threading;

@@ -1,11 +1,11 @@
 ﻿using Core.Exceptions;
-using GlobalArticleDatabase.Helpers;
+using GlobalArticleDatabaseAPI.Helpers;
 using System.Collections;
 using System.Collections.Generic;
 using Xunit;
-using static GlobalArticleDatabase.Tests.Unit.SecurityTestDataAllowAccess;
+using static GlobalArticleDatabaseAPI.Tests.Unit.SecurityTestDataAllowAccess;
 
-namespace GlobalArticleDatabase.Tests.Unit
+namespace GlobalArticleDatabaseAPI.Tests.Unit
 {
     public class SecurityCheck
     {

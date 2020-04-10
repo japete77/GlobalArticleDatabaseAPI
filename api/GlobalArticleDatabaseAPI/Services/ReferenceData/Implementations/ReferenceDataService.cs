@@ -1,4 +1,4 @@
-﻿using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
+﻿using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.DbContext.Models;
 using GlobalArticleDatabaseAPI.Services.ReferenceData.Interfaces;
 using MongoDB.Driver;

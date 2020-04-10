@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase
+namespace GlobalArticleDatabaseAPI
 {
     public class Program
     {

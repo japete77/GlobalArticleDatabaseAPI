@@ -1,5 +1,5 @@
 ﻿using Config.Interfaces;
-using GlobalArticleDatabase.Services.Authentication.Interfaces;
+using GlobalArticleDatabaseAPI.Services.Authentication.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace GlobalArticleDatabase.Services.Authentication.Implementations
+namespace GlobalArticleDatabaseAPI.Services.Authentication.Implementations
 {
     public class JwtGenerator : IJwtGenerator
     {

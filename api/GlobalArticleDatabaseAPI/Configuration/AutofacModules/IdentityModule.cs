@@ -1,9 +1,9 @@
 ﻿using Autofac;
-using GlobalArticleDatabase.Identity.Implementation;
+using GlobalArticleDatabaseAPI.Identity.Implementation;
 using GlobalArticleDatabaseAPI.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace GlobalArticleDatabase.Configuration.AutofacModules
+namespace GlobalArticleDatabaseAPI.Configuration.AutofacModules
 {
     public class IdentityModule : Module
     {

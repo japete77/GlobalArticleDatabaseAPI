@@ -1,11 +1,11 @@
-﻿using GlobalArticleDatabase.Services.Articles.Interfaces;
+﻿using GlobalArticleDatabaseAPI.Services.Articles.Interfaces;
 using GlobalArticleDatabaseAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Controllers
+namespace GlobalArticleDatabaseAPI.Controllers
 {
     /// <summary>
     /// Articles management

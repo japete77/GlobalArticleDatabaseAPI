@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace GlobalArticleDatabase.Filters
+namespace GlobalArticleDatabaseAPI.Filters
 {
     /// <summary>
     /// Filter to add header Cache-Control to responses

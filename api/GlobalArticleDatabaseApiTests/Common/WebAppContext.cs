@@ -1,4 +1,4 @@
-﻿using GlobalArticleDatabase;
+﻿using GlobalArticleDatabaseAPI;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Mongo2Go;
@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Net.Http;
 
-namespace GlobalArticleDatabaseApiTests
+namespace GlobalArticleDatabaseAPITests
 {
     public class WebAppContext : IDisposable
     {

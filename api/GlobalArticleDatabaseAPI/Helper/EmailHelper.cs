@@ -1,4 +1,4 @@
-﻿namespace GlobalArticleDatabase.Helpers
+﻿namespace GlobalArticleDatabaseAPI.Helpers
 {
     public class EmailHelper
     {

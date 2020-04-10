@@ -2,9 +2,8 @@
 using AutoMapper;
 using Config.Interfaces;
 using Core.Exceptions;
-using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
-using GlobalArticleDatabase.Services.Articles.Interfaces;
 using GlobalArticleDatabaseAPI.DbContext.Models;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.Models;
 using GlobalArticleDatabaseAPI.Services.Articles.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -16,7 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Services.Articles.Implementations
+namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
 {
     public class ArticleService : IArticleService
     {

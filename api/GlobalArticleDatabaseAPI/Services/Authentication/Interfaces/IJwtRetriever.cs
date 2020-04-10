@@ -1,6 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 
-namespace GlobalArticleDatabase.Services.Authentication.Interfaces
+namespace GlobalArticleDatabaseAPI.Services.Authentication.Interfaces
 {
     public interface IJwtRetriever
     {

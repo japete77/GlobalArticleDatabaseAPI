@@ -1,7 +1,7 @@
 ﻿using Autofac;
-using GlobalArticleDatabase.Configuration.AutofacModules;
+using GlobalArticleDatabaseAPI.Configuration.AutofacModules;
 
-namespace GlobalArticleDatabase.Modules
+namespace GlobalArticleDatabaseAPI.Modules
 {
     /// <summary>
     /// Default module for Autofac

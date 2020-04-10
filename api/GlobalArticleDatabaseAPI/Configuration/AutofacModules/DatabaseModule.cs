@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using GlobalArticleDatabase.DbContext.MongoDB.Implementations;
-using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Implementations;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
 
-namespace GlobalArticleDatabase.Configuration.AutofacModules
+namespace GlobalArticleDatabaseAPI.Configuration.AutofacModules
 {
     public class DatabaseModule : Module
     {

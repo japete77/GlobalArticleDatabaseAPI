@@ -1,7 +1,7 @@
 ﻿using GlobalArticleDatabaseAPI.Models;
 using System;
 
-namespace GlobalArticleDatabaseApiTests.Builders
+namespace GlobalArticleDatabaseAPITests.Builders
 {
     public class ArticleModelBuilder
     {

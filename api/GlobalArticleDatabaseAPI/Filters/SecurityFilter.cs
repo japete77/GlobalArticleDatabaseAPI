@@ -1,14 +1,14 @@
 ﻿using Core.Exceptions;
-using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
-using GlobalArticleDatabase.Helpers;
-using GlobalArticleDatabase.Repositories.Interfaces;
-using GlobalArticleDatabase.Services.Authentication.Implementations;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabaseAPI.Helpers;
+using GlobalArticleDatabaseAPI.Repositories.Interfaces;
+using GlobalArticleDatabaseAPI.Services.Authentication.Implementations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 
-namespace GlobalArticleDatabase.Filters
+namespace GlobalArticleDatabaseAPI.Filters
 {
     public class SecurityFilter : Attribute, IAuthorizationFilter
     {

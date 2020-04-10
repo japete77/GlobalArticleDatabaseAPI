@@ -1,6 +1,6 @@
 ﻿using Core.Exceptions;
 using GlobalArticleDatabaseAPI.Models;
-using GlobalArticleDatabaseApiTests.Builders;
+using GlobalArticleDatabaseAPITests.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GlobalArticleDatabaseApiTests
+namespace GlobalArticleDatabaseAPITests
 {
     [Collection("WebAppCollection")]
     public class PublicationTests : IntegrationTestBase

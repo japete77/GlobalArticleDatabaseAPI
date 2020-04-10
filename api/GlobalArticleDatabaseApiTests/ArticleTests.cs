@@ -1,5 +1,5 @@
 ﻿using GlobalArticleDatabaseAPI.Models;
-using GlobalArticleDatabaseApiTests.Builders;
+using GlobalArticleDatabaseAPITests.Builders;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GlobalArticleDatabaseApiTests
+namespace GlobalArticleDatabaseAPITests
 {
     [Collection("WebAppCollection")]
     public class ArticleTests : IntegrationTestBase

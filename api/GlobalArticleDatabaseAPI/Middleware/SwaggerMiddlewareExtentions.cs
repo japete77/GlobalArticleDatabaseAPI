@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace GlobalArticleDatabase.Middleware
+namespace GlobalArticleDatabaseAPI.Middleware
 {
     public static class SwaggerMiddlewareExtentions
     {

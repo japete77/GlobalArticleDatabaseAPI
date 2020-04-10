@@ -1,7 +1,7 @@
 ﻿using GlobalArticleDatabaseAPI.Models;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Services.Articles.Interfaces
+namespace GlobalArticleDatabaseAPI.Services.Articles.Interfaces
 {
     public interface IArticleService
     {

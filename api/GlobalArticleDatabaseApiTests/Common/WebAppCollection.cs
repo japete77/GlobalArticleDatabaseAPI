@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace GlobalArticleDatabaseApiTests
+namespace GlobalArticleDatabaseAPITests
 {
     [CollectionDefinition("WebAppCollection")]
     public class WebAppCollection : ICollectionFixture<WebAppContext>

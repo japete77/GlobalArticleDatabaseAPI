@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Identity.Helpers
+namespace GlobalArticleDatabaseAPI.Identity.Helpers
 {
     public class IdentityHelper
     {

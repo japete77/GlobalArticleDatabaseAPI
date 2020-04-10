@@ -1,7 +1,7 @@
 ﻿using Core.Exceptions;
-using GlobalArticleDatabase.Helpers;
-using GlobalArticleDatabase.Helpers.Framework.Helpers.Threads;
-using GlobalArticleDatabase.Services.Authentication.Interfaces;
+using GlobalArticleDatabaseAPI.Helpers;
+using GlobalArticleDatabaseAPI.Helpers.Framework.Helpers.Threads;
+using GlobalArticleDatabaseAPI.Services.Authentication.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
-namespace GlobalArticleDatabase.Services.Authentication.Implementations
+namespace GlobalArticleDatabaseAPI.Services.Authentication.Implementations
 {
     public class JwtRetriever : IJwtRetriever
     {

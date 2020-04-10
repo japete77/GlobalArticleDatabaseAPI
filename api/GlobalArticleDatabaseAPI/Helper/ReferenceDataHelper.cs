@@ -3,9 +3,9 @@ using GlobalArticleDatabaseAPI.Models;
 using GlobalArticleDatabaseAPI.Repositories.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static GlobalArticleDatabase.Constants;
+using static GlobalArticleDatabaseAPI.Constants;
 
-namespace GlobalArticleDatabase.Helper
+namespace GlobalArticleDatabaseAPI.Helper
 {
     public class ReferenceDataHelper
     {

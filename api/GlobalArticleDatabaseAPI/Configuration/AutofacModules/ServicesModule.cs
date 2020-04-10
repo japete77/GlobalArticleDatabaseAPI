@@ -3,24 +3,21 @@ using Alintia.Glass.Services.User.Interfaces;
 using Autofac;
 using Config.Implementations;
 using Config.Interfaces;
-using GlobalArticleDatabase.DataAccess.Repositories.MongoDB;
-using GlobalArticleDatabase.DbContext.MongoDB.Implementations;
-using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
-using GlobalArticleDatabase.Repositories.Interfaces;
-using GlobalArticleDatabase.Services.Articles.Implementations;
-using GlobalArticleDatabase.Services.Articles.Interfaces;
-using GlobalArticleDatabase.Services.Authentication.Implementations;
-using GlobalArticleDatabase.Services.Authentication.Interfaces;
+using GlobalArticleDatabaseAPI.DataAccess.Repositories.MongoDB;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Implementations;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.Repositories.Interfaces;
 using GlobalArticleDatabaseAPI.Services.Articles.Implementations;
 using GlobalArticleDatabaseAPI.Services.Articles.Interfaces;
+using GlobalArticleDatabaseAPI.Services.Authentication.Implementations;
+using GlobalArticleDatabaseAPI.Services.Authentication.Interfaces;
 using GlobalArticleDatabaseAPI.Services.ReferenceData.Implementations;
 using GlobalArticleDatabaseAPI.Services.ReferenceData.Interfaces;
 using GlobalArticleDatabaseAPI.Services.User.Implementations;
 using GlobalArticleDatabaseAPI.Services.User.Interfaces;
 using GlobalAtricleDatabase.Repositories.Implementations;
 
-namespace GlobalArticleDatabase.Configuration.AutofacModules
+namespace GlobalArticleDatabaseAPI.Configuration.AutofacModules
 {
     public class ServicesModule : Module
     {

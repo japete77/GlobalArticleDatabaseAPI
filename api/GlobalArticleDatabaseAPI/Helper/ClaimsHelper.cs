@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-namespace GlobalArticleDatabase.Helpers
+namespace GlobalArticleDatabaseAPI.Helpers
 {
     public class ClaimsHelper
     {

@@ -4,7 +4,7 @@ using MongoDB.Driver;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.DbContext.MongoDB.Interfaces
+namespace GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces
 {
     public interface IDbContextMongoDb
     {

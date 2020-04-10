@@ -1,11 +1,11 @@
-﻿using GlobalArticleDatabase.Repositories.Interfaces;
-using GlobalArticleDatabase.Services.Authentication.Interfaces;
+﻿using GlobalArticleDatabaseAPI.Repositories.Interfaces;
+using GlobalArticleDatabaseAPI.Services.Authentication.Interfaces;
 using GlobalArticleDatabaseAPI.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Services.Authentication.Implementations
+namespace GlobalArticleDatabaseAPI.Services.Authentication.Implementations
 {
     public class RenewTokenRetriever : IRenewTokenRetriever
     {

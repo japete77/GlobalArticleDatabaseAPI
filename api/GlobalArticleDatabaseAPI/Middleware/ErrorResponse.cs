@@ -2,7 +2,7 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Middleware
+namespace GlobalArticleDatabaseAPI.Middleware
 {
     public class ErrorResponse
     {

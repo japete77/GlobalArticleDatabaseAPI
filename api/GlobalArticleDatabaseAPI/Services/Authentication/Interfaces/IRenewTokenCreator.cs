@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Services.Authentication.Interfaces
+namespace GlobalArticleDatabaseAPI.Services.Authentication.Interfaces
 {
     public interface IRenewTokenCreator
     {

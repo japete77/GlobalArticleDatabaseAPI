@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
-using GlobalArticleDatabase.Repositories.Interfaces;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabaseAPI.Repositories.Interfaces;
 using GlobalArticleDatabaseAPI.DbContext.Models;
 using GlobalArticleDatabaseAPI.Models;
 using MongoDB.Driver;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.DataAccess.Repositories.MongoDB
+namespace GlobalArticleDatabaseAPI.DataAccess.Repositories.MongoDB
 {
     public class AuthRenewRepositoryMongoDb : IAuthRenewRepository
     {

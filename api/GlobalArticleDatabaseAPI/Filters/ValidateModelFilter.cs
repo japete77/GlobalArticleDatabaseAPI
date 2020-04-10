@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Filters
+namespace GlobalArticleDatabaseAPI.Filters
 {
     /// <summary>
     /// Filter to check is a model valid

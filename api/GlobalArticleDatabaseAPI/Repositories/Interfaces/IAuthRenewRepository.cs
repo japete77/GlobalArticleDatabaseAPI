@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Repositories.Interfaces
+namespace GlobalArticleDatabaseAPI.Repositories.Interfaces
 {
     public interface IAuthRenewRepository
     {

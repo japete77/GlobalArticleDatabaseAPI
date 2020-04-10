@@ -1,5 +1,5 @@
 ﻿using Config.Interfaces;
-using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.DbContext.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.DbContext.MongoDB.Implementations
+namespace GlobalArticleDatabaseAPI.DbContext.MongoDB.Implementations
 {
     public class DbContextMongoDb : IDbContextMongoDb
     {

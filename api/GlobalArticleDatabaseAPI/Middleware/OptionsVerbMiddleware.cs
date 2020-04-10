@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Middleware
+namespace GlobalArticleDatabaseAPI.Middleware
 {
     /// <summary>
     /// OPTIONS HTTP-method handler

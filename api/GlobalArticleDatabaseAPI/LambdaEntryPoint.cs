@@ -2,7 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
-namespace GlobalArticleDatabase
+namespace GlobalArticleDatabaseAPI
 {
     /// <summary>
     /// This class extends from APIGatewayProxyFunction which contains the method FunctionHandlerAsync which is the 

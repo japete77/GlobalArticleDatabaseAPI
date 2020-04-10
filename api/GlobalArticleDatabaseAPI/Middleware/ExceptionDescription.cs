@@ -1,4 +1,4 @@
-﻿namespace GlobalArticleDatabase.Middleware
+﻿namespace GlobalArticleDatabaseAPI.Middleware
 {
     public class ExceptionDescription
     {

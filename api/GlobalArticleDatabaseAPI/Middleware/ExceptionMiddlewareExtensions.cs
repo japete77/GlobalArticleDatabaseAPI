@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace GlobalArticleDatabase.Middleware
+namespace GlobalArticleDatabaseAPI.Middleware
 {
     public static class ExceptionMiddlewareExtensions
     {

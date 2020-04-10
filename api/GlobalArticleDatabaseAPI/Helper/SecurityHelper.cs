@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GlobalArticleDatabase.Helpers
+namespace GlobalArticleDatabaseAPI.Helpers
 {
     public class SecurityHelper
     {

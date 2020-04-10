@@ -6,7 +6,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Identity.Implementation
+namespace GlobalArticleDatabaseAPI.Identity.Implementation
 {
     public class UserStore : IUserStore<User>, IUserPasswordStore<User>, IUserEmailStore<User>
     {

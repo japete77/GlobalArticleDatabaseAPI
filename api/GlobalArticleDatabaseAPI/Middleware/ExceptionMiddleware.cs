@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Middleware
+namespace GlobalArticleDatabaseAPI.Middleware
 {
     /// <summary>
     /// Middleware to handle exceptions.

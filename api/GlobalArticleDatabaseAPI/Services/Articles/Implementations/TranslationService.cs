@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Config.Interfaces;
 using Core.Exceptions;
-using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
-using GlobalArticleDatabase.Helpers;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabaseAPI.Helpers;
 using GlobalArticleDatabaseAPI.DbContext.Models;
 using GlobalArticleDatabaseAPI.Models;
 using GlobalArticleDatabaseAPI.Services.Articles.Interfaces;

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace GlobalArticleDatabase.Helpers
+namespace GlobalArticleDatabaseAPI.Helpers
 {
     public class ResourcesHelper
     {

@@ -1,7 +1,7 @@
 ﻿using Core.Exceptions;
-using GlobalArticleDatabase.Helpers;
-using GlobalArticleDatabase.Identity.Helpers;
-using GlobalArticleDatabase.Services.Authentication.Interfaces;
+using GlobalArticleDatabaseAPI.Helpers;
+using GlobalArticleDatabaseAPI.Identity.Helpers;
+using GlobalArticleDatabaseAPI.Services.Authentication.Interfaces;
 using GlobalArticleDatabaseAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -86,7 +86,7 @@ namespace Alintia.Glass.Api.Controllers
             {
                 UserToken = userToken,
                 RenewToken = renewToken,
-                ExpiteAt = DateTime.UtcNow.AddMinutes(GlobalArticleDatabase.Constants.App.RenewTokenPasswordExpirationInMinutes)
+                ExpiteAt = DateTime.UtcNow.AddMinutes(GlobalArticleDatabaseAPI.Constants.App.RenewTokenPasswordExpirationInMinutes)
             });
 
             return new LoginResponse()
@@ -215,7 +215,7 @@ namespace Alintia.Glass.Api.Controllers
             {
                 UserToken = newUserToken,
                 RenewToken = newRenewToken,
-                ExpiteAt = DateTime.UtcNow.AddMinutes(GlobalArticleDatabase.Constants.App.RenewTokenPasswordExpirationInMinutes)
+                ExpiteAt = DateTime.UtcNow.AddMinutes(GlobalArticleDatabaseAPI.Constants.App.RenewTokenPasswordExpirationInMinutes)
             });
 
             return new RenewResponse

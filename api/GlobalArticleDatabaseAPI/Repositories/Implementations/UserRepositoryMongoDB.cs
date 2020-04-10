@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Core.Exceptions;
-using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.DbContext.Models;
 using GlobalArticleDatabaseAPI.Models;
 using GlobalArticleDatabaseAPI.Repositories.Interfaces;
@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using GlobalArticleDatabaseAPI;
 
 namespace GlobalAtricleDatabase.Repositories.Implementations
 {
@@ -212,9 +213,9 @@ namespace GlobalAtricleDatabase.Repositories.Implementations
 
             List<string> validRoles = new List<string>
             {
-                GlobalArticleDatabase.Constants.Roles.Admin,
-                GlobalArticleDatabase.Constants.Roles.Editor,
-                GlobalArticleDatabase.Constants.Roles.Reader,
+                Constants.Roles.Admin,
+                Constants.Roles.Editor,
+                Constants.Roles.Reader,
             };
 
             return roles.Where(w => !validRoles.Contains(w.Name)).Count() == 0;

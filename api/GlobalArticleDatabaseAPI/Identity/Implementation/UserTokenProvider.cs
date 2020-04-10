@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using System;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabase.Api.Identity.Implementation
+namespace GlobalArticleDatabaseAPI.Api.Identity.Implementation
 {
     public class UserTokenProvider : IUserTwoFactorTokenProvider<User>
     {

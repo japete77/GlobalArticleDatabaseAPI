@@ -1,15 +1,12 @@
 ﻿using Core.Exceptions;
 using GlobalArticleDatabaseAPI.Models;
-using GlobalArticleDatabaseApiTests.Builders;
-using System;
-using System.Collections.Generic;
+using GlobalArticleDatabaseAPITests.Builders;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace GlobalArticleDatabaseApiTests
+namespace GlobalArticleDatabaseAPITests
 {
     [Collection("WebAppCollection")]
     public class TranslationTests : IntegrationTestBase
@@ -74,7 +71,7 @@ namespace GlobalArticleDatabaseApiTests
             Assert.True(dataArticle.Translations != null && dataArticle.Translations.Count > 0, "No data received");
 
             Assert.True(DateEquals(dataArticle.Translations.First().Date, translation.Date), "Date mismatch");
-            Assert.True(dataArticle.Translations.First().Language == translation.Language , "Language mismatch");
+            Assert.True(dataArticle.Translations.First().Language == translation.Language, "Language mismatch");
             Assert.True(dataArticle.Translations.First().ReviewedBy == translation.ReviewedBy, "ReviewedBy mismatch");
             Assert.True(dataArticle.Translations.First().Status == translation.Status, "Status mismatch");
             Assert.True(dataArticle.Translations.First().Subtitle == translation.Subtitle, "Subtitle mismatch");
