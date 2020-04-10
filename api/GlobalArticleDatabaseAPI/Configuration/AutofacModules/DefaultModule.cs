@@ -15,6 +15,7 @@ namespace GlobalArticleDatabase.Modules
         {
             ServicesModule.Register(builder);
             DatabaseModule.Register(builder);
+            IdentityModule.Register(builder);
         }
     }
 }

@@ -1,0 +1,189 @@
+{
+  "controllers": [
+    {
+      "name": "AuthenticationV1",
+      "actions": [
+        {
+          "name": "Login",
+          "roles": [
+            "Anonymous"
+          ]
+        },
+        {
+          "name": "ForgotPassword",
+          "roles": [
+            "Anonymous"
+          ]
+        },
+        {
+          "name": "ResetPassword",
+          "roles": [
+            "Anonymous"
+          ]
+        },
+        {
+          "name": "RenewToken",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        },
+        {
+          "name": "Logout",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ArticleV1",
+      "actions": [
+        {
+          "name": "Create",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        },
+        {
+          "name": "Update",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        },
+        {
+          "name": "UpdateText",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        },
+        {
+          "name": "UpdateImage",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        },
+        {
+          "name": "Get",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        },
+        {
+          "name": "Search",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        },
+        {
+          "name": "Delete",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "PublicationV1",
+      "roles": [],
+      "actions": [
+        {
+          "name": "Create",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        },
+        {
+          "name": "Delete",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ReferenceDataV1",
+      "actions": [
+        {
+          "name": "GetAuthors",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        },
+        {
+          "name": "GetCategories",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        },
+        {
+          "name": "GetTopics",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        },
+        {
+          "name": "GetOwners",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "TranslationV1",
+      "actions": [
+        {
+          "name": "Create",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        },
+        {
+          "name": "Update",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        },
+        {
+          "name": "UpdateText",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        },
+        {
+          "name": "Delete",
+          "roles": [
+            "ADMIN",
+            "EDITOR"
+          ]
+        }
+      ]
+    }
+  ]
+}

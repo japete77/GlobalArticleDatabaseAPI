@@ -55,5 +55,9 @@
 
         // Publication exceptions
         public static int PUBLICATION_ALREADY_EXISTS = -9000;
+
+        // User exceptions
+        public static int USER_NOT_FOUND = -10000;
+        public static int USER_ROLES_NOT_VALID = -10001;
     }
 }

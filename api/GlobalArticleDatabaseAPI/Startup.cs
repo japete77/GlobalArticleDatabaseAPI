@@ -2,13 +2,19 @@
 using Autofac.Configuration;
 using AutoMapper;
 using Config.Implementations;
-using DataAccess.DbContext.MongoDB.Implementations;
 using FluentValidation;
+using GlobalArticleDatabase.Api.Identity.Implementation;
+using GlobalArticleDatabase.DataAccess.Repositories.MongoDB;
+using GlobalArticleDatabase.DbContext.MongoDB.Implementations;
+using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabase.Filters;
+using GlobalArticleDatabase.Helper;
+using GlobalArticleDatabase.Helpers;
+using GlobalArticleDatabase.Helpers.Framework.Helpers.Threads;
 using GlobalArticleDatabase.Middleware;
 using GlobalArticleDatabase.Modules;
-using GlobalArticleDatabase.Services.Helpers;
 using GlobalArticleDatabaseAPI.Configuration.AutoMapperProfiles;
+using GlobalArticleDatabaseAPI.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -87,7 +93,7 @@ namespace GlobalArticleDatabase
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public static void ConfigureServices(IServiceCollection services)
         {
             services
                 .AddAutoMapper(typeof(DefaultProfile))    // Check out Configuration/AutoMapperProfiles/DefaultProfile to do actual configuration. See: https://github.com/drwatson1/AspNet-Core-REST-Service/wiki#automapper
@@ -105,6 +111,7 @@ namespace GlobalArticleDatabase
                     .GetUrlHelper(x.GetRequiredService<IActionContextAccessor>().ActionContext))
                 .AddMvcCore(options =>
                 {
+                    options.Filters.Add(new ValidateModelFilter());  // Validate model. See: https://github.com/drwatson1/AspNet-Core-REST-Service/wiki#model-validation
                     options.Filters.Add(new CacheControlFilter());   // Add "Cache-Control" header. See: https://github.com/drwatson1/AspNet-Core-REST-Service/wiki#cache-control
                     options.Filters.Add(new SecurityFilter(new HttpContextAccessor()));   // Security applied globally to all controllers
                     options.EnableEndpointRouting = false;
@@ -127,6 +134,19 @@ namespace GlobalArticleDatabase
 
             ValidatorOptions.LanguageManager.Enabled = false;
 
+            // Identity service setup
+            services
+                .AddIdentityCore<User>(options =>
+                {
+                    // Password settings
+                    options.Password.RequireDigit = true;
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequireNonAlphanumeric = true;
+                    options.Password.RequireUppercase = true;
+                    options.Password.RequireLowercase = true;
+                })
+                .AddTokenProvider<UserTokenProvider>("Default");
+            
             // Configure token provider expiry time (1 hour)
             services.Configure<DataProtectionTokenProviderOptions>(options =>
             {
@@ -146,7 +166,7 @@ namespace GlobalArticleDatabase
         /// 
         /// See: https://github.com/drwatson1/AspNet-Core-REST-Service/wiki#dependency-injection
         /// </remarks>
-        public void ConfigureContainer(ContainerBuilder builder)
+        public static void ConfigureContainer(ContainerBuilder builder)
         {
             // Add things to the Autofac ContainerBuilder.
             builder.RegisterModule<DefaultModule>();
@@ -195,8 +215,19 @@ namespace GlobalArticleDatabase
 
             app.UseMvcWithDefaultRoute();
 
+            // Initialize security information for controller and actions
+            SecurityHelper.Initialize();
+
+            // Initialize db context
+            GetService<IDbContextMongoDb>().Initialize();
+
+            // Create indices
             var dbContext = new DbContextMongoDb(settings);
             AsyncHelper.RunSync(() => dbContext.CreateIndices());
+
+            // Create default admin user if it doesn´t exist
+            var referenceData = new ReferenceDataHelper();
+            AsyncHelper.RunSync(() => referenceData.CreateDefaultAdminUser());
 
             _logger.LogInformation("Server started");
         }

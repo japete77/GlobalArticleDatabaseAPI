@@ -9,5 +9,7 @@
         string AWSSecretKey { get; }
         string AWSBucket { get; }
         int AWSLinkExpireInSecs { get; }
+        string Secret { get; }
+        string DefaultEmail { get; }
     }
 }

@@ -1,4 +1,8 @@
-﻿namespace GlobalArticleDatabase
+﻿using Config.Interfaces;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+namespace GlobalArticleDatabase
 {
     public static class Constants
     {
@@ -21,10 +25,9 @@
 
         public static class Roles
         {
-            public const string SuperAdmin = "SUPERADMIN";
             public const string Admin = "ADMIN";
-            public const string Standard = "STANDARD";
-            public const string Agent = "AGENT";
+            public const string Editor = "EDITOR";
+            public const string Reader = "READER";
         }
 
         public static class DefaultAdminUser
@@ -36,16 +39,24 @@
 
         public static class Security
         {
-            public const string SecurityDocResource = "Belsize.WebApi.Security.json";
+            public const string SecurityDocResource = "GlobalArticleDatabase.Security.json";
             public const string Anonymous = "Anonymous";
         }
 
-        public static class Workflow
+
+        public static class Authentication
         {
-            public const string MongoDBCollection = "workflow";
-            public const string RedisEventHubChannel = "event-hub";
-            public const string RedisPersistenceName = "workflow";
-            public const string RedisQueueName = "glass-queue";
+            public static TokenValidationParameters tokenValidationParameters => new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateIssuerSigningKey = true,
+                ValidateLifetime = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Startup.GetService<ISettings>().Secret))
+            };
+
+            public const string AuthorizationHeaderKey = "Authorization";
+            public const string BearerType = "Bearer";
         }
     }
 }

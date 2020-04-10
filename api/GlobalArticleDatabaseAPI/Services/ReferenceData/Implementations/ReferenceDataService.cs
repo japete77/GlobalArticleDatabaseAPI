@@ -1,11 +1,9 @@
-﻿using DataAccess.DbContext.MongoDB.Interfaces;
+﻿using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.DbContext.Models;
-using GlobalArticleDatabaseAPI.Models;
 using GlobalArticleDatabaseAPI.Services.ReferenceData.Interfaces;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GlobalArticleDatabaseAPI.Services.ReferenceData.Implementations
@@ -22,7 +20,7 @@ namespace GlobalArticleDatabaseAPI.Services.ReferenceData.Implementations
         public async Task<List<string>> GetAuthors()
         {
             var result = await _dbContext.Articles.DistinctAsync<string>(
-                "Author", 
+                "Author",
                 Builders<ArticleEntity>.Filter.Empty
             );
 

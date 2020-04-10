@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
-namespace GlobalArticleDatabaseAPI.Helper
+namespace GlobalArticleDatabase.Helpers
 {
     public class BsonPropertyHelper
     {

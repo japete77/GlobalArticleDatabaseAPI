@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using Config.Interfaces;
 using Core.Exceptions;
-using DataAccess.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabase.Helpers;
 using GlobalArticleDatabaseAPI.DbContext.Models;
-using GlobalArticleDatabaseAPI.Helper;
 using GlobalArticleDatabaseAPI.Models;
 using GlobalArticleDatabaseAPI.Services.Articles.Interfaces;
 using MongoDB.Bson;
@@ -97,14 +96,14 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                         {
                             "$elemMatch",  new BsonDocument {
                                 { BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Language), language },
-                                { 
-                                    BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Publications), new BsonDocument { 
-                                        { 
+                                {
+                                    BsonPropertyHelper.GetPropertyName<TranslationEntity>(f => f.Publications), new BsonDocument {
+                                        {
                                             "$elemMatch", new BsonDocument {
                                                 { BsonPropertyHelper.GetPropertyName<PublicationEntity>(f => f.Publisher), publisher }
                                             }
-                                        } 
-                                    } 
+                                        }
+                                    }
                                 }
                             }
                         }

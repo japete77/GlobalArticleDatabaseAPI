@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Config.Interfaces;
 using Core.Exceptions;
-using DataAccess.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabase.Helpers;
 using GlobalArticleDatabaseAPI.DbContext.Models;
-using GlobalArticleDatabaseAPI.Helper;
 using GlobalArticleDatabaseAPI.Models;
 using GlobalArticleDatabaseAPI.Services.Articles.Interfaces;
 using MongoDB.Bson;
@@ -221,11 +221,6 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
         private string GetTranslationTextFilename(string articleId, Translation translation)
         {
             return $"{articleId}-{translation.Language}.txt";
-        }
-
-        private string GetTranslationTextLink(string articleId, Translation translation)
-        {
-            return $"{_settings.S3Url}/{articleId}-{translation.Language}.txt";
         }
     }
 }

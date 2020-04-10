@@ -1,7 +1,6 @@
 ﻿using Config.Interfaces;
-using DataAccess.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.DbContext.Models;
-using GlobalArticleDatabaseAPI.Models;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Conventions;
@@ -12,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DataAccess.DbContext.MongoDB.Implementations
+namespace GlobalArticleDatabase.DbContext.MongoDB.Implementations
 {
     public class DbContextMongoDb : IDbContextMongoDb
     {
@@ -120,6 +119,22 @@ namespace DataAccess.DbContext.MongoDB.Implementations
             }
         }
 
+        public IMongoCollection<UserEntity> Users
+        {
+            get
+            {
+                return GetCollection<UserEntity>("users");
+            }
+        }
+
+        public IMongoCollection<AuthRenewEntity> RenewTokens
+        {
+            get
+            {
+                return GetCollection<AuthRenewEntity>("renew_tokens");
+            }
+        }
+
         public IMongoCollection<BsonDocument> GetGenericArticlesCollection()
         {
             return GetCollection<BsonDocument>("articles");
@@ -151,6 +166,22 @@ namespace DataAccess.DbContext.MongoDB.Implementations
             if (!BsonClassMap.IsClassMapRegistered(typeof(PublicationEntity)))
             {
                 BsonClassMap.RegisterClassMap<PublicationEntity>(cm =>
+                {
+                    cm.AutoMap();
+                });
+            }
+
+            if (!BsonClassMap.IsClassMapRegistered(typeof(UserEntity)))
+            {
+                BsonClassMap.RegisterClassMap<UserEntity>(cm =>
+                {
+                    cm.AutoMap();
+                });
+            }
+
+            if (!BsonClassMap.IsClassMapRegistered(typeof(AuthRenewEntity)))
+            {
+                BsonClassMap.RegisterClassMap<AuthRenewEntity>(cm =>
                 {
                     cm.AutoMap();
                 });

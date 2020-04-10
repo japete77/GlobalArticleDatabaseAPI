@@ -2,7 +2,7 @@
 using AutoMapper;
 using Config.Interfaces;
 using Core.Exceptions;
-using DataAccess.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabase.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabase.Services.Articles.Interfaces;
 using GlobalArticleDatabaseAPI.DbContext.Models;
 using GlobalArticleDatabaseAPI.Models;
@@ -122,12 +122,10 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
 
                 var client = _s3Client.GetClient();
 
-                using (GetObjectResponse response = await client.GetObjectAsync(request))
-                using (Stream responseStream = response.ResponseStream)
-                using (StreamReader reader = new StreamReader(responseStream))
-                {
-                    responseBody = reader.ReadToEnd();
-                }
+                using GetObjectResponse response = await client.GetObjectAsync(request);
+                using Stream responseStream = response.ResponseStream;
+                using StreamReader reader = new StreamReader(responseStream);
+                responseBody = reader.ReadToEnd();
             }
             catch (Exception e)
             {
@@ -285,7 +283,7 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
             };
         }
 
-        public SortDefinition<ArticleEntity> GetSortFilter(ArticleFilter filter)
+        public static SortDefinition<ArticleEntity> GetSortFilter(ArticleFilter filter)
         {
             SortDefinition<ArticleEntity> sortDefinition = null;
 
@@ -336,7 +334,7 @@ namespace GlobalArticleDatabase.Services.Articles.Implementations
             return sortDefinition;
         }
 
-        public FilterDefinition<ArticleEntity> GetSearchFilter(ArticleFilter filter)
+        public static FilterDefinition<ArticleEntity> GetSearchFilter(ArticleFilter filter)
         {
             List<FilterDefinition<ArticleEntity>> filters = new List<FilterDefinition<ArticleEntity>>();
 
