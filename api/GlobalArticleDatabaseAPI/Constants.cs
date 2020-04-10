@@ -39,7 +39,7 @@ namespace GlobalArticleDatabaseAPI
 
         public static class Security
         {
-            public const string SecurityDocResource = "GlobalArticleDatabase.Security.json";
+            public const string SecurityDocResource = "GlobalArticleDatabaseAPI.Security.json";
             public const string Anonymous = "Anonymous";
         }
 

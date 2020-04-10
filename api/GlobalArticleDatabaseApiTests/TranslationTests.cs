@@ -26,7 +26,7 @@ namespace GlobalArticleDatabaseAPITests
                 .WithRandomValues()
                 .Build();
 
-            using var client = _webAppContext.GetAnonymousClient();
+            using var client = await _webAppContext.GetLoggedClient();
 
             // Create article
             using var httpResponseCreate = await CallApiAsync<CreateArticleRequest>(
@@ -112,7 +112,7 @@ namespace GlobalArticleDatabaseAPITests
                 .WithRandomValues()
                 .Build();
 
-            using var client = _webAppContext.GetAnonymousClient();
+            using var client = await _webAppContext.GetLoggedClient();
 
             // Create article
             using var httpResponseCreate = await CallApiAsync<CreateArticleRequest>(
@@ -168,7 +168,7 @@ namespace GlobalArticleDatabaseAPITests
                 .WithRandomValues()
                 .Build();
 
-            using var client = _webAppContext.GetAnonymousClient();
+            using var client = await _webAppContext.GetLoggedClient();
 
             // Create article
             using var httpResponseCreate = await CallApiAsync<CreateArticleRequest>(
@@ -304,7 +304,7 @@ namespace GlobalArticleDatabaseAPITests
                 .WithRandomValues()
                 .Build();
 
-            using var client = _webAppContext.GetAnonymousClient();
+            using var client = await _webAppContext.GetLoggedClient();
 
             // Create article
             using var httpResponseCreate = await CallApiAsync<CreateArticleRequest>(

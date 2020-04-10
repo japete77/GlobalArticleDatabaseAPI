@@ -1,12 +1,18 @@
-﻿using GlobalArticleDatabaseAPI;
+﻿using Core.Exceptions;
+using GlobalArticleDatabaseAPI;
+using GlobalArticleDatabaseAPI.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Mongo2Go;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.IO;
+using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace GlobalArticleDatabaseAPITests
 {
@@ -24,12 +30,51 @@ namespace GlobalArticleDatabaseAPITests
             return _dbRunner.ConnectionString;
         }
 
+        public async Task<HttpClient> GetLoggedClient(string username = "admin", string password = "admin")
+        {
+            var client = GetFactory().CreateClient();
+
+            var loginRequest = new LoginRequest
+            {
+                User = username,
+                Password = password
+            };
+
+            var httpContent = new StringContent(JsonConvert.SerializeObject(loginRequest), Encoding.UTF8, "application/json");
+
+            using (var httpResponse = await client.PostAsync("api/v1/auth/login", httpContent))
+            {
+                if (httpResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    var contentResponse = await httpResponse.Content.ReadAsStringAsync();
+
+                    var loginResponse = JsonConvert.DeserializeObject<LoginResponse>(contentResponse);
+
+                    // set authentication header
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginResponse.Token);
+                }
+                else
+                {
+                    throw new AuthenticationException(ExceptionCodes.IDENTITY_INVALID_USER_PASSWORD, "Invalid user, password or token", null, StatusCodes.Status401Unauthorized);
+                }
+            }
+
+            return client;
+        }
+
         public T GetService<T>()
         {
             return Startup.GetService<T>();
         }
 
         public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        // The bulk of the clean-up code is implemented in Dispose(bool)
+        protected virtual void Dispose(bool disposing)
         {
             if (_factory != null)
             {
@@ -43,7 +88,6 @@ namespace GlobalArticleDatabaseAPITests
                 _dbRunner = null;
             }
         }
-
         private WebApplicationFactory<Startup> GetFactory()
         {
             if (_factory == null)

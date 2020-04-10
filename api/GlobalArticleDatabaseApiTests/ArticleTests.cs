@@ -30,7 +30,7 @@ namespace GlobalArticleDatabaseAPITests
         [Trait("Category", "IntegrationTest")]
         public async Task Article_GetNoNExisting_NotFound()
         {
-            using var client = _webAppContext.GetAnonymousClient();
+            using var client = await _webAppContext.GetLoggedClient();
             using var httpResponse = await CallApiAsync(
                 client.GetAsync,
                 $"/api/v1/article/{ObjectId.GenerateNewId()}"
@@ -43,7 +43,7 @@ namespace GlobalArticleDatabaseAPITests
         [Trait("Category", "IntegrationTest")]
         public async Task Article_CreateWithMissingFields_BadRequest()
         {
-            using var client = _webAppContext.GetAnonymousClient();
+            using var client = await _webAppContext.GetLoggedClient();
 
             var article = new ArticleModelBuilder()
                 .WithRandomValues()
@@ -133,7 +133,7 @@ namespace GlobalArticleDatabaseAPITests
                 .WithRandomValues()
                 .Build();
 
-            using var client = _webAppContext.GetAnonymousClient();
+            using var client = await _webAppContext.GetLoggedClient();
 
             // Create article
             using var httpResponseCreate = await CallApiAsync<CreateArticleRequest>(
@@ -240,7 +240,7 @@ namespace GlobalArticleDatabaseAPITests
                 .WithRandomValues()
                 .Build();
 
-            using var client = _webAppContext.GetAnonymousClient();
+            using var client = await _webAppContext.GetLoggedClient();
 
             // Create article
             using var httpResponseCreate = await CallApiAsync<CreateArticleRequest>(
@@ -346,7 +346,7 @@ namespace GlobalArticleDatabaseAPITests
                     .Build()
             };
 
-            using var client = _webAppContext.GetAnonymousClient();
+            using var client = await _webAppContext.GetLoggedClient();
 
             // Create article
             using var httpResponseCreate = await CallApiAsync<CreateArticleRequest>(
