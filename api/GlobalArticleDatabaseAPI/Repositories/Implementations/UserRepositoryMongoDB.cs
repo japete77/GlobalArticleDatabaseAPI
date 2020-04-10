@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Core.Exceptions;
-using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
+using GlobalArticleDatabaseAPI;
 using GlobalArticleDatabaseAPI.DbContext.Models;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.Models;
 using GlobalArticleDatabaseAPI.Repositories.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -11,9 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using GlobalArticleDatabaseAPI;
 
-namespace GlobalAtricleDatabase.Repositories.Implementations
+namespace GlobalAtricleDatabaseAPI.Repositories.Implementations
 {
     public class UserRepositoryMongoDb : IUserRepository
     {

@@ -15,7 +15,7 @@ using GlobalArticleDatabaseAPI.Services.ReferenceData.Implementations;
 using GlobalArticleDatabaseAPI.Services.ReferenceData.Interfaces;
 using GlobalArticleDatabaseAPI.Services.User.Implementations;
 using GlobalArticleDatabaseAPI.Services.User.Interfaces;
-using GlobalAtricleDatabase.Repositories.Implementations;
+using GlobalAtricleDatabaseAPI.Repositories.Implementations;
 
 namespace GlobalArticleDatabaseAPI.Configuration.AutofacModules
 {
