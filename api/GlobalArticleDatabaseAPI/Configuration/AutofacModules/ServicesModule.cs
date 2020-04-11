@@ -11,6 +11,8 @@ using GlobalArticleDatabaseAPI.Services.Articles.Implementations;
 using GlobalArticleDatabaseAPI.Services.Articles.Interfaces;
 using GlobalArticleDatabaseAPI.Services.Authentication.Implementations;
 using GlobalArticleDatabaseAPI.Services.Authentication.Interfaces;
+using GlobalArticleDatabaseAPI.Services.Email.Implementations;
+using GlobalArticleDatabaseAPI.Services.Email.Interfaces;
 using GlobalArticleDatabaseAPI.Services.ReferenceData.Implementations;
 using GlobalArticleDatabaseAPI.Services.ReferenceData.Interfaces;
 using GlobalArticleDatabaseAPI.Services.User.Implementations;
@@ -41,6 +43,9 @@ namespace GlobalArticleDatabaseAPI.Configuration.AutofacModules
             builder.RegisterType<RenewTokenRetriever>().As<IRenewTokenRetriever>().InstancePerLifetimeScope();
             builder.RegisterType<UserRetriever>().As<IUserRetriever>().InstancePerLifetimeScope();
             builder.RegisterType<UserUpdater>().As<IUserUpdater>().InstancePerLifetimeScope();
+
+            builder.RegisterType<EmailTemplateRetriever>().As<IEmailTemplateRetriever>().InstancePerLifetimeScope();
+            builder.RegisterType<EmailSender>().As<IEmailSender>().InstancePerLifetimeScope();
         }
     }
 }

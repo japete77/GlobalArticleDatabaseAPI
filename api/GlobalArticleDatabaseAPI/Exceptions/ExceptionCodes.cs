@@ -59,5 +59,8 @@
         // User exceptions
         public static int USER_NOT_FOUND = -10000;
         public static int USER_ROLES_NOT_VALID = -10001;
+
+        // Email exceptions
+        public static int EMAIL_SEND_ERROR = -11000;
     }
 }

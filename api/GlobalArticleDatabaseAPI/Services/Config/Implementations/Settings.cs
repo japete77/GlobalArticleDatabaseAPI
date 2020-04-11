@@ -23,5 +23,15 @@ namespace Config.Implementations
         public int AWSLinkExpireInSecs { get { return Int32.Parse(Get("AWS:LinkExpireInSecs")); } }
         public string Secret { get { return Get("Secret"); } }
         public string DefaultEmail { get { return Get("DefaultEmail"); } }
+        public bool SmtpEnabled { get { return Convert.ToBoolean(Get("Smtp:Enabled")); } }
+        public string SmtpServer { get { return Get("Smtp:Server"); } }
+        public int SmtpPort { get { return Convert.ToInt32(Get("Smtp:Port")); } }
+        public string SmtpUserName { get { return Get("Smtp:UserName"); } }
+        public string SmtpPassword { get { return Get("Smtp:Password"); } }
+        public string SmtpFrom { get { return Get("Smtp:From"); } }
+        public string SmtpFromName { get { return Get("Smtp:FromName"); } }
+        public string ResetPasswordUrl { get { return Get("ResetPasswordUrl"); } }
+        public string SupportUrl { get { return Get("SupportUrl"); } }
+
     }
 }

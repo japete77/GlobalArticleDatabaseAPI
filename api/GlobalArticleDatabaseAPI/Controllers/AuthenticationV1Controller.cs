@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using GlobalArticleDatabaseAPI.Services.Email.Interfaces;
+using Config.Interfaces;
 
 namespace Alintia.Glass.Api.Controllers
 {
@@ -25,13 +27,19 @@ namespace Alintia.Glass.Api.Controllers
         IRenewTokenRemover _renewTokenRemover { get; }
         IRenewTokenRetriever _renewTokenRetriever { get; }
         IJwtRetriever _jwtRetriever { get; }
+        IEmailTemplateRetriever _emailTemplateRetriever { get; }
+        IEmailSender _emailSender { get; }
+        ISettings _settings { get; }
 
         public AuthenticationV1Controller(UserManager<User> userManager,
             IJwtGenerator jwtGenereator,
             IRenewTokenCreator renewTokenCreator,
             IRenewTokenRemover renewTokenRemover,
             IRenewTokenRetriever renewTokenRetriever,
-            IJwtRetriever jwtRetriever)
+            IJwtRetriever jwtRetriever,
+            IEmailTemplateRetriever emailTemplateRetriever,
+            IEmailSender emailSender,
+            ISettings settings)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _jwtGenereator = jwtGenereator ?? throw new ArgumentNullException(nameof(jwtGenereator));
@@ -39,6 +47,9 @@ namespace Alintia.Glass.Api.Controllers
             _renewTokenRemover = renewTokenRemover ?? throw new ArgumentNullException(nameof(renewTokenRemover));
             _renewTokenRetriever = renewTokenRetriever ?? throw new ArgumentNullException(nameof(renewTokenRetriever));
             _jwtRetriever = jwtRetriever ?? throw new ArgumentNullException(nameof(jwtRetriever));
+            _emailTemplateRetriever = emailTemplateRetriever ?? throw new ArgumentNullException(nameof(emailTemplateRetriever));
+            _emailSender = emailSender ?? throw new ArgumentNullException(nameof(emailSender));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
         /// <summary>
@@ -117,21 +128,18 @@ namespace Alintia.Glass.Api.Controllers
             {
                 var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                //await _workflowRepository.CreateNewWorkflow(new WorkflowInstance
-                //{
-                //    WorkflowDefinitionId = WorkflowDefinitions.SendEmailWorkflowId,
-                //    CreateTime = DateTime.UtcNow,
-                //    Status = WorkflowStatus.Runnable,
-                //    Data = new SendEmailModel
-                //    {
-                //        To = user.Email,
-                //        Subject = string.IsNullOrEmpty(user.PasswordHash) ? "Welcome to Alintia!" : "Password reset on Alintia",
-                //        Content = string.IsNullOrEmpty(user.PasswordHash) ?
-                //                        _emailTemplateRetriever.SetInitialPasswordTemplate(request.Tenant, user.UserName, user.Email, resetToken) :
-                //                        _emailTemplateRetriever.GetResetPasswordTemplate(request.Tenant, user.UserName, user.Email, resetToken)
-                //    },
-                //    Reference = GetUserTenant()
-                //});
+                if (_settings.SmtpEnabled)
+                {
+                    await _emailSender.Send(new EmailMessage
+                    {
+                        ToAddresses = new List<EmailAddress> { new EmailAddress { Name = user.UserName, Address = user.Email } },
+                        FromAddresses = new List<EmailAddress> { new EmailAddress { Name = _settings.SmtpFromName, Address = _settings.SmtpFrom } },
+                        Subject = string.IsNullOrEmpty(user.PasswordHash) ? "Welcome to Global Article Database!" : "Password reset on Global Article Database",
+                        Content = string.IsNullOrEmpty(user.PasswordHash) ?
+                                            _emailTemplateRetriever.SetInitialPasswordTemplate(user.UserName, user.Email, resetToken) :
+                                            _emailTemplateRetriever.GetResetPasswordTemplate(user.UserName, user.Email, resetToken)
+                    });
+                }
             }
         }
 

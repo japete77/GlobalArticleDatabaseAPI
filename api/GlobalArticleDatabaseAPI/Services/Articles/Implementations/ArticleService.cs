@@ -94,6 +94,7 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 Builders<ArticleEntity>.Update
                     .Set(f => f.Author, request.Article.Author)
                     .Set(f => f.Category, request.Article.Category)
+                    .Set(f => f.Topics, request.Article.Topics)
                     .Set(f => f.Date, request.Article.Date)
                     .Set(f => f.Language, request.Article.Language)
                     .Set(f => f.Owner, request.Article.Owner)

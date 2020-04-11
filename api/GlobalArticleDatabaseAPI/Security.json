@@ -79,6 +79,14 @@
           ]
         },
         {
+          "name": "GetText",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        },
+        {
           "name": "Search",
           "roles": [
             "ADMIN",
@@ -184,6 +192,48 @@
           ]
         }
       ]
-    }
-  ]
+    },
+    {
+      "name": "UserV1",
+      "actions": [
+        {
+          "name": "Create",
+          "roles": [
+            "ADMIN"
+          ]
+        },
+        {
+          "name": "Update",
+          "roles": [
+            "ADMIN"
+          ]
+        },
+        {
+          "name": "Get",
+          "roles": [
+            "ADMIN"
+          ]
+        },
+        {
+          "name": "GetCurrent",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        },
+        {
+          "name": "Delete",
+          "roles": [
+            "ADMIN"
+          ]
+        },
+        {
+          "name": "SearchUsers",
+          "roles": [
+            "ADMIN"
+          ]
+        }
+      ]
+    }  ]
 }

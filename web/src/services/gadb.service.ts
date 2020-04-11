@@ -8,8 +8,8 @@ import { UpdateArticleRequest } from 'src/app/models/update-article-request';
 import { UpdateArticleTextRequest } from 'src/app/models/update-article-text-request';
 import { Translation } from 'src/app/models/translation';
 import { UpdateTranslationRequest } from 'src/app/models/update-translation-request';
-import { identifierModuleUrl } from '@angular/compiler';
 import { UpdateTranslationTextRequest } from 'src/app/models/update-translation-text-request';
+import { AppConfig } from 'src/app/helpers/app-config';
 
 @Injectable({ providedIn: "root" })
 export class ApplicationService {
@@ -18,25 +18,25 @@ export class ApplicationService {
 
   getAuthors() {
     return this.http.get<GetListResponse>(
-      `${environment.gadb_api_base}reference-data/authors`
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/authors`
     );
   }
 
   getCategories() {
     return this.http.get<GetListResponse>(
-      `${environment.gadb_api_base}reference-data/categories`
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/categories`
     );
   }
 
   getTopics() {
     return this.http.get<GetListResponse>(
-      `${environment.gadb_api_base}reference-data/topics`
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/topics`
     );
   }
 
   getOwners() {
     return this.http.get<GetListResponse>(
-      `${environment.gadb_api_base}reference-data/owners`
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/owners`
     );
   }
 
@@ -88,12 +88,12 @@ export class ApplicationService {
     }
 
     return this.http.get<ArticleSearchResponse>(
-      `${environment.gadb_api_base}articles${query}`
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/articles${query}`
     );
   }
 
   getArticleText(id: string, language?: string) {
-    var url = `${environment.gadb_api_base}article/${id}/text`
+    var url = `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/article/${id}/text`
     if (language) url += `?language=${language}`;
     return this.http.get<string>(url);
   }
@@ -101,7 +101,7 @@ export class ApplicationService {
   updateArticle(article: Article) {
     var body: UpdateArticleRequest = { article: article };
     return this.http.put(
-      `${environment.gadb_api_base}article`,
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/article`,
       body
     );
   }
@@ -109,7 +109,7 @@ export class ApplicationService {
   updateArticleText(id: string, text: string) {
     var body: UpdateArticleTextRequest = { id: id, text: text };
     return this.http.put(
-      `${environment.gadb_api_base}article/text`,
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/article/text`,
       body
     );
   }
@@ -117,7 +117,7 @@ export class ApplicationService {
   updateTranslation(articleId: string, translation: Translation) {
     var body: UpdateTranslationRequest = { articleId: articleId, translation: translation };
     return this.http.put(
-      `${environment.gadb_api_base}translation`,
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation`,
       body
     );
   }
@@ -125,7 +125,7 @@ export class ApplicationService {
   updateTranslationText(articleId: string, text: string, language: string) {
     var body: UpdateTranslationTextRequest = { articleId: articleId, text: text, language: language };
     return this.http.put(
-      `${environment.gadb_api_base}translation/text`,
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation/text`,
       body
     );
   }
