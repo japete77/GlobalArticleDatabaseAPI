@@ -43,6 +43,8 @@ import { LoginComponent } from './login/login.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { DialogComponent } from './dialog/dialog.component';
 import { MatMenuModule } from '@angular/material/menu';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -56,7 +58,9 @@ export function initializeApp(appConfig: AppConfig) {
     RefreshTokenComponent,
     ArticlesComponent,
     LoginComponent,
-    DialogComponent
+    DialogComponent,
+    ForgotPasswordComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
