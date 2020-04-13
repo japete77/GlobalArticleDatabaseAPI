@@ -19,8 +19,7 @@ namespace GlobalArticleDatabaseAPITests
 
         private readonly string text = "This a sample text";
         private readonly string textUpdated = "This a sample text updated";
-        private readonly string imageBase64 = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAHDSURBVDhPY/z//z8DKYAJShMNoDZ8PNX++8MdIOPT9n////Ao9fd/u3P3clGFmC0vnzErUJyJQ1DIrgfIYAFiIPj14fbvN5eAjP8c/z/t+Pdu+/anm3e8OnxM2k/m1xtGoDgTpyhYIZKT2EQNxfw28tnpMfMxfNiz5832nQphNsx8jPymleL+W0TdF0KUITQwMrMzc4oxsnNyW7H9//GDi5dTMTcTKP794c5PF6f9eHIQogyh4eeLE89XWv56cYrf1vH32XNijnYc8vJA8V+vzn1/sO3n6/MQZVA/gADIBlFOOZef2z6x//7zn5Hx07GjQGFe3Qw2cSMmdkGIKoQN7KKG4n4bOGUj/63fxG1n+/3evVfzlwDF/359/vv9LaA9EGXo8fBj8RLOHz/5UpKFvL1/3H376/H/b/c2fjrb8+nCZIgCqJO4VUMZmVn/fPr0Z9FyFjNTTn19Vnl5Zm5uFjEGNgVQsDIysUFUMgAjDg6e9E68JSr/9fgJKB8bQGj48/XrUTmNiy4+UD4OgNDwdPqsfSxC73btgfJxAKiGvz9+nNI1OWfr8u/fP4gILgBNfP+BCr9/Z2RlZWKDeQ4rYGAAAI3bQ7yc8FrMAAAAAElFTkSuQmCC";
-        private readonly string imageBase64Updated = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAAGESURBVDhPY6A5YIRQQvxctvriQAbvB/Z7774ce/IEyPaRkeOVYv/G8QfIPn/r7aMXn4AMZiAGAldz6enpwt4mnDb8rG8ufjn6+bO1jFzMu68Ocbz3X33kZv39/df/J69/IDSoywsEeVoLu8z8z3iV9eyb/0IScV9+6QVazrtxc86OV+fufIWoBgImCAUEjMzszJxijOyc6s68TVZW8oK8irmZUY4ifnaKEiI8UEXIGn6+OPF8peWvF6f4bR1/nz0n5mjHIS8PFBfj+mqpxsbDyQZRxgKhQABkgyinnMvPbZ/Yf//5z8j46djRZfvfAJ0EVQAGCD8Ee9k9EM5NLuznOHRkIQuT2OfP7LeuKtr823b227cfvyHKgAAarBryAsqyQk8+8168eNGIg/Pcj++ywsJ1goJnZT6//PX7xftfP/8wnrv9GaIYBehwcHnIykHYbCxIDsYKFIRFGniEoBwcABFKQOD/l+kiHzeUQxBICghUMRFWjbDBjZXjrrgglEM1wMAAACDwgaAokUkqAAAAAElFTkSuQmCC";
+
         public ArticleTests(WebAppContext webAppContext)
         {
             _webAppContext = webAppContext;
@@ -249,8 +248,7 @@ namespace GlobalArticleDatabaseAPITests
                 new CreateArticleRequest
                 {
                     Article = article,
-                    Text = text,
-                    ImageBase64 = imageBase64
+                    Text = text
                 }
             );
 
@@ -263,7 +261,6 @@ namespace GlobalArticleDatabaseAPITests
             Assert.True(dataCreate.Article.Id != null, "No article Id created");
             Assert.True(dataCreate.Article.HasText, "Text missing");
             Assert.True(!string.IsNullOrEmpty(dataCreate.Article.TextLink), "Text link missing");
-            Assert.True(dataCreate.Article.HasImage, "Image missing");
             Assert.True(!string.IsNullOrEmpty(dataCreate.Article.ImageLink), "Image link missing");
 
             // Check text and image files exists
@@ -292,27 +289,6 @@ namespace GlobalArticleDatabaseAPITests
             
             var updatedTextContent =  await getTextUpdatedResponse.Content.ReadAsStringAsync();
             Assert.True(updatedTextContent == textUpdated, "Text not updated");
-
-            // Update article image
-            using var httpResponseUpdateImage = await CallApiAsync<UpdateArticleImageRequest>(
-                client.PutAsync,
-                $"/api/v1/article/image",
-                new UpdateArticleImageRequest
-                {
-                    Id = dataCreate.Article.Id,
-                    ImageBase64 = imageBase64Updated,
-                }
-            );
-
-            Assert.True(httpResponseUpdateImage.StatusCode == System.Net.HttpStatusCode.OK, $"Error updating article text: {httpResponseUpdateImage.StatusCode}");
-
-            var getImageUpdatedResponse = await httpGet.GetAsync(dataCreate.Article.ImageLink);
-            Assert.True(getImageUpdatedResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving text file: {getImageUpdatedResponse.StatusCode}");
-            
-            byte[] remoteImage = await getImageUpdatedResponse.Content.ReadAsByteArrayAsync();
-            byte[] updatedImageContent = Convert.FromBase64String(imageBase64Updated);
-
-            Assert.True(ArrayEquals(remoteImage, updatedImageContent), "Image not updated");
 
             // Delete
             using var httpResponseDelete = await CallApiAsync(

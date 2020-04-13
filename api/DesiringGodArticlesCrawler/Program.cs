@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using DesiringGodArticlesCrawler.Models;
 using Google.Api.Gax.ResourceNames;
 using Google.Cloud.Translate.V3;
 using HtmlAgilityPack;
@@ -17,21 +19,177 @@ namespace DesiringGodArticlesCrawler
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             //ExtractSpanishArticlesFromDG("/Users/juanpablogonzalezjara/Desktop/articles/spanish_articles.json");
             // GetAuthors("/Users/juanpablogonzalezjara/Desktop/articles/authors.json");
             //var builder = new Automation.ArticlesBuilder();
             //builder.CreateArticles();
 
-            List<Article> articles = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:\temp\pxe\articles\spanish_articles.json"));
+            //List<Article> articles = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:\temp\pxe\articles\spanish_articles.json"));
 
-            var articlesPiper = articles.Where(w => w.Author == "John Piper" && w.Link.Contains("/articles/")).ToList();
+            //var articlesPiper = articles.Where(w => w.Author == "John Piper" && w.Link.Contains("/articles/")).ToList();
 
-            var extractor = new ArticleExtractor();
+            //var extractor = new ArticleExtractor();
 
-            var textEnglish = extractor.Extract(articlesPiper.First().Link.Replace("?lang=es", ""));
-            var textSpanish = extractor.Extract(articlesPiper.First().Link);
+            //var textEnglish = extractor.Extract(articlesPiper.First().Link.Replace("?lang=es", ""));
+            //var textSpanish = extractor.Extract(articlesPiper.First().Link);
+
+            // ************************************************************************
+            // **************** Get All Articles from DG ******************************
+            ////var topicsExtractor = new TopicsExtractor();
+            ////var topics = topicsExtractor.Extract();
+
+            //var authorsExtractor = new AuthorsExtractor();
+            //var authors = authorsExtractor.Extract();
+
+            //List<Article> dgResources = new List<Article>();
+            //var resources = new ResourcesExtractor();
+
+            ////foreach (var topic in topics)
+            ////{
+            ////    Console.WriteLine($"Extracting topic: {topic.Name}");
+            ////    var data = resources.Extract($"{topic.Link}/all");
+            ////    data.ForEach(item => item.Topic = topic.Name);
+            ////    dgResources.AddRange(data);
+            ////}
+
+            //int authorIndex = 1;
+
+            //Console.WriteLine($"Detected {authors.Count} authors");
+            //foreach (var author in authors)
+            //{
+            //    Console.WriteLine($"{authorIndex} Extracting author: {author.Name}");
+            //    var data = resources.Extract($"{author.Link}");
+            //    data.ForEach(item => item.Author = author.Name);
+            //    dgResources.AddRange(data);
+            //    authorIndex++;
+            //}
+
+            //File.WriteAllText(@"C:/temp/pxe/dg_resources_by_author.json", JsonConvert.SerializeObject(dgResources));
+
+            // *************************#################################**********************
+            // *************************#################################**********************
+            //List<Article> articlesByTopic = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:/temp/pxe/dg_resources.json"));
+            //List<Article> articlesByAuthor = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:/temp/pxe/dg_resources_by_author.json"));
+            // List<Article> articles = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:/temp/pxe/articles/john-piper_articles_all.json"));
+
+            var cHelper = new ClientHelper();
+            var client = await cHelper.GetLoggedClient();
+
+            int page = 1;
+            int index = 1;
+            while (true)
+            {
+                var result = await client.GetAsync($"articles?page={page}&pageSize=1000");
+
+                var data = await result.Content.ReadAsStringAsync();
+                var dbArticles = JsonConvert.DeserializeObject<GlobalArticleDatabaseAPI.Models.ArticleSearchResponse>(data);
+
+                if (dbArticles.Articles.Count == 0) break;
+
+                foreach (var a in dbArticles.Articles)
+                {
+                    a.Title = System.Web.HttpUtility.HtmlDecode(a.Title);
+                    a.Subtitle = System.Web.HttpUtility.HtmlDecode(a.Subtitle);
+                    a.Summary = System.Web.HttpUtility.HtmlDecode(a.Summary);
+
+                    // Update Article
+                    var httpContent = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.UpdateArticleRequest { Article = a }), Encoding.UTF8, "application/json");
+                    await client.PutAsync("article", httpContent);
+
+                    Console.WriteLine($"{index++} Update article");
+                }
+
+                page++;
+            }
+
+
+            //int index = 1;
+
+            //var extractor = new ArticleExtractor();
+
+            //// Create article
+            //foreach (var a in articlesByAuthor)
+            //{
+            //    if (dbArticles.Articles.Where(w => w.SourceLink == a.Link).Count() == 0)
+            //    {
+            //        var dupes = articlesByTopic.Where(w => w.Link == a.Link).ToList();
+
+            //        // Only create if exists
+            //        var newResource = new GlobalArticleDatabaseAPI.Models.Article
+            //        {
+            //            Author = a.Author,
+            //            Category = a.Category,
+            //            Date = a.Date,
+            //            HasText = true,
+            //            ImageLink = a.ImageLink,
+            //            Language = "us",
+            //            Owner = "Desiring God",
+            //            Reference = a.Scripture,
+            //            SourceLink = a.Link,
+            //            Subtitle = a.Subtitle,
+            //            Summary = a.Summary,
+            //            Title = a.Title,
+            //            Topics = dupes.Select(s => s.Topic).ToList()
+            //        };
+
+            //        var f = $"C:/temp/pxe/resources/{newResource.SourceLink.Split('/').Last()}.txt";
+            //        if (File.Exists(f))
+            //        {
+            //            var text = File.ReadAllText(f);
+
+            //            // Create Article
+            //            var httpContent = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.CreateArticleRequest { Article = newResource, Text = text }), Encoding.UTF8, "application/json");
+            //            await client.PostAsync("article", httpContent);
+
+            //            Console.WriteLine($"{index} Created {a.Link}");
+            //        }
+            //        //string text = extractor.Extract(newResource.SourceLink);
+            //        //File.WriteAllText($"C:/temp/pxe/resources/{newResource.SourceLink.Split('/').Last()}.txt", text);
+
+            //        //dbArticles.Articles.Add(newResource);
+            //    }
+            //    else
+            //    {
+            //        Console.WriteLine($"{index} Already exists {a.Link}");
+            //    }
+
+            //    index++;
+            //}
+
+            //// Update image link
+            //foreach (var a in dbArticles.Articles)
+            //{
+            //    var source = articles.Where(w => w.Link == a.SourceLink).ToList();
+
+            //    a.Author = a.Author.Trim();
+            //    a.Category = a.Category?.Trim();
+            //    a.Owner = a.Owner?.Trim();
+            //    a.SourceLink = a.SourceLink.Trim();
+            //    a.Subtitle = a.Subtitle?.Trim();
+            //    a.Summary = a.Summary?.Trim();
+            //    a.Title = a.Title?.Trim();
+            //    if (source != null && source.Count > 0)
+            //    {
+            //        a.ImageLink = source.First().ImageLink?.Trim();
+            //        a.Reference = source.First().Text?.Trim();
+            //        a.Topics = source.Select(s => s.Topic).ToList();
+            //    }
+            //    else
+            //    {
+            //        a.Reference = null;
+            //    }
+
+            //    // Update Article
+            //    var httpContent = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.UpdateArticleRequest { Article = a }), Encoding.UTF8, "application/json");
+            //    await client.PutAsync("article", httpContent);
+
+            //    Console.WriteLine($"{index} Updated {a.SourceLink}");
+
+            //    index++;
+            //}
+
         }
 
         static void GetAuthors(string filename)
@@ -137,9 +295,13 @@ namespace DesiringGodArticlesCrawler
                 {
                     articleParagraphs.Add($"Subtitle: {articles[i].Subtitle}");
                 }
-                if (!string.IsNullOrEmpty(articles[i].Text))
+                if (!string.IsNullOrEmpty(articles[i].Summary))
                 {
-                    articleParagraphs.Add($"Summary: {articles[i].Text}");
+                    articleParagraphs.Add($"Summary: {articles[i].Summary}");
+                }
+                if (!string.IsNullOrEmpty(articles[i].Scripture))
+                {
+                    articleParagraphs.Add($"Scripture: {articles[i].Scripture}");
                 }
                 foreach (var node in body.ChildNodes)
                 {
@@ -313,7 +475,7 @@ namespace DesiringGodArticlesCrawler
                                 Title = articleHtml.DocumentNode.SelectSingleNode("//h2[@class='card--resource__title']")?.InnerText,
                                 Subtitle = articleHtml.DocumentNode.SelectSingleNode("//h3[@class='card--resource__subtitle']")?.InnerText,
                                 Date = DateTime.Parse(articleHtml.DocumentNode.SelectSingleNode("//div[@class='card--resource__date']")?.InnerText),
-                                Text = articleHtml.DocumentNode.SelectSingleNode("//div[@class='card--resource__text']")?.InnerText
+                                Scripture = articleHtml.DocumentNode.SelectSingleNode("//div[@class='card--resource__text']/div[@class='card--resource__scripture']")?.InnerText.Trim()
                             }
                         );
                     }
@@ -371,7 +533,7 @@ namespace DesiringGodArticlesCrawler
                                 Title = articleHtml.DocumentNode.SelectSingleNode("//h2[@class='card--resource__title']")?.InnerText,
                                 Subtitle = articleHtml.DocumentNode.SelectSingleNode("//h3[@class='card--resource__subtitle']")?.InnerText,
                                 Date = DateTime.Parse(articleHtml.DocumentNode.SelectSingleNode("//div[@class='card--resource__date']")?.InnerText),
-                                Text = articleHtml.DocumentNode.SelectSingleNode("//div[@class='card--resource__text']")?.InnerText
+                                Scripture = articleHtml.DocumentNode.SelectSingleNode("//div[@class='card--resource__text']/div[@class='card--resource__scripture']")?.InnerText.Trim()
                             }
                         );
                     }
@@ -388,43 +550,13 @@ namespace DesiringGodArticlesCrawler
         }
     }
 
-    public class Article
-    {
-        public string Author { get; set; }
-        public string Title { get; set; }
-        public string Subtitle { get; set; }
-        public string Link { get; set; }
-        public string ImageLink { get; set; }
-        public DateTime Date { get; set; }
-        public string Text { get; set; }
-    }
 
-    public class TranslateRequestV3
-    {
-        public string sourceLanguageCode { get; set; }
-        public string targetLanguageCode { get; set; }
-        public List<string> contents { get; set; }
-    }
 
-    public class TranslateRequest
-    {
-        public List<string> q { get; set; }
-        public string target { get; set; }
-    }
 
-    public class TranslateData
-    {
-        public TranslateResponse data { get; set; }
-    }
 
-    public class TranslateResponse
-    {
-        public List<Translations> translations { get; set; }
-    }
 
-    public class Translations
-    {
-        public string translatedText { get; set; }
-        public string detectedSourceLanguage { get; set; }
-    }
+
+
+
+
 }

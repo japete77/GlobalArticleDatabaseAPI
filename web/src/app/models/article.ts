@@ -14,7 +14,6 @@ export class Article {
     owner: string;
     hasText: boolean;
     textLink: string;
-    hasImage: boolean;
     imageLink: string;
     translations: Translation[];
 }

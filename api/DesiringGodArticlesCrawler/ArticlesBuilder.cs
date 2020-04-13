@@ -10,17 +10,9 @@ using System.Threading.Tasks;
 
 namespace Automation
 {
-    internal class ArticleExtract
-    {
-        public string Title { get; set; }
-        public string Subtitle { get; set; }
-        public string Summary { get; set; }
-        public string Text { get; set; }
-    }
-
     public class ArticlesBuilder
     {
-        private string LoadImageBase64(int index, DesiringGodArticlesCrawler.Article article)
+        private string LoadImageBase64(int index, DesiringGodArticlesCrawler.Models.Article article)
         {
             string filename = $"C:/temp/pxe/articles/john-piper/{index}_{article.Date.ToString("yyyy-MM-dd")}_{article.Link.Split('/').Last()}.jpg";
             if (File.Exists(filename))
@@ -32,7 +24,7 @@ namespace Automation
             return null;
         }
 
-        private ArticleExtract LoadText(int index, string language, DesiringGodArticlesCrawler.Article article)
+        private ArticleExtract LoadText(int index, string language, DesiringGodArticlesCrawler.Models.Article article)
         {
             string filename = $"C:/temp/pxe/articles/john-piper/{index}_{article.Date.ToString("yyyy-MM-dd")}_{article.Link.Split('/').Last()}.{language}.txt";
             if (File.Exists(filename))
@@ -76,7 +68,7 @@ namespace Automation
             client.BaseUrl = new Uri("https://ig24hiba4k.execute-api.eu-west-1.amazonaws.com/Prod/api/v1/");
             // client.BaseUrl = new Uri("http://localhost:5000/api/v1/");
 
-            List<DesiringGodArticlesCrawler.Article> articles = JsonConvert.DeserializeObject<List<DesiringGodArticlesCrawler.Article>>(File.ReadAllText("C:/temp/pxe/articles/john-piper_articles.json"));
+            List<DesiringGodArticlesCrawler.Models.Article> articles = JsonConvert.DeserializeObject<List<DesiringGodArticlesCrawler.Models.Article>>(File.ReadAllText("C:/temp/pxe/articles/john-piper_articles.json"));
 
             for (int index = 0; index < articles.Count; index++)
             {
@@ -108,16 +100,15 @@ namespace Automation
                         Category = "Article",
                         Date = articles[index].Date,
                         HasText = textEnglish != null,
-                        HasImage = image != null,
                         SourceLink = articles[index].Link,
                         Language = "en",
                         Owner = "Desiring God",
                         Title = articles[index].Title,
                         Subtitle = articles[index].Subtitle,
-                        Summary = articles[index].Text,
+                        Summary = articles[index].Summary,
+                        Reference = articles[index].Scripture
                     },
                     Text = textEnglish?.Text,
-                    ImageBase64 = image,
                 };
                 requestArticle.AddJsonBody(bodyArticle);
 
@@ -176,5 +167,13 @@ namespace Automation
             }
 
         }
+    }
+
+    internal class ArticleExtract
+    {
+        public string Title { get; set; }
+        public string Subtitle { get; set; }
+        public string Summary { get; set; }
+        public string Text { get; set; }
     }
 }

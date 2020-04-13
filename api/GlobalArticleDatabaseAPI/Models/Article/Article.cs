@@ -64,6 +64,11 @@ namespace GlobalArticleDatabaseAPI.Models
         public string Owner { get; set; }
 
         /// <summary>
+        /// Bible reference
+        /// </summary>
+        public string Reference { get; set; }
+
+        /// <summary>
         /// Indicate whether the article has image
         /// </summary>
         public bool HasText { get; set; }
@@ -72,11 +77,6 @@ namespace GlobalArticleDatabaseAPI.Models
         /// Link to the source text
         /// </summary>
         public string TextLink { get; set; }
-
-        /// <summary>
-        /// Indicate whether the article has image
-        /// </summary>
-        public bool HasImage { get; set; }
 
         /// <summary>
         /// Link to the article image

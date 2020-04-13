@@ -111,7 +111,9 @@ export class ArticlesComponent implements OnInit {
 
   private _filter(value: string, values: string[]): string[] {
     const filterValue = value.toLowerCase();
-    return values.filter(option => option.toLowerCase().includes(filterValue));
+    return values.filter(option => {
+      if (option) return option.toLowerCase().includes(filterValue);
+    });
   }
 
   filterChanged() {
@@ -221,7 +223,6 @@ export class ArticlesComponent implements OnInit {
             article.author = data.articleUpdated.author;
             article.category = data.articleUpdated.category;
             article.date = data.articleUpdated.date;
-            article.hasImage = data.articleUpdated.hasImage;
             article.hasText = data.articleUpdated.hasText;
             article.imageLink = data.articleUpdated.imageLink;
             article.language = data.articleUpdated.language;

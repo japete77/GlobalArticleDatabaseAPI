@@ -34,7 +34,6 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
 
         public async Task<Article> Create(CreateArticleRequest request)
         {
-            request.Article.HasImage = !string.IsNullOrEmpty(request.ImageBase64);
             request.Article.HasText = !string.IsNullOrEmpty(request.Text);
             request.Article.Translations = null; // Ignore translations when creating the article
 
@@ -64,26 +63,6 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 article.TextLink = GetTextLink(article);
             }
 
-            // Create image file in S3
-            if (!string.IsNullOrEmpty(request.ImageBase64))
-            {
-                var result = await UploadS3File(
-                     GetImageFilename(article),
-                     request.ImageBase64,
-                     true
-                 );
-
-                if (!result)
-                {
-                    // Clean up
-                    await Delete(request.Article.Id.ToString());
-
-                    throw new Exception($"Error uploading image {request.Article.Id} to storage");
-                }
-
-                article.ImageLink = GetImageLink(article);
-            }
-
             return article;
         }
 
@@ -98,12 +77,13 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                     .Set(f => f.Date, request.Article.Date)
                     .Set(f => f.Language, request.Article.Language)
                     .Set(f => f.Owner, request.Article.Owner)
+                    .Set(f => f.Reference, request.Article.Reference)
                     .Set(f => f.SourceLink, request.Article.SourceLink)
                     .Set(f => f.Subtitle, request.Article.Subtitle)
                     .Set(f => f.Summary, request.Article.Summary)
                     .Set(f => f.Title, request.Article.Title)
                     .Set(f => f.HasText, request.Article.HasText)
-                    .Set(f => f.HasImage, request.Article.HasImage)
+                    .Set(f => f.ImageLink, request.Article.ImageLink)
             );
 
             return request.Article;
@@ -172,7 +152,7 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 Builders<ArticleEntity>.Filter.Eq(f => f.Id, new ObjectId(id))
             );
 
-            if (article.HasText || article.HasImage || article.Translations != null)
+            if (article.HasText || article.Translations != null)
             {
                 var clientS3 = _s3Client.GetClient();
 
@@ -180,12 +160,6 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 {
                     // Delete text file
                     await clientS3.DeleteAsync(_settings.AWSBucket, $"{id}.txt", null);
-                }
-
-                if (article.HasImage)
-                {
-                    // Delete image
-                    await clientS3.DeleteAsync(_settings.AWSBucket, $"{id}.jpg", null);
                 }
 
                 if (article.Translations != null)
@@ -214,11 +188,6 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 if (article.HasText)
                 {
                     article.TextLink = GetTextLink(article);
-                }
-
-                if (article.HasImage)
-                {
-                    article.ImageLink = GetImageLink(article);
                 }
 
                 if (article.Translations != null)
@@ -264,14 +233,9 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
 
             results.ForEach(article =>
             {
-                if (article.HasImage)
+                if (article.HasText)
                 {
                     article.TextLink = GetTextLink(article);
-                }
-
-                if (article.HasImage)
-                {
-                    article.ImageLink = GetImageLink(article);
                 }
             });
 

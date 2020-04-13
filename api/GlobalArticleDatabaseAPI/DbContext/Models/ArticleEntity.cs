@@ -62,9 +62,19 @@ namespace GlobalArticleDatabaseAPI.DbContext.Models
         public string SourceLink { get; set; }
 
         /// <summary>
+        /// Original hyperlink of the image
+        /// </summary>
+        public string ImageLink { get; set; }
+
+        /// <summary>
         /// Organization that owns the rights of the article
         /// </summary>
         public string Owner { get; set; }
+
+        /// <summary>
+        /// Bible reference
+        /// </summary>
+        public string Reference { get; set; }
 
         /// <summary>
         /// Indicate whether the article has image

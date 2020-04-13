@@ -23,6 +23,7 @@ namespace GlobalArticleDatabaseAPITests.Builders
             _article.Subtitle = $"Subtitles {DateTime.Now.Ticks}";
             _article.Summary = $"Summary {DateTime.Now.Ticks}";
             _article.Title = $"Title {DateTime.Now.Ticks}";
+            _article.ImageLink = $"ImageLink_{DateTime.Now.Ticks}";
             return this;
         }
 

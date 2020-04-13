@@ -44,23 +44,24 @@ export class ApplicationService {
     
     let query = `?page=${page}&pageSize=${pageSize}`;
     if (text) {
-      query += `&Text=${text}`;
+      
+      query += `&Text=${encodeURIComponent(text.replace(/&amp;/g, "&"))}`;
     }
 
     if (author) {
-      query += `&author=${author}`;
+      query += `&author=${encodeURIComponent(author.replace(/&amp;/g, "&"))}`;
     }
 
     if (category) {
-      query += `&category=${category}`;
+      query += `&category=${encodeURIComponent(category.replace(/&amp;/g, "&"))}`;
     }
 
     if (topic) {
-      query += `&topic=${topic}`;
+      query += `&topic=${encodeURIComponent(topic.replace(/&amp;/g, "&"))}`;
     }
 
     if (owner) {
-      query += `&owner=${owner}`;
+      query += `&owner=${encodeURIComponent(owner.replace(/&amp;/g, "&"))}`;
     }
 
     if (sortByDate) {

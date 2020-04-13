@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iis": {
-      "applicationUrl": "http://localhost/Belsize",
+      "applicationUrl": "http://localhost/gadbapi",
       "sslPort": 0
     },
     "iisExpress": {
@@ -27,6 +27,9 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5000"
+    },
+    "IIS": {
+      "commandName": "IIS"
     }
   }
 }
