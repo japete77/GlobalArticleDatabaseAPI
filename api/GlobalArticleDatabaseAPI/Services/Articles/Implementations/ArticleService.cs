@@ -73,6 +73,7 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 Builders<ArticleEntity>.Update
                     .Set(f => f.Author, request.Article.Author)
                     .Set(f => f.Category, request.Article.Category)
+                    .Set(f => f.Characters, request.Article.Characters)
                     .Set(f => f.Topics, request.Article.Topics)
                     .Set(f => f.Date, request.Article.Date)
                     .Set(f => f.Language, request.Article.Language)
@@ -84,6 +85,7 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                     .Set(f => f.Title, request.Article.Title)
                     .Set(f => f.HasText, request.Article.HasText)
                     .Set(f => f.ImageLink, request.Article.ImageLink)
+                    .Set(f => f.Words, request.Article.Words)
             );
 
             return request.Article;
@@ -126,21 +128,6 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
             await UploadS3File(
                 GetTextFilename(new Article { Id = request.Id }),
                 request.Text
-            );
-        }
-
-        public async Task UpdateImage(UpdateArticleImageRequest request)
-        {
-            await _dbContext.Articles.UpdateOneAsync(
-                Builders<ArticleEntity>.Filter.Eq(f => f.Id, new ObjectId(request.Id)),
-                Builders<ArticleEntity>.Update
-                    .Set(f => f.HasText, true)
-            );
-
-            await UploadS3File(
-                GetImageFilename(new Article { Id = request.Id }),
-                request.ImageBase64,
-                true
             );
         }
 
@@ -207,6 +194,11 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
             {
                 throw new InvalidArgumentException(ExceptionCodes.ARTICLE_NOT_FOUND, $"Article with id {id} not found", null, StatusCodes.Status404NotFound);
             }
+        }
+
+        public async Task<long> SearchCount(ArticleFilter filter)
+        {
+            return await _dbContext.Articles.CountDocumentsAsync(GetSearchFilter(filter));
         }
 
         public async Task<ArticleSearchResponse> Search(ArticleFilter filter, int page, int pageSize)
@@ -339,6 +331,11 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                     filters.Add(Builders<ArticleEntity>.Filter.Eq(f => f.Language, filter.Language));
                 }
 
+                if (filter.SourceLink != null)
+                {
+                    filters.Add(Builders<ArticleEntity>.Filter.Eq(f => f.SourceLink, filter.SourceLink));
+                }
+
                 if (filter.Owner != null)
                 {
                     filters.Add(Builders<ArticleEntity>.Filter.Eq(f => f.Owner, filter.Owner));
@@ -347,6 +344,24 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 if (filter.TranslationLanguage != null)
                 {
                     filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.Language == filter.TranslationLanguage));
+                }
+
+                if (filter.ReviewedBy != null && filter.Status != null)
+                {
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.ReviewedBy == filter.ReviewedBy && x.Status == filter.Status));
+                }
+                else if (filter.Status != null)
+                {
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.Status == filter.Status));
+                }
+                else if (filter.ReviewedBy != null)
+                {
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.ReviewedBy == filter.ReviewedBy));
+                }
+
+                if (filter.TranslatedBy != null)
+                {
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.TranslatedBy == filter.TranslatedBy));
                 }
 
                 if (filter.PublishedBy != null)

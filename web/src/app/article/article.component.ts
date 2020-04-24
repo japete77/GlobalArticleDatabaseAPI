@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Article } from '../models/article';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { ApplicationService } from 'src/services/gadb.service';
+import { ApplicationService } from 'src/app/services/gadb.service';
 import { TdLoadingService } from '@covalent/core/loading';
 import { ArticleContext } from '../models/article-context';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
@@ -19,6 +19,7 @@ export class ArticleComponent implements OnInit {
   categories: string[];
   owners: string[];
   topics: string[];
+  status: string[];
 
   visible = true;
   selectable = true;
@@ -42,6 +43,7 @@ export class ArticleComponent implements OnInit {
     this.categories = data.categories;
     this.owners = data.owners;
     this.topics = data.topics;
+    this.status = data.status;
   }
 
   ngOnInit(): void {
@@ -64,9 +66,6 @@ export class ArticleComponent implements OnInit {
   }
 
   articleCreationDateChange(event) {
-    // var a = event.value.toDateString();
-    // this.data.articleUpdated.date = new Date(a);
-    // console.log(event);
   }
 
   add(event: MatChipInputEvent): void {

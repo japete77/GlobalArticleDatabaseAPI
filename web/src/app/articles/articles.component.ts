@@ -1,5 +1,5 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { ApplicationService } from 'src/services/gadb.service';
+import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
+import { ApplicationService } from 'src/app/services/gadb.service';
 import { Article } from '../models/article';
 import { TdLoadingService } from '@covalent/core/loading';
 import { MatRadioChange } from '@angular/material/radio';
@@ -13,7 +13,10 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ArticleComponent } from '../article/article.component';
 import { ArticleContext } from '../models/article-context';
 import { AuthenticationService } from '../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { WorkspaceEntry } from '../models/workspace.entry';
+import { MatSelectionListChange, MatSelectionList } from '@angular/material/list';
+import { tick } from '@angular/core/testing';
 
 @Component({
   selector: 'articles',
@@ -29,16 +32,19 @@ export class ArticlesComponent implements OnInit {
     private _domSanitizer:DomSanitizer,
     public dialog: MatDialog,
     private authService: AuthenticationService,
-    private router: Router) {
+    private route: ActivatedRoute) {
     this._iconRegistry.addSvgIconInNamespace('assets', 'gadb',
     this._domSanitizer.bypassSecurityTrustResourceUrl('assets/gadb.svg'));
   }
+  
+  @ViewChild('workspaceOptions') workspaceOptions : MatSelectionList;
   
   authorControl = new FormControl();
   categoryControl = new FormControl();
   topicControl = new FormControl();
   ownerControl = new FormControl();
   sourceControl = new FormControl();
+  sortControl = new FormControl();
 
   PAGE_SIZE = 25;
   searchText = '';
@@ -49,11 +55,18 @@ export class ArticlesComponent implements OnInit {
   topics = [];
   owners = [];
 
-  sortByDate : number;
-  sortByAuthor : number;
-  sortBySource : number;
+  sortFilters = ['Newest', 'Oldest']
+  // sortByDate : number;
+  // sortByAuthor : number;
+  // sortBySource : number;
+
+  reviewedBy: string;
+  status: string;
 
   articles: Article[] = [];
+
+  workspace: WorkspaceEntry[];
+  translationStatus: string[];
 
   filteredAuthors: Observable<string[]>;
   filteredCategories: Observable<string[]>;
@@ -62,6 +75,16 @@ export class ArticlesComponent implements OnInit {
   filteredOwners: Observable<string[]>;
  
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe(params => {
+      let articleId = params.get('article');
+      if (articleId) {
+        this.appService.getArticle(articleId)
+        .subscribe(data => {
+          this.openArticle(data);
+        });
+      }
+    });
+
     this.appService.getAuthors()
       .subscribe(data => {
         this.authors = data.items.sort();
@@ -106,7 +129,17 @@ export class ArticlesComponent implements OnInit {
           );
     });
 
-    this.search();
+    this.appService.getWorkspace()
+      .subscribe(data => {
+        this.workspace = data.workspaceEntries;
+      });
+
+    this.appService.getTranslationStatus()
+      .subscribe(data => {
+        this.translationStatus = data;
+      });
+
+      this.search();
   }
 
   private _filter(value: string, values: string[]): string[] {
@@ -124,18 +157,18 @@ export class ArticlesComponent implements OnInit {
   search() {
     this.showMore = false;
     this.loadingService.register("loading");
-    this.appService.getArticles(
-        this.currentPage, 
-        this.PAGE_SIZE, 
-        this.searchText, 
-        this.authorControl.value, 
-        this.categoryControl.value,
-        this.topicControl.value,
-        this.ownerControl.value,
-        this.sortByAuthor,
-        this.sortByDate, 
-        this.sortBySource
-      )
+    this.appService.getArticles({
+      page : this.currentPage,
+      pageSize: this.PAGE_SIZE,
+      text: this.searchText,
+      author: this.authorControl.value,
+      category: this.categoryControl.value,
+      topic: this.topicControl.value,
+      owner: this.ownerControl.value,
+      sortBy: this.sortFilters.indexOf(this.sortControl.value),
+      reviewedBy: this.reviewedBy,
+      status: this.status
+    })
       .subscribe(data => {
         this.articles = this.articles.concat(data.articles);
         this.loadingService.resolve("loading");
@@ -143,20 +176,15 @@ export class ArticlesComponent implements OnInit {
       });
   }
 
-  sortChange(event: MatRadioChange) {
-    if (event.value == 0 || event.value == 1) {
-      this.sortByAuthor = undefined;
-      this.sortBySource = undefined;
-    }
-
-    if (event.value == 2 || event.value == 3) {
-      this.sortByDate = undefined;
-      this.sortBySource = undefined;
-    }
-
-    if (event.value == 4 || event.value == 5) {
-      this.sortByDate = undefined;
-      this.sortByAuthor = undefined;
+  filterByWorkspace(event: MatSelectionListChange) {
+    if (event.option.selected) {
+      this.workspaceOptions.deselectAll();
+      this.workspaceOptions.selectedOptions.select(event.option);
+      this.status = event.option.value.status != 'All Asigned To Me' ? event.option.value.status : null;
+      this.reviewedBy = event.option.value.reviewer;
+    } else {
+      this.status = null;
+      this.reviewedBy = null;
     }
 
     this.clearResults();
@@ -185,7 +213,8 @@ export class ArticlesComponent implements OnInit {
       authors: this.authors,
       categories: this.categories,
       owners: this.owners,
-      topics: this.topics
+      topics: this.topics,
+      status: this.translationStatus
     };
     const dialogRef = this.dialog.open(ArticleComponent, dialogConfig);
 

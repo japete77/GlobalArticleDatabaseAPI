@@ -129,9 +129,7 @@
                                     <mat-label>Status</mat-label>
                                     <select matNativeControl [(ngModel)]="translation.status" name="status">
                                         <option value=""></option>
-                                        <option value="In progress">In progress</option>
-                                        <option value="Pending review">Pending review</option>
-                                        <option value="Ready">Ready</option>
+                                        <option *ngFor="let item of status" value="{{item}}">{{item}}</option>
                                     </select>
                                 </mat-form-field>
                             </td>
@@ -161,7 +159,7 @@
             </mat-tab-group>
         </mat-dialog-content>
         <mat-dialog-actions align="end">
-            <button mat-raised-button color="primary" [mat-dialog-close]="data">Update</button>
+            <button secure [roles]="['ADMIN', 'EDITOR']" mat-raised-button color="primary" [mat-dialog-close]="data">Update</button>
             <button mat-raised-button [mat-dialog-close]>Close</button>
         </mat-dialog-actions>
     </div>

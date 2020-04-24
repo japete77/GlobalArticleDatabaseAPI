@@ -45,6 +45,8 @@ import { DialogComponent } from './dialog/dialog.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { MatListModule } from '@angular/material/list';
+import { SecureDirective } from './directives/secure.directive';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -60,7 +62,8 @@ export function initializeApp(appConfig: AppConfig) {
     LoginComponent,
     DialogComponent,
     ForgotPasswordComponent,
-    ChangePasswordComponent
+    ChangePasswordComponent,
+    SecureDirective
   ],
   imports: [
     BrowserModule,
@@ -92,7 +95,8 @@ export function initializeApp(appConfig: AppConfig) {
     MatDatepickerModule,
     MatNativeDateModule,
     FlexLayoutModule,
-    MatMenuModule
+    MatMenuModule,
+    MatListModule
   ],
   schemas: [ 
     CUSTOM_ELEMENTS_SCHEMA 

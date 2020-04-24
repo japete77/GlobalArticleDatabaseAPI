@@ -69,6 +69,16 @@ namespace GlobalArticleDatabaseAPI.Models
         public string Reference { get; set; }
 
         /// <summary>
+        /// Number of words in the article, including Title and Summary
+        /// </summary>
+        public int Words { get; set; }
+
+        /// <summary>
+        /// Number of characters in the article including Title and Summary
+        /// </summary>
+        public int Characters { get; set; }
+
+        /// <summary>
         /// Indicate whether the article has image
         /// </summary>
         public bool HasText { get; set; }

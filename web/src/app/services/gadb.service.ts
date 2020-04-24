@@ -10,6 +10,8 @@ import { Translation } from 'src/app/models/translation';
 import { UpdateTranslationRequest } from 'src/app/models/update-translation-request';
 import { UpdateTranslationTextRequest } from 'src/app/models/update-translation-text-request';
 import { AppConfig } from 'src/app/helpers/app-config';
+import { WorkspaceResponse } from 'src/app/models/responses/workspace.response';
+import { ArticleFilter } from '../models/article.filter';
 
 @Injectable({ providedIn: "root" })
 export class ApplicationService {
@@ -40,52 +42,48 @@ export class ApplicationService {
     );
   }
 
-  getArticles(page: number, pageSize: number, text?: string, author?: string, category?: string, topic?: string, owner?: string, sortByAuthor?: number,  sortByDate?: number,  sortBySource?: number) {
+  getArticle(id: string) {
+    return this.http.get<Article>(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/article/${id}`
+    );
+  }
+
+  getArticles(filter: ArticleFilter) {
     
-    let query = `?page=${page}&pageSize=${pageSize}`;
-    if (text) {
+    let query = `?page=${filter.page}&pageSize=${filter.pageSize}`;
+    if (filter.text) {
       
-      query += `&Text=${encodeURIComponent(text.replace(/&amp;/g, "&"))}`;
+      query += `&Text=${encodeURIComponent(filter.text.replace(/&amp;/g, "&"))}`;
     }
 
-    if (author) {
-      query += `&author=${encodeURIComponent(author.replace(/&amp;/g, "&"))}`;
+    if (filter.author) {
+      query += `&author=${encodeURIComponent(filter.author.replace(/&amp;/g, "&"))}`;
     }
 
-    if (category) {
-      query += `&category=${encodeURIComponent(category.replace(/&amp;/g, "&"))}`;
+    if (filter.category) {
+      query += `&category=${encodeURIComponent(filter.category.replace(/&amp;/g, "&"))}`;
     }
 
-    if (topic) {
-      query += `&topic=${encodeURIComponent(topic.replace(/&amp;/g, "&"))}`;
+    if (filter.topic) {
+      query += `&topic=${encodeURIComponent(filter.topic.replace(/&amp;/g, "&"))}`;
     }
 
-    if (owner) {
-      query += `&owner=${encodeURIComponent(owner.replace(/&amp;/g, "&"))}`;
+    if (filter.owner) {
+      query += `&owner=${encodeURIComponent(filter.owner.replace(/&amp;/g, "&"))}`;
     }
 
-    if (sortByDate) {
-      if (sortByDate == 0) {
-        query += `&ByDateAsc=true`;
-      } else {
-        query += `&ByDateAsc=false`;
-      }
+    if (filter.reviewedBy) {
+      query += `&reviewedBy=${encodeURIComponent(filter.reviewedBy.replace(/&amp;/g, "&"))}`;
     }
 
-    if (sortByAuthor) {
-      if (sortByAuthor == 2) {
-        query += `&ByAuthorAsc=true`;
-      } else {
-        query += `&ByAuthorAsc=false`;
-      }
+    if (filter.status) {
+      query += `&status=${encodeURIComponent(filter.status.replace(/&amp;/g, "&"))}`;
     }
 
-    if (sortBySource) {
-      if (sortBySource == 4) {
-        query += `&ByOwnerAsc=true`;
-      } else {
-        query += `&ByOwnerAsc=false`;
-      }
+    if (filter.sortBy == 0) {
+      query += `&ByDateAsc=false`;
+    } else if (filter.sortBy == 1) {
+      query += `&ByDateAsc=true`;
     }
 
     return this.http.get<ArticleSearchResponse>(
@@ -128,6 +126,24 @@ export class ApplicationService {
     return this.http.put(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation/text`,
       body
+    );
+  }
+
+  getWorkspace() {
+    return this.http.get<WorkspaceResponse>(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/workspace`,      
+    );
+  }
+
+  getWorkspaceArticles(url: string, page: number, pageSize: number) {
+    return this.http.get<ArticleSearchResponse>(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/${url}&page=${page}&pageSize=${pageSize}`
+    );
+  }
+
+  getTranslationStatus() {
+    return this.http.get<string[]>(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation/status`,      
     );
   }
 }

@@ -9,6 +9,17 @@
       <mat-accordion multi="true">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
+            Workspace
+          </mat-expansion-panel-header>
+          <mat-selection-list #workspaceOptions role="list" (selectionChange)="filterByWorkspace($event)">
+            <mat-list-option class="workspace-options" *ngFor="let item of workspace" [value]="item" role="listitem">
+              <mat-icon mat-list-icon>folder</mat-icon>
+              <div mat-line>{{item.name}} ({{item.count}})</div>
+            </mat-list-option>
+          </mat-selection-list>
+        </mat-expansion-panel>
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
             Filtered by
           </mat-expansion-panel-header>
           <mat-form-field class="filter-field">
@@ -52,30 +63,13 @@
           <mat-expansion-panel-header>
             Sorted by
           </mat-expansion-panel-header>
-          <div class="sort-item">
-            <label class="sort-item-label">Date</label>
-            <mat-radio-group class="sort-item-updown" aria-label="Select an option" [(ngModel)]="sortByDate"
-              (change)="sortChange($event)">
-              <mat-radio-button value="0">Asc</mat-radio-button>
-              <mat-radio-button value="1">Desc</mat-radio-button>
-            </mat-radio-group>
-          </div>
-          <div class="sort-item">
-            <label class="sort-item-label">Author</label>
-            <mat-radio-group class="sort-item-updown" aria-label="Select an option" [(ngModel)]="sortByAuthor"
-              (change)="sortChange($event)">
-              <mat-radio-button value="2">Asc</mat-radio-button>
-              <mat-radio-button value="3">Desc</mat-radio-button>
-            </mat-radio-group>
-          </div>
-          <div class="sort-item">
-            <label class="sort-item-label">Source</label>
-            <mat-radio-group class="sort-item-updown" aria-label="Select an option" [(ngModel)]="sortBySource"
-              (change)="sortChange($event)">
-              <mat-radio-button value="4">Asc</mat-radio-button>
-              <mat-radio-button value="5">Desc</mat-radio-button>
-            </mat-radio-group>
-          </div>
+          <mat-form-field class="filter-field">
+            <input #sortBy type="text" placeholder="Sort By" (keydown.enter)="filterChanged()" aria-label="Sort By"
+              matInput [formControl]="sortControl" [matAutocomplete]="sortTopic">
+            <mat-autocomplete #sortTopic="matAutocomplete" (optionSelected)="filterChanged()">
+              <mat-option *ngFor="let item of sortFilters" [value]="item">{{item}}</mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
         </mat-expansion-panel>
       </mat-accordion>
     </div>
@@ -87,7 +81,7 @@
         <button mat-menu-item (click)="logout()">
           <mat-icon>exit_to_app</mat-icon>
           <span>Logout</span>
-        </button> 
+        </button>
       </mat-menu>
     </div>
     <mat-card *ngFor="let article of articles" class="article-card">

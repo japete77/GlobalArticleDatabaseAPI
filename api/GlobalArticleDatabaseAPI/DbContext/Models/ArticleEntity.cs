@@ -87,6 +87,16 @@ namespace GlobalArticleDatabaseAPI.DbContext.Models
         public bool HasText { get; set; }
 
         /// <summary>
+        /// Number of words in the article, including Title and Summary
+        /// </summary>
+        public int Words { get; set; }
+
+        /// <summary>
+        /// Number of characters in the article including Title and Summary
+        /// </summary>
+        public int Characters { get; set; }
+
+        /// <summary>
         /// Article translations
         /// </summary>
         public List<TranslationEntity> Translations { get; set; }

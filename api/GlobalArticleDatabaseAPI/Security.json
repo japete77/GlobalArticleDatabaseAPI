@@ -64,13 +64,6 @@
           ]
         },
         {
-          "name": "UpdateImage",
-          "roles": [
-            "ADMIN",
-            "EDITOR"
-          ]
-        },
-        {
           "name": "Get",
           "roles": [
             "ADMIN",
@@ -190,6 +183,14 @@
             "ADMIN",
             "EDITOR"
           ]
+        },
+        {
+          "name": "GetStatus",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
         }
       ]
     },
@@ -235,5 +236,20 @@
           ]
         }
       ]
-    }  ]
+    },
+    {
+      "name": "WorkspaceV1",
+      "roles": [],
+      "actions": [
+        {
+          "name": "GetWorkspace",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
+        }
+      ]
+    }
+  ]
 }

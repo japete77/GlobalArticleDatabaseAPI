@@ -4,6 +4,7 @@ using GlobalArticleDatabaseAPITests.Builders;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 using Xunit;
 
 namespace GlobalArticleDatabaseAPITests
@@ -334,6 +335,91 @@ namespace GlobalArticleDatabaseAPITests
             );
 
             Assert.True(httpResponseUpdateTranslation.StatusCode == System.Net.HttpStatusCode.NotFound, $"Update error 'Not Found' not raised: {httpResponseUpdateTranslation.StatusCode}");
+        }
+
+        [Fact]
+        [Trait("Category", "IntegrationTest")]
+        public async Task Translation_CreateMultipleSearchByReviewer_Success()
+        {
+            var article = new ArticleModelBuilder()
+                .WithRandomValues()
+                .Build();
+
+            using var client = await _webAppContext.GetLoggedClient();
+
+            // Create article
+            using var httpResponseCreate = await CallApiAsync<CreateArticleRequest>(
+                client.PostAsync,
+                $"/api/v1/article",
+                new CreateArticleRequest
+                {
+                    Article = article,
+                    Text = "In ENglish"
+                }
+            );
+
+            Assert.True(httpResponseCreate.StatusCode == System.Net.HttpStatusCode.OK, $"Error in create article response: {httpResponseCreate.StatusCode}");
+
+            var dataCreate = await GetResponse<CreateArticleResponse>(httpResponseCreate.Content);
+
+            var translationES = new TranslationModelBuilder()
+                .WithRandomValues()
+                .WithLanguage("es")
+                .Build();
+
+            // Create translation ES
+            using var httpResponseCreateTranslationES = await CallApiAsync<CreateTranslationRequest>(
+                client.PostAsync,
+                $"/api/v1/translation",
+                new CreateTranslationRequest
+                {
+                    ArticleId = dataCreate.Article.Id,
+                    Translation = translationES,
+                    Text = "En español"
+                }
+            );
+
+            Assert.True(httpResponseCreateTranslationES.StatusCode == System.Net.HttpStatusCode.OK, $"Error in create translation response: {httpResponseCreateTranslationES.StatusCode}");
+
+            var translationFR = new TranslationModelBuilder()
+                .WithRandomValues()
+                .WithLanguage("fr")
+                .Build();
+
+            // Create translation FR
+            using var httpResponseCreateTranslationFR = await CallApiAsync<CreateTranslationRequest>(
+                client.PostAsync,
+                $"/api/v1/translation",
+                new CreateTranslationRequest
+                {
+                    ArticleId = dataCreate.Article.Id,
+                    Translation = translationFR,
+                    Text = "Fraçous"
+                }
+            );
+
+            Assert.True(httpResponseCreateTranslationFR.StatusCode == System.Net.HttpStatusCode.OK, $"Error in create translation response: {httpResponseCreateTranslationFR.StatusCode}");
+
+            // Search by reviewed by
+            using var httpResponseSearch = await CallApiAsync(
+                client.GetAsync,
+                $"/api/v1/articles?filter.reviewedBy={HttpUtility.UrlEncode(translationES.ReviewedBy)}&page=1&pageCount=10"
+            );
+
+            var searchResult = await GetResponse<ArticleSearchResponse>(httpResponseSearch.Content);
+
+            Assert.True(searchResult.Total == 1, "Not found articles");
+            Assert.True(searchResult.Articles != null && searchResult.Articles.Count == 1, "Not found articles");
+            Assert.True(searchResult.Articles[0].Translations != null &&
+                        searchResult.Articles[0].Translations.Where(w => w.ReviewedBy == translationES.ReviewedBy).Count() == 1, "Not found articles");
+
+            // Delete
+            using var httpResponseDelete = await CallApiAsync(
+                client.DeleteAsync,
+                $"/api/v1/article/{dataCreate.Article.Id}"
+            );
+
+            Assert.True(httpResponseDelete.StatusCode == System.Net.HttpStatusCode.OK, $"Error in deleting article response: {httpResponseCreate.StatusCode}");
         }
     }
 }

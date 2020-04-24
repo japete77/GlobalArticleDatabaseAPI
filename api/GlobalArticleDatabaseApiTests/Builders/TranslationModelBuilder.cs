@@ -24,7 +24,6 @@ namespace GlobalArticleDatabaseAPITests.Builders
             _translation.ReviewedBy = $"Reviewer_{DateTime.Now.Ticks}";
             _translation.Status = $"Status_{DateTime.Now.Ticks}";
             _translation.TranslatedBy = $"Translator_{DateTime.Now.Ticks}";
-
             return this;
         }
 
@@ -61,6 +60,18 @@ namespace GlobalArticleDatabaseAPITests.Builders
         public TranslationModelBuilder WithDate(DateTime date)
         {
             _translation.Date = date;
+            return this;
+        }
+
+        public TranslationModelBuilder WithReviewedBy(string reviewedBy)
+        {
+            _translation.ReviewedBy = reviewedBy;
+            return this;
+        }
+
+        public TranslationModelBuilder WithTranslatedBy(string translatedBy)
+        {
+            _translation.TranslatedBy = translatedBy;
             return this;
         }
 

@@ -160,6 +160,8 @@ namespace GlobalArticleDatabaseAPITests
             Assert.True(dataCreate.Article.Subtitle == article.Subtitle, "Subtitle mismatch");
             Assert.True(dataCreate.Article.Summary == article.Summary, "Summary mismatch");
             Assert.True(dataCreate.Article.Title == article.Title, "Title mismatch");
+            Assert.True(dataCreate.Article.Words == article.Words, "Words mismatch");
+            Assert.True(dataCreate.Article.Characters == article.Characters, "Characters mismatch");
 
             // Retrieve article
             using var httpResponseRetrieve = await CallApiAsync(
@@ -182,6 +184,8 @@ namespace GlobalArticleDatabaseAPITests
             Assert.True(dataCreate.Article.Subtitle == dataRetrieve.Subtitle, "Subtitle mismatch");
             Assert.True(dataCreate.Article.Summary == dataRetrieve.Summary, "Summary mismatch");
             Assert.True(dataCreate.Article.Title == dataRetrieve.Title, "Title mismatch");
+            Assert.True(dataCreate.Article.Words == dataRetrieve.Words, "Words mismatch");
+            Assert.True(dataCreate.Article.Characters == dataRetrieve.Characters, "Characters mismatch");
 
             // Update article
             var updateArticle = new ArticleModelBuilder()
@@ -213,6 +217,8 @@ namespace GlobalArticleDatabaseAPITests
             Assert.True(updateArticle.Subtitle == dataUpdate.Article.Subtitle, "Subtitle mismatch");
             Assert.True(updateArticle.Summary == dataUpdate.Article.Summary, "Summary mismatch");
             Assert.True(updateArticle.Title == dataUpdate.Article.Title, "Title mismatch");
+            Assert.True(updateArticle.Words == dataUpdate.Article.Words, "Words mismatch");
+            Assert.True(updateArticle.Characters == dataUpdate.Article.Characters, "Characters mismatch");
 
             // Delete
             using var httpResponseDelete = await CallApiAsync(
@@ -268,9 +274,6 @@ namespace GlobalArticleDatabaseAPITests
 
             var getTextResponse = await httpGet.GetAsync(dataCreate.Article.TextLink);
             Assert.True(getTextResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving text file: {getTextResponse.StatusCode}");
-
-            var getImageResponse = await httpGet.GetAsync(dataCreate.Article.ImageLink);
-            Assert.True(getImageResponse.StatusCode == System.Net.HttpStatusCode.OK, $"Error retrieving image file: {getImageResponse.StatusCode}");
 
             // Update article text
             using var httpResponseUpdateText = await CallApiAsync<UpdateArticleTextRequest>(

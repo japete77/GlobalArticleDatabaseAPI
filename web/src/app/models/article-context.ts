@@ -11,4 +11,5 @@ export class ArticleContext {
     textUpdated: string;
     translationText: any;
     translationTextUpdated: any;
+    status: string[];
 }

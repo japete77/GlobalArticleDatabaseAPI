@@ -79,18 +79,6 @@ namespace GlobalArticleDatabaseAPI.Controllers
         }
 
         /// <summary>
-        /// Update article image
-        /// </summary>
-        [Route("article/image")]
-        [HttpPut]
-        public async Task UpdateImage(UpdateArticleImageRequest request)
-        {
-            request.ValidateAndThrow();
-
-            await _articlesService.UpdateImage(request);
-        }
-
-        /// <summary>
         /// Get article
         /// </summary>
         [Route("article/{id}")]

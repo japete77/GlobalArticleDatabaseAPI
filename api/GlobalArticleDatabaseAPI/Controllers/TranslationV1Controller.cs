@@ -2,6 +2,7 @@
 using GlobalArticleDatabaseAPI.Services.Articles.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
@@ -69,6 +70,16 @@ namespace GlobalArticleDatabaseAPI.Controllers
         public async Task Delete([Required]string articleId, [Required]string language)
         {
             await _translationService.Delete(articleId, language);
+        }
+
+        /// <summary>
+        /// Get status list
+        /// </summary>
+        [Route("translation/status")]
+        [HttpGet]
+        public List<string> GetStatus()
+        {
+            return TranslationStatus.GetTraslationStatus();
         }
     }
 }

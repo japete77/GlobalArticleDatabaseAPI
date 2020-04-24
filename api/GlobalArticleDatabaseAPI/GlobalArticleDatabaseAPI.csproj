@@ -88,6 +88,7 @@
     <Folder Include="Identity\Helpers\" />
     <Folder Include="Identity\Implementation\" />
     <Folder Include="Models\Translation\Responses\" />
+    <Folder Include="Models\Workspace\Requests\" />
     <Folder Include="Services\Config\" />
     <Folder Include="Services\Users\Interfaces\" />
     <Folder Include="Services\Users\Implementations\" />

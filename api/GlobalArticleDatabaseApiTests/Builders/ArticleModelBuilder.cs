@@ -6,10 +6,12 @@ namespace GlobalArticleDatabaseAPITests.Builders
     public class ArticleModelBuilder
     {
         private readonly Article _article;
+        private readonly Random _random;
 
         public ArticleModelBuilder()
         {
             _article = new Article();
+            _random = new Random((int)DateTime.Now.Ticks);
         }
 
         public ArticleModelBuilder WithRandomValues()
@@ -24,6 +26,8 @@ namespace GlobalArticleDatabaseAPITests.Builders
             _article.Summary = $"Summary {DateTime.Now.Ticks}";
             _article.Title = $"Title {DateTime.Now.Ticks}";
             _article.ImageLink = $"ImageLink_{DateTime.Now.Ticks}";
+            _article.Characters = _random.Next(1000, 10000);
+            _article.Words = _article.Characters / 5;
             return this;
         }
 
@@ -62,7 +66,6 @@ namespace GlobalArticleDatabaseAPITests.Builders
             _article.Title = title;
             return this;
         }
-
 
         public Article Build() => _article;
     }
