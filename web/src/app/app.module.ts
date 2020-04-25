@@ -47,6 +47,9 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { MatListModule } from '@angular/material/list';
 import { SecureDirective } from './directives/secure.directive';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { SelectLanguageComponent } from './select-language/select-language.component';
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -63,7 +66,9 @@ export function initializeApp(appConfig: AppConfig) {
     DialogComponent,
     ForgotPasswordComponent,
     ChangePasswordComponent,
-    SecureDirective
+    SecureDirective,
+    SelectLanguageComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -96,7 +101,8 @@ export function initializeApp(appConfig: AppConfig) {
     MatNativeDateModule,
     FlexLayoutModule,
     MatMenuModule,
-    MatListModule
+    MatListModule,
+    ClipboardModule
   ],
   schemas: [ 
     CUSTOM_ELEMENTS_SCHEMA 

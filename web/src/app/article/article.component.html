@@ -2,11 +2,29 @@
     <div class="article">
         <table cellspacing="0">
             <tr>
+                <td class="article-menu">
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Artcile options">
+                        <mat-icon>menu</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item [cdkCopyToClipboard]="articleText">
+                            <mat-icon>file_copy</mat-icon>
+                            <span>Copy Article</span>
+                        </button>
+                        <button secure [roles]="['ADMIN', 'EDITOR']" mat-menu-item (click)="addTranslation()">
+                            <mat-icon>create</mat-icon>
+                            <span>Add Translation</span>
+                        </button>
+                        <button *ngIf="translationIndex > 0" secure [roles]="['ADMIN', 'EDITOR']" mat-menu-item (click)="deleteTranslation()">
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete Translation</span>
+                        </button>
+                    </mat-menu>
+                </td>
                 <td>
                     <mat-form-field class="article-field">
                         <mat-label>Author</mat-label>
-                        <input #author matInput [(ngModel)]="data.articleUpdated.author"
-                            [matAutocomplete]="autoAuthor">
+                        <input #author matInput [(ngModel)]="data.articleUpdated.author" [matAutocomplete]="autoAuthor">
                         <mat-autocomplete #autoAuthor="matAutocomplete">
                             <mat-option *ngFor="let author of authors" [value]="author">
                                 {{author}}
@@ -17,8 +35,7 @@
                 <td>
                     <mat-form-field class="article-field">
                         <mat-label>Category</mat-label>
-                        <input matInput [(ngModel)]="data.articleUpdated.category"
-                            [matAutocomplete]="autoCategory">
+                        <input matInput [(ngModel)]="data.articleUpdated.category" [matAutocomplete]="autoCategory">
                         <mat-autocomplete #autoCategory="matAutocomplete">
                             <mat-option *ngFor="let category of categories" [value]="category">
                                 {{category}}
@@ -29,8 +46,7 @@
                 <td>
                     <mat-form-field class="article-field">
                         <mat-label>Source</mat-label>
-                        <input matInput [(ngModel)]="data.articleUpdated.owner"
-                            [matAutocomplete]="autoOwner">
+                        <input matInput [(ngModel)]="data.articleUpdated.owner" [matAutocomplete]="autoOwner">
                         <mat-autocomplete #autoOwner="matAutocomplete">
                             <mat-option *ngFor="let owner of owners" [value]="owner">
                                 {{owner}}
@@ -50,8 +66,8 @@
         </table>
         <mat-form-field class="form--full">
             <mat-chip-list #topicList aria-label="Topics">
-                <mat-chip *ngFor="let topic of data.articleUpdated.topics" [selectable]="selectable" [removable]="removable"
-                    (removed)="remove(topic)">
+                <mat-chip *ngFor="let topic of data.articleUpdated.topics" [selectable]="selectable"
+                    [removable]="removable" (removed)="remove(topic)">
                     {{topic}}
                     <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                 </mat-chip>
@@ -70,7 +86,7 @@
             <input matInput [(ngModel)]="data.articleUpdated.sourceLink">
         </mat-form-field>
         <mat-dialog-content class="mat-typography">
-            <mat-tab-group>
+            <mat-tab-group (selectedTabChange)="onTabChanged($event)" [(selectedIndex)]="translationIndex">
                 <mat-tab class="tab-content">
                     <ng-template mat-tab-label>
                         <span [ngClass]="['flag-icon', 'flag-icon-' + data.articleUpdated.language]"></span>
@@ -88,7 +104,7 @@
                         <mat-label>Summary</mat-label>
                         <textarea class="form-textarea" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
                             cdkAutosizeMinRows="1" [(ngModel)]="data.articleUpdated.summary">
-                </textarea>
+                        </textarea>
                     </mat-form-field>
                     <mat-form-field class="article-field--full">
                         <mat-label>Text</mat-label>
@@ -159,7 +175,8 @@
             </mat-tab-group>
         </mat-dialog-content>
         <mat-dialog-actions align="end">
-            <button secure [roles]="['ADMIN', 'EDITOR']" mat-raised-button color="primary" [mat-dialog-close]="data">Update</button>
+            <button secure [roles]="['ADMIN', 'EDITOR']" mat-raised-button color="primary"
+                [mat-dialog-close]="data">Update</button>
             <button mat-raised-button [mat-dialog-close]>Close</button>
         </mat-dialog-actions>
     </div>

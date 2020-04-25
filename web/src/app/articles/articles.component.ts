@@ -237,6 +237,10 @@ export class ArticlesComponent implements OnInit {
         
         data.article.translations.forEach(item => {
 
+          if (data.translationTextUpdated[item.language]) {
+            item.hasText = true;
+          }
+
           if (JSON.stringify(item) != JSON.stringify(data.articleUpdated.translations.find(s => s.language == item.language))) {
             allPromises.push(this.appService.updateTranslation(data.articleUpdated.id, data.articleUpdated.translations.find(s => s.language == item.language)).toPromise());
           }

@@ -29,10 +29,8 @@ namespace GlobalArticleDatabaseAPI.Models
         {
             RuleFor(model => model.ArticleId).NotEmpty();
             RuleFor(model => model.Translation).NotEmpty();
-            RuleFor(model => model.Translation.Title).NotEmpty();
             RuleFor(model => model.Translation.Date).NotEmpty();
             RuleFor(model => model.Translation.Language).NotEmpty();
-            RuleFor(model => model.Translation.Status).NotEmpty();
         }
     }
 }

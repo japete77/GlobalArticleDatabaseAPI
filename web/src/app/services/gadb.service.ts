@@ -12,6 +12,7 @@ import { UpdateTranslationTextRequest } from 'src/app/models/update-translation-
 import { AppConfig } from 'src/app/helpers/app-config';
 import { WorkspaceResponse } from 'src/app/models/responses/workspace.response';
 import { ArticleFilter } from '../models/article.filter';
+import { CreateTranslationRequest } from '../models/create-translation-request';
 
 @Injectable({ providedIn: "root" })
 export class ApplicationService {
@@ -113,11 +114,25 @@ export class ApplicationService {
     );
   }
 
+  createTranslation(articleId: string, text: string, translation: Translation) {
+    var body: CreateTranslationRequest = { articleId: articleId, text: text, translation: translation };
+    return this.http.post(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation`,
+      body
+    );
+  }
+
   updateTranslation(articleId: string, translation: Translation) {
     var body: UpdateTranslationRequest = { articleId: articleId, translation: translation };
     return this.http.put(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation`,
       body
+    );
+  }
+
+  deleteTranslation(articleId: string, language: string) {
+    return this.http.delete(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation?articleId=${articleId}&language=${language}`
     );
   }
 
