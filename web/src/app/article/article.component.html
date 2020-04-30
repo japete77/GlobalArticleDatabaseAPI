@@ -9,7 +9,7 @@
                     <mat-menu #menu="matMenu">
                         <button mat-menu-item [cdkCopyToClipboard]="articleText">
                             <mat-icon>file_copy</mat-icon>
-                            <span>Copy Article</span>
+                            <span>Copy Raw Article</span>
                         </button>
                         <button secure [roles]="['ADMIN', 'EDITOR']" mat-menu-item (click)="addTranslation()">
                             <mat-icon>create</mat-icon>
@@ -106,12 +106,10 @@
                             cdkAutosizeMinRows="1" [(ngModel)]="data.articleUpdated.summary">
                         </textarea>
                     </mat-form-field>
-                    <mat-form-field class="article-field--full">
+                    <div class="article-field--full">
                         <mat-label>Text</mat-label>
-                        <textarea class="form-textarea" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
-                            cdkAutosizeMinRows="1" [(ngModel)]="data.textUpdated">
-                </textarea>
-                    </mat-form-field>
+                        <ckeditor [editor]="Editor" [(ngModel)]="data.textUpdated"></ckeditor>
+                    </div>
                 </mat-tab>
                 <mat-tab class="tab-content" *ngFor="let translation of data.articleUpdated.translations">
                     <ng-template mat-tab-label>
@@ -163,14 +161,12 @@
                         <mat-label>Summary</mat-label>
                         <textarea class="form-textarea" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
                             cdkAutosizeMinRows="1" [(ngModel)]="translation.summary">
-                </textarea>
+                        </textarea>
                     </mat-form-field>
-                    <mat-form-field class="article-field--full">
+                    <div class="article-field--full">
                         <mat-label>Text</mat-label>
-                        <textarea class="form-textarea" matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
-                            cdkAutosizeMinRows="1" [(ngModel)]="data.translationTextUpdated[translation.language]">
-                </textarea>
-                    </mat-form-field>
+                        <ckeditor [editor]="Editor" [(ngModel)]="data.translationTextUpdated[translation.language]"></ckeditor>
+                    </div>
                 </mat-tab>
             </mat-tab-group>
         </mat-dialog-content>

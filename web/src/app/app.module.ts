@@ -50,6 +50,7 @@ import { SecureDirective } from './directives/secure.directive';
 import { ClipboardModule } from '@angular/cdk/clipboard';
 import { SelectLanguageComponent } from './select-language/select-language.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -102,7 +103,8 @@ export function initializeApp(appConfig: AppConfig) {
     FlexLayoutModule,
     MatMenuModule,
     MatListModule,
-    ClipboardModule
+    ClipboardModule,
+    CKEditorModule
   ],
   schemas: [ 
     CUSTOM_ELEMENTS_SCHEMA 

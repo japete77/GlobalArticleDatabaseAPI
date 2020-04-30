@@ -19,177 +19,216 @@ namespace DesiringGodArticlesCrawler
 {
     class Program
     {
-        static async Task Main(string[] args)
+        static void Main(string[] args)
         {
-            //ExtractSpanishArticlesFromDG("/Users/juanpablogonzalezjara/Desktop/articles/spanish_articles.json");
-            // GetAuthors("/Users/juanpablogonzalezjara/Desktop/articles/authors.json");
-            //var builder = new Automation.ArticlesBuilder();
-            //builder.CreateArticles();
+            SetupParagraphsFromFiles(@"C:\Users\JPablo\Desktop\Personal\PxE\gadb-articles");
+        }
 
-            //List<Article> articles = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:\temp\pxe\articles\spanish_articles.json"));
+        static void SetupParagraphsFromFiles(string path)
+        {
+            var files = Directory.GetFiles(path, "*.txt");
 
-            //var articlesPiper = articles.Where(w => w.Author == "John Piper" && w.Link.Contains("/articles/")).ToList();
+            int index = 0;
+            foreach (var f in files)
+            {
+                StringBuilder sb = new StringBuilder();
+                var text = File.ReadAllText(f);
 
-            //var extractor = new ArticleExtractor();
+                if (text != null)
+                {
+                    var m = Regex.Match(text, @"<[^>]*?>");
+                    if (!m.Success)
+                    {
+                        var paragraphs = Regex.Split(text, @"(\r\n?|\n){2}")
+                              .Where(p => p.Any(char.IsLetterOrDigit));
 
-            //var textEnglish = extractor.Extract(articlesPiper.First().Link.Replace("?lang=es", ""));
-            //var textSpanish = extractor.Extract(articlesPiper.First().Link);
+                        foreach (var paragraph in paragraphs)
+                        {
+                            sb.AppendLine($"<p>{paragraph}</p>");
+                        }
 
-            // ************************************************************************
-            // **************** Get All Articles from DG ******************************
-            ////var topicsExtractor = new TopicsExtractor();
-            ////var topics = topicsExtractor.Extract();
+                        // Update Article text
+                        File.WriteAllText(f, sb.ToString());
 
-            //var authorsExtractor = new AuthorsExtractor();
-            //var authors = authorsExtractor.Extract();
+                        Console.WriteLine($"{index}, Update article text {f}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{index}, >>> Article already updated {f}");
+                    }
+                }
+                index++;
+            }
 
-            //List<Article> dgResources = new List<Article>();
-            //var resources = new ResourcesExtractor();
 
-            ////foreach (var topic in topics)
-            ////{
-            ////    Console.WriteLine($"Extracting topic: {topic.Name}");
-            ////    var data = resources.Extract($"{topic.Link}/all");
-            ////    data.ForEach(item => item.Topic = topic.Name);
-            ////    dgResources.AddRange(data);
-            ////}
+        }
 
-            //int authorIndex = 1;
-
-            //Console.WriteLine($"Detected {authors.Count} authors");
-            //foreach (var author in authors)
-            //{
-            //    Console.WriteLine($"{authorIndex} Extracting author: {author.Name}");
-            //    var data = resources.Extract($"{author.Link}");
-            //    data.ForEach(item => item.Author = author.Name);
-            //    dgResources.AddRange(data);
-            //    authorIndex++;
-            //}
-
-            //File.WriteAllText(@"C:/temp/pxe/dg_resources_by_author.json", JsonConvert.SerializeObject(dgResources));
-
-            // *************************#################################**********************
-            // *************************#################################**********************
-            //List<Article> articlesByTopic = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:/temp/pxe/dg_resources.json"));
-            //List<Article> articlesByAuthor = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:/temp/pxe/dg_resources_by_author.json"));
-            // List<Article> articles = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText(@"C:/temp/pxe/articles/john-piper_articles_all.json"));
-
+        static async Task SetupParagraphs()
+        {
             var cHelper = new ClientHelper();
-            var client = await cHelper.GetLoggedClient();
+            HttpClient client;
 
             int page = 1;
             int index = 1;
             while (true)
             {
-                var result = await client.GetAsync($"articles?page={page}&pageSize=1000");
+                client = await cHelper.GetLoggedClient();
+
+                var result = await client.GetAsync($"articles?page={page}&pageSize=500");
 
                 var data = await result.Content.ReadAsStringAsync();
+
                 var dbArticles = JsonConvert.DeserializeObject<GlobalArticleDatabaseAPI.Models.ArticleSearchResponse>(data);
 
                 if (dbArticles.Articles.Count == 0) break;
 
                 foreach (var a in dbArticles.Articles)
                 {
-                    a.Title = System.Web.HttpUtility.HtmlDecode(a.Title);
-                    a.Subtitle = System.Web.HttpUtility.HtmlDecode(a.Subtitle);
-                    a.Summary = System.Web.HttpUtility.HtmlDecode(a.Summary);
+                    var httpTextResponse = await client.GetAsync($"article/{a.Id}/text");
+                    if (httpTextResponse.StatusCode == HttpStatusCode.OK)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        var text = JsonConvert.DeserializeObject<string>(await httpTextResponse.Content.ReadAsStringAsync());
 
-                    // Update Article
-                    var httpContent = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.UpdateArticleRequest { Article = a }), Encoding.UTF8, "application/json");
-                    await client.PutAsync("article", httpContent);
+                        if (text != null)
+                        {
+                            var m = Regex.Match(text, @"<[^>]*?>");
+                            if (!m.Success)
+                            {
+                                var paragraphs = Regex.Split(text, @"(\r\n?|\n){2}")
+                                      .Where(p => p.Any(char.IsLetterOrDigit));
 
-                    Console.WriteLine($"{index++} Update article");
+                                foreach (var paragraph in paragraphs)
+                                {
+                                    sb.AppendLine($"<p>{paragraph}</p>");
+                                }
+
+                                // Update Article text
+                                var httpContent = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.UpdateArticleTextRequest { Id = a.Id, Text = sb.ToString() }), Encoding.UTF8, "application/json");
+                                await client.PutAsync("article/text", httpContent);
+
+                                Console.WriteLine($"{index}, Update article text {a.SourceLink}");
+                            }
+                        }
+
+                        if (a.Translations != null)
+                        {
+                            foreach (var t in a.Translations)
+                            {
+                                var httpTextResponseTranslation = await client.GetAsync($"article/{a.Id}/text?language={t.Language}");
+                                if (httpTextResponseTranslation.StatusCode == HttpStatusCode.OK)
+                                {
+                                    var translationText = JsonConvert.DeserializeObject<string>(await httpTextResponseTranslation.Content.ReadAsStringAsync());
+
+                                    if (translationText != null)
+                                    {
+                                        var m = Regex.Match(translationText, @"<[^>]*?>");
+                                        if (!m.Success)
+                                        {
+                                            StringBuilder translationString = new StringBuilder();
+                                            var translationParagraphs = Regex.Split(translationText, @"(\r\n?|\n){2}")
+                                                  .Where(p => p.Any(char.IsLetterOrDigit));
+
+                                            foreach (var paragraph in translationParagraphs)
+                                            {
+                                                translationString.AppendLine($"<p>{paragraph}</p>");
+                                            }
+
+                                            // Update Article text
+                                            var httpContentUpdateTraslation = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.UpdateTranslationTextRequest { ArticleId = a.Id, Language = t.Language, Text = translationString.ToString() }), Encoding.UTF8, "application/json");
+                                            await client.PutAsync("translation/text", httpContentUpdateTraslation);
+
+                                            Console.WriteLine($"{index}, Update article translation '{t.Language}'text {a.SourceLink}");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{index}, Article text NOT FOUND: {a.TextLink}");
+                    }
+
+                    index++;
                 }
 
                 page++;
             }
+        }
 
+        static async Task SetupWordCount()
+        {
+            var cHelper = new ClientHelper();
+            HttpClient client;
 
-            //int index = 1;
+            int page = 1;
+            int index = 1;
+            while (true)
+            {
+                client = await cHelper.GetLoggedClient();
 
-            //var extractor = new ArticleExtractor();
+                var result = await client.GetAsync($"articles?page={page}&pageSize=500");
 
-            //// Create article
-            //foreach (var a in articlesByAuthor)
-            //{
-            //    if (dbArticles.Articles.Where(w => w.SourceLink == a.Link).Count() == 0)
-            //    {
-            //        var dupes = articlesByTopic.Where(w => w.Link == a.Link).ToList();
+                var data = await result.Content.ReadAsStringAsync();
 
-            //        // Only create if exists
-            //        var newResource = new GlobalArticleDatabaseAPI.Models.Article
-            //        {
-            //            Author = a.Author,
-            //            Category = a.Category,
-            //            Date = a.Date,
-            //            HasText = true,
-            //            ImageLink = a.ImageLink,
-            //            Language = "us",
-            //            Owner = "Desiring God",
-            //            Reference = a.Scripture,
-            //            SourceLink = a.Link,
-            //            Subtitle = a.Subtitle,
-            //            Summary = a.Summary,
-            //            Title = a.Title,
-            //            Topics = dupes.Select(s => s.Topic).ToList()
-            //        };
+                var dbArticles = JsonConvert.DeserializeObject<GlobalArticleDatabaseAPI.Models.ArticleSearchResponse>(data);
 
-            //        var f = $"C:/temp/pxe/resources/{newResource.SourceLink.Split('/').Last()}.txt";
-            //        if (File.Exists(f))
-            //        {
-            //            var text = File.ReadAllText(f);
+                if (dbArticles.Articles.Count == 0) break;
 
-            //            // Create Article
-            //            var httpContent = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.CreateArticleRequest { Article = newResource, Text = text }), Encoding.UTF8, "application/json");
-            //            await client.PostAsync("article", httpContent);
+                foreach (var a in dbArticles.Articles)
+                {
+                    if (a.Words == 0)
+                    {
+                        var httpTextResponse = await client.GetAsync($"article/{a.Id}/text");
+                        if (httpTextResponse.StatusCode == HttpStatusCode.OK)
+                        {
+                            var text = JsonConvert.DeserializeObject<string>(await httpTextResponse.Content.ReadAsStringAsync());
 
-            //            Console.WriteLine($"{index} Created {a.Link}");
-            //        }
-            //        //string text = extractor.Extract(newResource.SourceLink);
-            //        //File.WriteAllText($"C:/temp/pxe/resources/{newResource.SourceLink.Split('/').Last()}.txt", text);
+                            // update size
+                            a.Characters = TextLength(a.Title) +
+                                           TextLength(a.Subtitle) +
+                                           TextLength(a.Summary) +
+                                           TextLength(text);
 
-            //        //dbArticles.Articles.Add(newResource);
-            //    }
-            //    else
-            //    {
-            //        Console.WriteLine($"{index} Already exists {a.Link}");
-            //    }
+                            a.Words = WordsCount(a.Title) +
+                                      WordsCount(a.Subtitle) +
+                                      WordsCount(a.Summary) +
+                                      WordsCount(text);
 
-            //    index++;
-            //}
+                            // Update Article
+                            var httpContent = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.UpdateArticleRequest { Article = a }), Encoding.UTF8, "application/json");
+                            await client.PutAsync("article", httpContent);
 
-            //// Update image link
-            //foreach (var a in dbArticles.Articles)
-            //{
-            //    var source = articles.Where(w => w.Link == a.SourceLink).ToList();
+                            Console.WriteLine($"{index}, C={a.Characters}, W={a.Words} Update article {a.SourceLink}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{index}, Article text NOT FOUND: {a.TextLink}");
+                        }
 
-            //    a.Author = a.Author.Trim();
-            //    a.Category = a.Category?.Trim();
-            //    a.Owner = a.Owner?.Trim();
-            //    a.SourceLink = a.SourceLink.Trim();
-            //    a.Subtitle = a.Subtitle?.Trim();
-            //    a.Summary = a.Summary?.Trim();
-            //    a.Title = a.Title?.Trim();
-            //    if (source != null && source.Count > 0)
-            //    {
-            //        a.ImageLink = source.First().ImageLink?.Trim();
-            //        a.Reference = source.First().Text?.Trim();
-            //        a.Topics = source.Select(s => s.Topic).ToList();
-            //    }
-            //    else
-            //    {
-            //        a.Reference = null;
-            //    }
+                        index++;
+                    }
+                }
 
-            //    // Update Article
-            //    var httpContent = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.UpdateArticleRequest { Article = a }), Encoding.UTF8, "application/json");
-            //    await client.PutAsync("article", httpContent);
+                page++;
+            }
+        }
 
-            //    Console.WriteLine($"{index} Updated {a.SourceLink}");
+        static int WordsCount(string text)
+        {
+            if (text != null)
+            {
+                MatchCollection collection = Regex.Matches(text, @"[\S]+");
+                return collection.Count;
+            }
 
-            //    index++;
-            //}
+            return 0;
+        }
 
+        static int TextLength(string text)
+        {
+            return text != null ? text.Length : 0;
         }
 
         static void GetAuthors(string filename)
@@ -549,14 +588,4 @@ namespace DesiringGodArticlesCrawler
             File.WriteAllText(filename, JsonConvert.SerializeObject(articles));
         }
     }
-
-
-
-
-
-
-
-
-
-
 }

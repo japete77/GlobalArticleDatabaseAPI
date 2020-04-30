@@ -11,6 +11,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { Translation } from '../models/translation';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import * as BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
 
 @Component({
   selector: 'app-article',
@@ -35,6 +36,8 @@ export class ArticleComponent implements OnInit {
 
   translationIndex: number = 0;
   articleText = '<Empty>';
+
+  public Editor = BalloonEditor;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: ArticleContext, 
@@ -156,21 +159,15 @@ export class ArticleComponent implements OnInit {
     if (index > 0) {
       let language = this.data.article.translations[index - 1].language;
 
-      this.articleText = `${this.data.article.translations[index - 1].title ?? ''}
-
-${this.data.article.translations[index - 1].subtitle ?? ''}
-
-${this.data.article.translations[index - 1].summary ?? ''}
-
+      this.articleText = `<h1>${this.data.article.translations[index - 1].title ?? ''}</h1>
+<h2>${this.data.article.translations[index - 1].subtitle ?? ''}</h2>
+<p>${this.data.article.translations[index - 1].summary ?? ''}</p>
 ${this.data.translationTextUpdated[language] ?? ''}
 `  
     } else {
-      this.articleText = `${this.data.article.title ?? ''}
-
-${this.data.article.subtitle ?? ''}
-
-${this.data.article.summary ?? ''}
-
+      this.articleText = `<h1>${this.data.article.title ?? ''}</h1>
+<h2>${this.data.article.subtitle ?? ''}</h2>
+<p>${this.data.article.summary ?? ''}</p>
 ${this.data.textUpdated ?? ''}
 `  
       }
