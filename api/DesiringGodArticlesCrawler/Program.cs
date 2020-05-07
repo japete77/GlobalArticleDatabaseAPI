@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using DesiringGodArticlesCrawler.Models;
 using Google.Api.Gax.ResourceNames;
 using Google.Cloud.Translate.V3;
@@ -19,9 +20,11 @@ namespace DesiringGodArticlesCrawler
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            SetupParagraphsFromFiles(@"C:\Users\JPablo\Desktop\Personal\PxE\gadb-articles");
+            var updater = new DGContentUpdater();
+            // await updater.Update(new DateTime(2020, 5, 1));
+            await FixUrls();
         }
 
         static void SetupParagraphsFromFiles(string path)
@@ -59,8 +62,54 @@ namespace DesiringGodArticlesCrawler
                 }
                 index++;
             }
+        }
 
+        static async Task FixUrls()
+        {
+            var cHelper = new ClientHelper();
+            HttpClient client;
 
+            client = await cHelper.GetLoggedClient();
+
+            int page = 1;
+            int index = 1;
+            while (true)
+            {
+                var result = await client.GetAsync($"articles?page={page}&pageSize=200");
+
+                var data = await result.Content.ReadAsStringAsync();
+
+                var dbArticles = JsonConvert.DeserializeObject<GlobalArticleDatabaseAPI.Models.ArticleSearchResponse>(data);
+
+                if (dbArticles.Articles.Count == 0) break;
+
+                foreach (var a in dbArticles.Articles)
+                {
+                    if (!string.IsNullOrEmpty(a.ImageLink))
+                    {
+                        if (a.ImageLink.Contains("&amp;"))
+                        {
+                            a.ImageLink = HttpUtility.HtmlDecode(a.ImageLink);
+
+                            var httpContent = new StringContent(JsonConvert.SerializeObject(new GlobalArticleDatabaseAPI.Models.UpdateArticleRequest { Article = a }), Encoding.UTF8, "application/json");
+                            await client.PutAsync("article", httpContent);
+                            Console.WriteLine($"{index}, Updated article image link {a.ImageLink}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"{index}, skipped - No fix needed...");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{index}, skipped - No image link...");
+                    }
+
+                    index++;
+                }
+
+                page++;
+            }
         }
 
         static async Task SetupParagraphs()
@@ -215,7 +264,7 @@ namespace DesiringGodArticlesCrawler
             }
         }
 
-        static int WordsCount(string text)
+        public static int WordsCount(string text)
         {
             if (text != null)
             {
@@ -226,7 +275,7 @@ namespace DesiringGodArticlesCrawler
             return 0;
         }
 
-        static int TextLength(string text)
+        public static int TextLength(string text)
         {
             return text != null ? text.Length : 0;
         }

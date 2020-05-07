@@ -11,6 +11,8 @@ export class Article {
     summary: string;
     language: string;
     sourceLink: string;
+    words: number;
+    characters: number;
     owner: string;
     hasText: boolean;
     textLink: string;

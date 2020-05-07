@@ -17,7 +17,7 @@ namespace DesiringGodArticlesCrawler
         public async Task<HttpClient> GetLoggedClient(string username = "admin", string password = "admin")
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("http://localhost:5000/api/v1/");
+            client.BaseAddress = new Uri("https://ig24hiba4k.execute-api.eu-west-1.amazonaws.com/Prod/api/v1/");
 
             var loginRequest = new LoginRequest
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DesiringGodArticlesCrawler.Models
 {
@@ -13,6 +14,6 @@ namespace DesiringGodArticlesCrawler.Models
         public DateTime Date { get; set; }
         public string Summary { get; set; }
         public string Scripture { get; set; }
-        public string Topic { get; set; }
+        public List<string> Topics { get; set; }
     }
 }
