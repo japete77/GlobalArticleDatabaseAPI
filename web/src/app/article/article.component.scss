@@ -1,14 +1,10 @@
 .article {
     &-field {
-        margin-right: 20px;
-        width: 250px;
+        width: 100%;
+        margin: 0 10px;
 
-        &--full {
-            width: 100%;
-        }
-
-        &--small {
-            width: 150px;
+        &--shifted {
+            padding-top: 12px;
         }
     }
 }
@@ -58,4 +54,9 @@
 .article-menu {
     padding-bottom: 10px;
     padding-right: 20px;
+}
+
+.mat-grid-tile .mat-figure {
+   justify-content: left !important;
+   align-items: flex-end !important;
 }

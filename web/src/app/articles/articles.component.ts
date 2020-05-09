@@ -216,7 +216,7 @@ export class ArticlesComponent implements OnInit {
     };
     const dialogRef = this.dialog.open(ArticleComponent, dialogConfig);
 
-    dialogRef.updateSize("80vw");
+    dialogRef.updateSize("100vw");
 
     dialogRef.afterClosed().subscribe((data: ArticleContext) => {
       
@@ -249,39 +249,27 @@ export class ArticlesComponent implements OnInit {
 
         });
 
-        var result = this.articles.find(item => item.id == data.articleUpdated.id);
-        if (result) {
-          result.imageLink = data.articleUpdated.imageLink;
-          result.language= data.articleUpdated.language;
-          result.owner = data.articleUpdated.owner;
-          result.sourceLink = data.articleUpdated.sourceLink;
-          result.subtitle = data.articleUpdated.subtitle;
-          result.summary = data.articleUpdated.summary;
-          result.textLink = data.articleUpdated.textLink;
-          result.title = data.articleUpdated.title;
-          result.topics = data.articleUpdated.topics;
-          result.translations = data.articleUpdated.translations;
-          result.words = data.articleUpdated.words;
-        }  
-
-        // if (allPromises.length > 0) {
-        //   Promise.all(allPromises).then(() => {
-        //     article.author = data.articleUpdated.author;
-        //     article.category = data.articleUpdated.category;
-        //     article.date = data.articleUpdated.date;
-        //     article.hasText = data.articleUpdated.hasText;
-        //     article.imageLink = data.articleUpdated.imageLink;
-        //     article.language = data.articleUpdated.language;
-        //     article.owner = data.articleUpdated.owner;
-        //     article.sourceLink = data.articleUpdated.sourceLink;
-        //     article.subtitle = data.articleUpdated.subtitle;
-        //     article.summary = data.articleUpdated.summary;
-        //     article.textLink = data.articleUpdated.textLink;
-        //     article.title = data.articleUpdated.title;
-        //     article.topics = data.articleUpdated.topics;
-        //     article.translations = data.articleUpdated.translations;
-        //   });
-        // }    
+        if (allPromises.length > 0) {
+          Promise.all(allPromises).then(() => {
+            // Retrieve article...
+            this.appService.getArticle(article.id).subscribe(articleUpdated => {
+              article.author = articleUpdated.author;
+              article.category = articleUpdated.category;
+              article.date = articleUpdated.date;
+              article.hasText = articleUpdated.hasText;
+              article.imageLink = articleUpdated.imageLink;
+              article.language = articleUpdated.language;
+              article.owner = articleUpdated.owner;
+              article.sourceLink = articleUpdated.sourceLink;
+              article.subtitle = articleUpdated.subtitle;
+              article.summary = articleUpdated.summary;
+              article.textLink = articleUpdated.textLink;
+              article.title = articleUpdated.title;
+              article.topics = articleUpdated.topics;
+              article.translations = articleUpdated.translations;
+            });
+          });
+        }    
       }
     });
   }

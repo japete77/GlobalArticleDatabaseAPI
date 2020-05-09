@@ -22,9 +22,10 @@ namespace DesiringGodArticlesCrawler
     {
         static async Task Main(string[] args)
         {
-            var updater = new DGContentUpdater();
+            // var updater = new DGContentUpdater();
             // await updater.Update(new DateTime(2020, 5, 1));
-            await FixUrls();
+            var soldadosExtractor = new SoldadosContentExtractor();
+            await soldadosExtractor.Extract();
         }
 
         static void SetupParagraphsFromFiles(string path)
