@@ -24,8 +24,12 @@ namespace DesiringGodArticlesCrawler
         {
             // var updater = new DGContentUpdater();
             // await updater.Update(new DateTime(2020, 5, 1));
-            var soldadosExtractor = new SoldadosContentExtractor();
-            await soldadosExtractor.Extract();
+
+            //var soldadosExtractor = new SoldadosContentExtractor();
+            //await soldadosExtractor.Extract();
+
+            var updater = new IXMarksContentUpdater();
+            await updater.Update(new DateTime(1, 1, 1));
         }
 
         static void SetupParagraphsFromFiles(string path)
@@ -559,7 +563,7 @@ namespace DesiringGodArticlesCrawler
                         articles.Add(
                             new Article
                             {
-                                Author = author,
+                                Author = new List<string> { author },
                                 Link = $"https://www.desiringgod.org{link}",
                                 Title = articleHtml.DocumentNode.SelectSingleNode("//h2[@class='card--resource__title']")?.InnerText,
                                 Subtitle = articleHtml.DocumentNode.SelectSingleNode("//h3[@class='card--resource__subtitle']")?.InnerText,

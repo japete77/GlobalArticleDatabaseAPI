@@ -2,7 +2,6 @@ import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
 import { ApplicationService } from 'src/app/services/gadb.service';
 import { Article } from '../models/article';
 import { TdLoadingService } from '@covalent/core/loading';
-import { MatRadioChange } from '@angular/material/radio';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 
@@ -13,10 +12,9 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { ArticleComponent } from '../article/article.component';
 import { ArticleContext } from '../models/article-context';
 import { AuthenticationService } from '../services/auth.service';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { WorkspaceEntry } from '../models/workspace.entry';
 import { MatSelectionListChange, MatSelectionList } from '@angular/material/list';
-import { tick } from '@angular/core/testing';
 
 @Component({
   selector: 'articles',
@@ -50,10 +48,12 @@ export class ArticlesComponent implements OnInit {
   searchText = '';
   currentPage = 1;
   showMore = false;
-  authors = []; // [ 'John Piper', 'Tony Reinke', 'David Platt', 'Mark Dever', 'Donald Carson', 'Yancey', 'Miguel Núñez', 'Paul Washer' ];
+  authors = [];
   categories = [];
   topics = [];
   owners = [];
+  total = 0;
+  username = '';
 
   sortFilters = ['Newest', 'Oldest']
 
@@ -72,6 +72,7 @@ export class ArticlesComponent implements OnInit {
   filteredOwners: Observable<string[]>;
  
   ngOnInit(): void {
+    this.username = this.authService.currentToken().username;
     this.sortControl.setValue(this.sortFilters[0]);
     this.route.queryParamMap.subscribe(params => {
       let articleId = params.get('article');
@@ -168,6 +169,7 @@ export class ArticlesComponent implements OnInit {
       status: this.status
     })
       .subscribe(data => {
+        this.total = data.total;
         this.articles = this.articles.concat(data.articles);
         this.loadingService.resolve("loading");
         this.showMore = (this.currentPage * this.PAGE_SIZE) < data.total;

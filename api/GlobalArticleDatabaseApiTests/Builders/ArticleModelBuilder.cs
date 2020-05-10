@@ -1,5 +1,6 @@
 ﻿using GlobalArticleDatabaseAPI.Models;
 using System;
+using System.Collections.Generic;
 
 namespace GlobalArticleDatabaseAPITests.Builders
 {
@@ -16,7 +17,7 @@ namespace GlobalArticleDatabaseAPITests.Builders
 
         public ArticleModelBuilder WithRandomValues()
         {
-            _article.Author = $"author_{DateTime.Now.Ticks}";
+            _article.Author = new List<string> { $"author_{DateTime.Now.Ticks}" };
             _article.Category = $"category_{DateTime.Now.Ticks}";
             _article.Date = DateTime.UtcNow;
             _article.Language = "en-US";
@@ -37,7 +38,7 @@ namespace GlobalArticleDatabaseAPITests.Builders
             return this;
         }
 
-        public ArticleModelBuilder WithAuthor(string author)
+        public ArticleModelBuilder WithAuthor(List<string> author)
         {
             _article.Author = author;
             return this;

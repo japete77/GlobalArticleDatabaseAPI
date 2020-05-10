@@ -96,7 +96,7 @@ namespace Automation
                 {
                     Article = new Article
                     {
-                        Author = "John Piper",
+                        Author = new List<string> { "John Piper" },
                         Category = "Article",
                         Date = articles[index].Date,
                         HasText = textEnglish != null,

@@ -109,9 +109,10 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 using StreamReader reader = new StreamReader(responseStream);
                 responseBody = reader.ReadToEnd();
             }
-            catch (Exception e)
+            catch
             {
-                throw new InvalidArgumentException(ExceptionCodes.ARTICLE_TEXT_RETRIEVING_ERROR, $"Error retrieving article text with id {id} and language {language}", e, StatusCodes.Status500InternalServerError);
+                return responseBody;
+                //throw new InvalidArgumentException(ExceptionCodes.ARTICLE_TEXT_RETRIEVING_ERROR, $"Error retrieving article text with id {id} and language {language}", e, StatusCodes.Status500InternalServerError);
             }
 
             return responseBody;
@@ -298,7 +299,7 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
             {
                 if (filter.Author != null)
                 {
-                    filters.Add(Builders<ArticleEntity>.Filter.Eq(f => f.Author, filter.Author));
+                    filters.Add(Builders<ArticleEntity>.Filter.AnyEq(f => f.Author, filter.Author));
                 }
 
                 if (filter.Category != null)

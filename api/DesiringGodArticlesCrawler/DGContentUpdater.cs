@@ -16,7 +16,7 @@ namespace DesiringGodArticlesCrawler
 {
     public class DGContentUpdater
     {
-        private string cache_file = "articles_update.json";
+        private string cache_file = "dg_articles_update.json";
         public async Task Update(DateTime from)
         {
             var allArticles = new List<Article>();
@@ -25,7 +25,8 @@ namespace DesiringGodArticlesCrawler
             {
                 var articlesByDate = GetArticles("https://www.desiringgod.org/resources/all", from);
 
-                var authors = articlesByDate.Select(s => s.Author.Trim()).Distinct().ToList();
+                var authors = articlesByDate.SelectMany(s => s.Author).Distinct().ToList();
+                authors.ForEach(item => item = item.Trim());
 
                 var articlesByAuthor = GetArticlesByAuthor(authors, from);
 
@@ -286,7 +287,7 @@ namespace DesiringGodArticlesCrawler
                     var article =
                         new Article
                         {
-                            Author = articleHtml.DocumentNode.SelectSingleNode("//div[@class='card__author']")?.InnerText?.Trim(),
+                            Author = new List<string> { articleHtml.DocumentNode.SelectSingleNode("//div[@class='card__author']")?.InnerText?.Trim() },
                             Category = articleHtml.DocumentNode.SelectSingleNode("//div[starts-with(@class, 'card--resource__labels-label')]")?.InnerText?.Trim(),
                             ImageLink = HttpUtility.HtmlDecode(articleHtml.DocumentNode.SelectSingleNode("//a[@class='card__shadow']/div[@class='card__inner']/div/img")?.Attributes["data-src"]?.Value),
                             Link = $"https://www.desiringgod.org{link}",

@@ -151,7 +151,7 @@ namespace GlobalArticleDatabaseAPITests
             Assert.True(dataCreate != null, "No data received");
             Assert.True(dataCreate.Article != null, "No article created");
             Assert.True(dataCreate.Article.Id != null, "No article Id created");
-            Assert.True(dataCreate.Article.Author == article.Author, "Author mismatch");
+            Assert.True(dataCreate.Article.Author.SequenceEqual(article.Author), "Author mismatch");
             Assert.True(dataCreate.Article.Category == article.Category, "Category mismatch");
             Assert.True(dataCreate.Article.Date.Ticks == article.Date.Ticks, "Date mismatch");
             Assert.True(dataCreate.Article.Language == article.Language, "Language mismatch");
@@ -175,7 +175,7 @@ namespace GlobalArticleDatabaseAPITests
 
             Assert.True(dataRetrieve != null, "No data received");
             Assert.True(dataCreate.Article.Id == dataRetrieve.Id, "Id mismatch");
-            Assert.True(dataCreate.Article.Author == dataRetrieve.Author, "Author mismatch");
+            Assert.True(dataCreate.Article.Author.SequenceEqual(dataRetrieve.Author), "Author mismatch");
             Assert.True(dataCreate.Article.Category == dataRetrieve.Category, "Category mismatch");
             Assert.True(DateEquals(dataCreate.Article.Date, dataRetrieve.Date), "Date mismatch");
             Assert.True(dataCreate.Article.Language == dataRetrieve.Language, "Language mismatch");
@@ -208,7 +208,7 @@ namespace GlobalArticleDatabaseAPITests
 
             Assert.True(updateArticle != null, "No data received");
             Assert.True(updateArticle.Id == dataUpdate.Article.Id, "Id mismatch");
-            Assert.True(updateArticle.Author == dataUpdate.Article.Author, "Author mismatch");
+            Assert.True(updateArticle.Author.SequenceEqual(dataUpdate.Article.Author), "Author mismatch");
             Assert.True(updateArticle.Category == dataUpdate.Article.Category, "Category mismatch");
             Assert.True(DateEquals(updateArticle.Date, dataUpdate.Article.Date), "Date mismatch");
             Assert.True(updateArticle.Language == dataUpdate.Article.Language, "Language mismatch");

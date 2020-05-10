@@ -24,7 +24,7 @@ namespace GlobalArticleDatabaseAPI.DbContext.Models
         /// <summary>
         /// Author of the article
         /// </summary>
-        public string Author { get; set; }
+        public List<string> Author { get; set; }
 
         /// <summary>
         /// Category of the article (Article, Interview, Sermon, etc)

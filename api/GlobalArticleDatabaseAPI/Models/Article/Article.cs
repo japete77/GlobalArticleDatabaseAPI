@@ -19,9 +19,9 @@ namespace GlobalArticleDatabaseAPI.Models
         public DateTime Date { get; set; }
 
         /// <summary>
-        /// Author of the article
+        /// Authors of the article
         /// </summary>
-        public string Author { get; set; }
+        public List<string> Author { get; set; }
 
         /// <summary>
         /// Category of the article (Article, Interview, Sermon, etc)

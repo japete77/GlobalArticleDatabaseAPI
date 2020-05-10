@@ -4,7 +4,7 @@
             <mat-grid-tile 
                 [colspan]="4"
                 [rowspan]="1">
-                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Artcile options">
+                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Article options">
                     <mat-icon>menu</mat-icon>
                 </button>
                 <mat-menu #menu="matMenu">
@@ -26,14 +26,12 @@
                     </button>
                 </mat-menu>
                 <mat-form-field class="article-field">
-                    <mat-label>Author</mat-label>
-                    <input #author matInput [(ngModel)]="data.articleUpdated.author" [matAutocomplete]="autoAuthor">
-                    <mat-autocomplete #autoAuthor="matAutocomplete">
-                        <mat-option *ngFor="let author of authors" [value]="author">
-                            {{author}}
-                        </mat-option>
-                    </mat-autocomplete>
+                    <mat-label>Authors</mat-label>
+                    <input matInput value="{{data.articleUpdated.author.join(', ')}}" disabled>
                 </mat-form-field>
+                <button mat-icon-button aria-label="Edit authors" (click)="editAuthors()">
+                    <mat-icon>edit</mat-icon>
+                </button>
             </mat-grid-tile>
             <mat-grid-tile 
                 [colspan]="2"
@@ -65,7 +63,7 @@
                 [colspan]="2"
                 [rowspan]="1">
                 <mat-form-field class="article-field">
-                    <mat-label>Cration Date</mat-label>
+                    <mat-label>Creation Date</mat-label>
                     <input matInput [(ngModel)]="data.articleUpdated.date" [matDatepicker]="dp3" disabled>
                     <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
                     <mat-datepicker #dp3 disabled="false"></mat-datepicker>
@@ -85,30 +83,23 @@
                 [colspan]="1"
                 [rowspan]="1">
                 <mat-form-field class="article-field">
-                    <mat-chip-list #topicList aria-label="Topics">
-                        <mat-chip *ngFor="let topic of data.articleUpdated.topics" [selectable]="selectable"
-                            [removable]="removable" (removed)="remove(topic)">
-                            {{topic}}
-                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                        </mat-chip>
-                        <input placeholder="Topics" [matChipInputFor]="topicList"
-                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
-                            [matAutocomplete]="autoTopics" (matChipInputTokenEnd)="add($event)">
-                        <mat-autocomplete #autoTopics="matAutocomplete">
-                            <mat-option *ngFor="let topic of topics" [value]="topic">
-                                {{topic}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </mat-chip-list>
+                    <mat-label>Topics</mat-label>
+                    <input matInput value="{{data.articleUpdated.topics.join(', ')}}" disabled>
                 </mat-form-field>
+                <button mat-icon-button aria-label="Edit topics" (click)="editTopics()">
+                    <mat-icon>edit</mat-icon>
+                </button>
             </mat-grid-tile>
             <mat-grid-tile 
                 [colspan]="1"
                 [rowspan]="1">
-                <mat-form-field class="article-field article-field--shifted">
+                <mat-form-field class="article-field">
                     <mat-label>Source Link</mat-label>
                     <input matInput [(ngModel)]="data.articleUpdated.sourceLink">
                 </mat-form-field>
+                <button mat-icon-button aria-label="Open source link" (click)="openSourceLink()">
+                    <mat-icon>open_in_new</mat-icon>
+                </button>
             </mat-grid-tile>
         </mat-grid-list>
         <mat-dialog-content class="mat-typography">

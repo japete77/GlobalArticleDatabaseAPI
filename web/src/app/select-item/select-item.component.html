@@ -1,0 +1,32 @@
+<div mat-dialog-content>
+    <h3>{{data.title}}</h3>
+    <mat-form-field class="field">
+        <mat-chip-list #itemList aria-label="Elements">
+            <mat-chip 
+                *ngFor="let item of editedItems"
+                [selectable]="true"
+                [removable]="true" 
+                (removed)="remove(item)">
+                {{item}}
+                <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
+            <input 
+                placeholder="Select items..."
+                #itemsInput
+                [formControl]="itemsCtrl"
+                [matAutocomplete]="autoItems"
+                [matChipInputFor]="itemList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="add($event)">
+            <mat-autocomplete #autoItems="matAutocomplete" (optionSelected)="selected($event)">
+                <mat-option *ngFor="let item of filteredItems | async" [value]="item">
+                    {{item}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-chip-list>
+    </mat-form-field>
+</div>
+<div mat-dialog-actions align="center">
+    <button mat-button [mat-dialog-close]="editedItems" cdkFocusInitial mat-raised-button color="primary">Ok</button>
+    <button mat-button (click)="onCancel()">Cancel</button>
+</div>

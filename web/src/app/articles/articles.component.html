@@ -6,6 +6,7 @@
           [showUnderline]="true" [alwaysVisible]="true" (search)="textChange()" (clear)="textChange()">
         </td-search-box>
       </div>
+      <div class="results">{{total | number:'1.0':'en-US'}} results found</div>
       <mat-accordion multi="true">
         <mat-expansion-panel>
           <mat-expansion-panel-header>
@@ -74,6 +75,7 @@
       </mat-accordion>
     </div>
     <div td-toolbar-content layout-align="end center" layout="row" flex>
+      <div class="username">{{username}}</div>
       <button mat-icon-button [matMenuTriggerFor]="menu">
         <mat-icon>account_circle</mat-icon>
       </button>
@@ -101,7 +103,7 @@
       </mat-card-content>
       <mat-card-actions>
         <div class="action-row">
-          <div class="actions--left">{{article.author}}</div>
+          <div class="actions--left">{{article.author.join(', ')}}</div>
           <div class="actions--right" title="{{article.topics.join(', ')}}">{{article.topics.join(', ')}}</div>
         </div>
         <div class="action-row">

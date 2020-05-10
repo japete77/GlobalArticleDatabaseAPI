@@ -1,16 +1,14 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { Article } from '../models/article';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { ApplicationService } from 'src/app/services/gadb.service';
 import { TdLoadingService } from '@covalent/core/loading';
 import { ArticleContext } from '../models/article-context';
-import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
-import { Translation } from '../models/translation';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { SelectItemComponent } from '../select-item/select-item.component';
 import * as BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
 
 @Component({
@@ -27,12 +25,6 @@ export class ArticleComponent implements OnInit {
   status: string[];
 
   availableLanguages = ['ad', 'ae', 'af', 'ag', 'ai', 'al', 'am', 'ao', 'aq', 'ar', 'as', 'at', 'au', 'aw', 'ax', 'az', 'ba', 'bb', 'bd', 'be', 'bf', 'bg', 'bh', 'bi', 'bj', 'bl', 'bm', 'bn', 'bo', 'bq', 'br', 'bs', 'bt', 'bv', 'bw', 'by', 'bz', 'ca', 'cc', 'cd', 'cf', 'cg', 'ch', 'ci', 'ck', 'cl', 'cm', 'cn', 'co', 'cr', 'cu', 'cv', 'cw', 'cx', 'cy', 'cz', 'de', 'dj', 'dk', 'dm', 'do', 'dz', 'ec', 'ee', 'eg', 'eh', 'er', 'es', 'et', 'fi', 'fj', 'fk', 'fm', 'fo', 'fr', 'ga', 'gb', 'gd', 'ge', 'gf', 'gg', 'gh', 'gi', 'gl', 'gm', 'gn', 'gp', 'gq', 'gr', 'gs', 'gt', 'gu', 'gw', 'gy', 'hk', 'hm', 'hn', 'hr', 'ht', 'hu', 'id', 'ie', 'il', 'im', 'in', 'io', 'iq', 'ir', 'is', 'it', 'je', 'jm', 'jo', 'jp', 'ke', 'kg', 'kh', 'ki', 'km', 'kn', 'kp', 'kr', 'kw', 'ky', 'kz', 'la', 'lb', 'lc', 'li', 'lk', 'lr', 'ls', 'lt', 'lu', 'lv', 'ly', 'ma', 'mc', 'md', 'me', 'mf', 'mg', 'mh', 'mk', 'ml', 'mm', 'mn', 'mo', 'mp', 'mq', 'mr', 'ms', 'mt', 'mu', 'mv', 'mw', 'mx', 'my', 'mz', 'na', 'nc', 'ne', 'nf', 'ng', 'ni', 'nl', 'no', 'np', 'nr', 'nu', 'nz', 'om', 'pa', 'pe', 'pf', 'pg', 'ph', 'pk', 'pl', 'pm', 'pn', 'pr', 'ps', 'pt', 'pw', 'py', 'qa', 're', 'ro', 'rs', 'ru', 'rw', 'sa', 'sb', 'sc', 'sd', 'se', 'sg', 'sh', 'si', 'sj', 'sk', 'sl', 'sm', 'sn', 'so', 'sr', 'ss', 'st', 'sv', 'sx', 'sy', 'sz', 'tc', 'td', 'tf', 'tg', 'th', 'tj', 'tk', 'tl', 'tm', 'tn', 'to', 'tr', 'tt', 'tv', 'tw', 'tz', 'ua', 'ug', 'um', 'us', 'uy', 'uz', 'va', 'vc', 've', 'vg', 'vi', 'vn', 'vu', 'wf', 'ws', 'ye', 'yt', 'za', 'zm', 'zw'];
-
-  visible = true;
-  selectable = true;
-  removable = true;
-  addOnBlur = true;
-  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
   translationIndex: number = 0;
   articleText = '<Empty>';
@@ -62,26 +54,42 @@ export class ArticleComponent implements OnInit {
   ngOnInit(): void {
     this.loadingService.register("loading-text")
 
-    if (this.data.articleUpdated.hasText) {
-      this.appService.getArticleText(this.data.articleUpdated.id)
-      .subscribe(data => {
-        this.data.text = data;
-        this.data.textUpdated = data;
-        this.loadingService.resolve("loading-text");
+    var promises = [];
 
-        this.copyArticleText(0);
-      });
+    promises.push(this.appService.getArticleText(this.data.articleUpdated.id).toPromise())
+    if (this.data.articleUpdated.hasText) {
+      promises.push(this.appService.getArticleText(this.data.articleUpdated.id).toPromise())
     }
 
     this.data.articleUpdated.translations.forEach(item => {
       if (item.hasText) {
-        this.appService.getArticleText(this.data.articleUpdated.id, item.language)
-        .subscribe(data => {
-          this.data.translationText[item.language] = data;
-          this.data.translationTextUpdated[item.language] = data;
-        });  
+        promises.push(this.appService.getArticleText(this.data.articleUpdated.id, item.language).toPromise())
       }
     });
+
+    if (promises.length == 0) {
+      this.loadingService.resolve("loading-text");
+    } else {
+      Promise.all(promises).then(results => {
+        var index = 0;
+        if (this.data.articleUpdated.hasText) {
+          this.data.text = results[index];
+          this.data.textUpdated = results[index];
+          index++;
+          this.copyArticleText(0);
+        }
+
+        for (var r = 0; r < this.data.articleUpdated.translations.length; r++) {
+          if (this.data.articleUpdated.translations[r].hasText) {
+            this.data.translationText[this.data.articleUpdated.translations[r].language] = results[index];
+            this.data.translationTextUpdated[this.data.articleUpdated.translations[r].language] = results[index];
+            index++;
+          }
+        }
+
+        this.loadingService.resolve("loading-text");
+      })
+    }
   }
 
   onTabChanged(event: MatTabChangeEvent) {
@@ -194,5 +202,43 @@ ${this.data.textUpdated ?? ''}
     if (index >= 0) {
       this.data.articleUpdated.topics.splice(index, 1);
     }
+  }
+
+  editAuthors() {
+    const dialogRef = this.dialog.open(SelectItemComponent, {
+      width: '600px',
+      data: { 
+        title: "Please select the authors of the article from the list:", 
+        selected: this.data.articleUpdated.author, 
+        list: this.data.authors
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.data.articleUpdated.author = result;
+      }
+    });
+  }
+
+  editTopics() {
+    const dialogRef = this.dialog.open(SelectItemComponent, {
+      width: '600px',
+      data: { 
+        title: "Please select the topics of the article from the list:", 
+        selected: this.data.articleUpdated.topics, 
+        list: this.topics
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.data.articleUpdated.topics = result;
+      }
+    });
+  }
+
+  openSourceLink() {
+    window.open(this.data.articleUpdated.sourceLink, "_blank");
   }
 }

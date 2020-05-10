@@ -3,7 +3,7 @@ import { Translation } from './translation';
 export class Article {
     id: string;
     date: Date;
-    author: string;
+    author: string[];
     category: string;
     topics: string[];
     title: string;

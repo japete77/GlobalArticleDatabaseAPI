@@ -51,6 +51,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
 import { SelectLanguageComponent } from './select-language/select-language.component';
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { SelectItemComponent } from './select-item/select-item.component';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -69,7 +70,8 @@ export function initializeApp(appConfig: AppConfig) {
     ChangePasswordComponent,
     SecureDirective,
     SelectLanguageComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    SelectItemComponent
   ],
   imports: [
     BrowserModule,
