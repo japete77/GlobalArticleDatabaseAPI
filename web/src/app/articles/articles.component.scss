@@ -177,3 +177,9 @@
 .username {
     font-size: 0.7em;
 }
+
+.summary {
+    max-height: 100px;
+    text-overflow: ellipsis;
+    overflow-y: hidden;
+}
