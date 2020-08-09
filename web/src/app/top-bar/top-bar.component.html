@@ -1,0 +1,75 @@
+<div class="container">
+    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Search options">
+        <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item [matMenuTriggerFor]="searchoptions">
+            <mat-icon>search</mat-icon>
+            <span>Search by</span>
+        </button>
+        <button mat-menu-item (click)="sortBy()">
+            <mat-icon>sort</mat-icon>
+            <span>Sort by</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Logout</span>
+        </button>
+    </mat-menu>
+    <mat-menu #searchoptions="matMenu">
+        <button mat-menu-item (click)="byAuthor()">
+            <mat-icon>perm_identity</mat-icon>
+            <span>Author (Alt + A)</span>
+        </button>
+        <button mat-menu-item (click)="byCategory()">
+            <mat-icon>category</mat-icon>
+            <span>Category (Alt + C)</span>
+        </button>
+        <button mat-menu-item (click)="bySource()">
+            <mat-icon>menu_book</mat-icon>
+            <span>Source (Alt + S)</span>
+        </button>
+        <button mat-menu-item (click)="byTopic()">
+            <mat-icon>scatter_plot</mat-icon>
+            <span>Topic (Alt + T)</span>
+        </button>
+        <button mat-menu-item (click)="assignedToMe()">
+            <mat-icon>pan_tool</mat-icon>
+            <span>Reviewed by me</span>
+        </button>
+        <button mat-menu-item [matMenuTriggerFor]="translateoptions">
+            <mat-icon>translate</mat-icon>
+            <span>Translations</span>
+        </button>
+    </mat-menu>
+    <mat-menu #translateoptions="matMenu">
+        <button mat-menu-item (click)="byLanguage()">
+            <mat-icon>flag</mat-icon>
+            <span>Language (Alt + L)</span>
+        </button>
+        <button mat-menu-item (click)="byStatus()">
+            <mat-icon>settings_backup_restore</mat-icon>
+            <span>Status (Alt + U)</span>
+        </button>
+    </mat-menu>
+    <mat-form-field class="search-chip-list">
+        <mat-chip-list #chipList aria-label="Search terms selection">
+            <mat-chip *ngFor="let item of searchItems" [selectable]="selectable" [removable]="removable"
+                (removed)="remove(item)">
+                {{item.name}}
+                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input #search placeholder="{{searchPlaceholder}}" (keydown)="keyPress($event)" [formControl]="termCtrl"
+                [matAutocomplete]="auto" [matChipInputFor]="chipList">
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                <mat-option *ngFor="let term of filteredTerms | async" [value]="term">
+                    {{term}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-chip-list>
+    </mat-form-field>
+    <div *ngIf="total == 0" layout-align="end center" layout="row" flex class="results">No results found</div>
+    <div *ngIf="total > 0" layout-align="end center" layout="row" flex class="results">{{total | number:'1.0':'en-US'}}
+        results found</div>
+    <div layout-align="end center" layout="row" flex class="username"><mat-icon>person</mat-icon>{{username}}</div>
+</div>

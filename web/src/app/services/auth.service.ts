@@ -8,9 +8,13 @@ import { Router } from '@angular/router';
 import { LoginResponse } from '../models/responses/login.response.model'
 import { RenewResponse } from '../models/responses/renew.token.response';
 import { AppConfig } from '../helpers/app-config'
+import { BehaviorSubject, Observable } from 'rxjs'
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
+
+    private logoutRequest = new BehaviorSubject<void>(null)
+
     private securityTokenKey = 'securityContext'
     private _securityContext: SecurityContext;
     private _decodedToken: AuthToken;
@@ -91,12 +95,18 @@ export class AuthenticationService {
         this.cookieService.setCookie(this.securityTokenKey, JSON.stringify(this._securityContext), null)
     }
 
+    getLogoutRequest() : Observable<void> {
+        return this.logoutRequest.asObservable();
+    }
+
     /**
      * Logout the user
      * @param redirect flag to redirect to login page after logout
      */
     logout(redirect: boolean = true) {
         if (this.securityContext()) {
+            this.logoutRequest.next(null);
+            
             // call to backend to remove renew token
             this.http.post<any>(`${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/auth/logout`, { })
                 .pipe(first())

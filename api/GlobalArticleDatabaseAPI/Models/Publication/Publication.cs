@@ -18,6 +18,11 @@ namespace GlobalArticleDatabaseAPI.Models
         public string Publisher { get; set; }
 
         /// <summary>
+        /// Publication status
+        /// </summary>
+        public string Status { get; set; }
+
+        /// <summary>
         /// Hyperlink to the published article
         /// </summary>
         public string Link { get; set; }

@@ -349,7 +349,7 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
 
                 if (filter.ReviewedBy != null && filter.Status != null)
                 {
-                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.ReviewedBy == filter.ReviewedBy && x.Status == filter.Status));
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.ReviewedBy.ToLower() == filter.ReviewedBy.ToLower() && x.Status == filter.Status));
                 }
                 else if (filter.Status != null)
                 {
@@ -357,17 +357,17 @@ namespace GlobalArticleDatabaseAPI.Services.Articles.Implementations
                 }
                 else if (filter.ReviewedBy != null)
                 {
-                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.ReviewedBy == filter.ReviewedBy));
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.ReviewedBy.ToLower() == filter.ReviewedBy.ToLower()));
                 }
 
                 if (filter.TranslatedBy != null)
                 {
-                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.TranslatedBy == filter.TranslatedBy));
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.TranslatedBy.ToLower() == filter.TranslatedBy.ToLower()));
                 }
 
                 if (filter.PublishedBy != null)
                 {
-                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.Publications.Any(a => a.Publisher == filter.PublishedBy)));
+                    filters.Add(Builders<ArticleEntity>.Filter.ElemMatch(f => f.Translations, x => x.Publications.Any(a => a.Publisher.ToLower() == filter.PublishedBy.ToLower())));
                 }
             }
 

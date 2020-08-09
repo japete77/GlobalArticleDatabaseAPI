@@ -183,3 +183,9 @@
     text-overflow: ellipsis;
     overflow-y: hidden;
 }
+
+.search-bar {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+}

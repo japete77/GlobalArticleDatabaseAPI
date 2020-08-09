@@ -13,34 +13,138 @@ import { AppConfig } from 'src/app/helpers/app-config';
 import { WorkspaceResponse } from 'src/app/models/responses/workspace.response';
 import { ArticleFilter } from '../models/article.filter';
 import { CreateTranslationRequest } from '../models/create-translation-request';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({ providedIn: "root" })
 export class ApplicationService {
 
-  constructor(private http: HttpClient) {}
+  private searchResponse = new BehaviorSubject<ArticleSearchResponse>(null)
+  private searchRequest = new BehaviorSubject<ArticleFilter>(null)
+  private totalResultsResponse = new BehaviorSubject<number>(null)
+  private currentFilter: ArticleFilter = { page: 0, pageSize: 25 }
+  readonly PAGE_SIZE = 25
 
-  getAuthors() {
-    return this.http.get<GetListResponse>(
-      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/authors`
-    );
+  authors: string[]
+  categories: string[]
+  topics: string[]
+  owners: string[]
+  translationLanguages: string[]
+  translationStatuses: string[]
+  sortedBy: string[] = [ "Newest", "Oldest" ]
+
+  constructor(private http: HttpClient) {
+    this.refreshAuthors()
+    this.refreshCategories()
+    this.refreshTopics()
+    this.refreshOwners()
+    this.refreshTranslationLanguages()
+    this.refreshTranslationStatuses()
   }
 
-  getCategories() {
-    return this.http.get<GetListResponse>(
+  getSearchResponse() : Observable<ArticleSearchResponse> {
+    return this.searchResponse.asObservable()
+  }
+
+  getSearchRequest() : Observable<ArticleFilter> {
+    return this.searchRequest.asObservable()
+  }
+
+  getTotalResultsResponse() : Observable<number> {
+    return this.totalResultsResponse.asObservable()
+  }
+
+  search(filter: ArticleFilter) {
+    if (filter) {
+      this.currentFilter = filter
+    }
+    this.currentFilter.page = 0
+    this.currentFilter.pageSize = this.PAGE_SIZE
+    this.loadMore()
+  }
+
+  loadMore() {
+    this.currentFilter.page++
+    this.searchRequest.next(this.currentFilter);
+    this.getArticles(this.currentFilter).subscribe(data => {
+      this.searchResponse.next(data)
+      this.totalResultsResponse.next(data.total)
+    })
+  }
+
+  refreshAuthors() {
+    this.http.get<GetListResponse>(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/authors`
+    ).subscribe(data => {
+      this.authors = data.items
+    })
+  }
+
+  getAuthors() : string[] {
+    return this.authors
+  }
+
+  refreshCategories() {
+    this.http.get<GetListResponse>(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/categories`
-    );
+    ).subscribe(data => {
+      this.categories = data.items.filter(item => item && item.trim().length > 0)
+    })
+  }
+
+  getCategories() : string[] {
+    return this.categories
+  }
+
+  refreshTopics() {
+    this.http.get<GetListResponse>(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/topics`
+    ).subscribe(data => {
+      this.topics = data.items.filter(item => item && item.trim().length > 0)
+    })
   }
 
   getTopics() {
-    return this.http.get<GetListResponse>(
-      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/topics`
-    );
+    return this.topics
   }
 
-  getOwners() {
+  refreshOwners() {
     return this.http.get<GetListResponse>(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/owners`
-    );
+    ).subscribe(data => {
+      this.owners = data.items.filter(item => item && item.trim().length > 0)
+    })
+  }
+
+  getOwners() : string[] {
+    return this.owners
+  }
+
+  refreshTranslationLanguages() {
+    return this.http.get<GetListResponse>(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/translation-languages`
+    ).subscribe(data => {
+      this.translationLanguages = data.items.filter(item => item && item.trim().length > 0)
+    })
+  }
+
+  getTranslationLanguages() : string[] {
+    return this.translationLanguages
+  }
+
+  refreshTranslationStatuses() {
+    return this.http.get<string[]>(
+      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation/status`
+    ).subscribe(data => {
+      this.translationStatuses = data.filter(item => item && item.trim().length > 0)
+    })
+  }
+
+  getTranslationStatuses() : string[] {
+    return this.translationStatuses
+  }
+
+  getSortedBy() : string[] {
+    return this.sortedBy
   }
 
   getArticle(id: string) {
@@ -79,6 +183,10 @@ export class ApplicationService {
 
     if (filter.status) {
       query += `&status=${encodeURIComponent(filter.status.replace(/&amp;/g, "&"))}`;
+    }
+
+    if (filter.translationLanguage) {
+      query += `&translationLanguage=${encodeURIComponent(filter.translationLanguage.replace(/&amp;/g, "&"))}`;
     }
 
     if (filter.sortBy == 0) {
@@ -153,12 +261,6 @@ export class ApplicationService {
   getWorkspaceArticles(url: string, page: number, pageSize: number) {
     return this.http.get<ArticleSearchResponse>(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/${url}&page=${page}&pageSize=${pageSize}`
-    );
-  }
-
-  getTranslationStatus() {
-    return this.http.get<string[]>(
-      `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation/status`,      
     );
   }
 }

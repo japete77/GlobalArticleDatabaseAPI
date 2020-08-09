@@ -37,18 +37,18 @@ export class ArticleComponent implements OnInit {
     private loadingService: TdLoadingService,
     private dialog: MatDialog
   ) { 
-    data.articleUpdated = JSON.parse(JSON.stringify(data.article));
-    data.translationText = [];
-    data.translationTextUpdated = [];
+    data.articleUpdated = JSON.parse(JSON.stringify(data.article))
+    data.translationText = []
+    data.translationTextUpdated = []
     data.articleUpdated.translations.forEach(item => {
-      data.translationText[item.language] = '';
-      data.translationTextUpdated[item.language] = '';
-    });
-    this.authors = data.authors;
-    this.categories = data.categories;
-    this.owners = data.owners;
-    this.topics = data.topics;
-    this.status = data.status;
+      data.translationText[item.language] = ''
+      data.translationTextUpdated[item.language] = ''
+    })
+    this.authors = this.appService.getAuthors()
+    this.categories = this.appService.getCategories()
+    this.owners = this.appService.getOwners()
+    this.topics = this.appService.getTopics()
+    this.status = this.appService.getTranslationStatuses()
   }
 
   ngOnInit(): void {
@@ -71,7 +71,7 @@ export class ArticleComponent implements OnInit {
       this.loadingService.resolve("loading-text");
     } else {
       Promise.all(promises).then(results => {
-        var index = 0;
+        var index = 1;
         if (this.data.articleUpdated.hasText) {
           this.data.text = results[index];
           this.data.textUpdated = results[index];

@@ -5,6 +5,7 @@ import { ArticlesComponent } from './articles/articles.component';
 import { AuthGuard } from './helpers/auth.guard';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { HomeComponent } from './home/home.component';
 
 
 const routes: Routes = [
@@ -22,7 +23,7 @@ const routes: Routes = [
   },
   {
     path: '',
-    component: ArticlesComponent,
+    component: HomeComponent,
     canActivate: [AuthGuard]
   },
 ];

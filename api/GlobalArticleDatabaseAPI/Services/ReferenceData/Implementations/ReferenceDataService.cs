@@ -1,5 +1,5 @@
-﻿using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
-using GlobalArticleDatabaseAPI.DbContext.Models;
+﻿using GlobalArticleDatabaseAPI.DbContext.Models;
+using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.Services.ReferenceData.Interfaces;
 using MongoDB.Driver;
 using System;
@@ -51,6 +51,16 @@ namespace GlobalArticleDatabaseAPI.Services.ReferenceData.Implementations
         {
             var result = await _dbContext.Articles.DistinctAsync<string>(
                 "Owner",
+                Builders<ArticleEntity>.Filter.Empty
+            );
+
+            return await result.ToListAsync();
+        }
+
+        public async Task<List<string>> GetTranslationLanguages()
+        {
+            var result = await _dbContext.Articles.DistinctAsync<string>(
+                "Translations.Language",
                 Builders<ArticleEntity>.Filter.Empty
             );
 

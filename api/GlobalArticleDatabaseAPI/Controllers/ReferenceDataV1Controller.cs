@@ -22,7 +22,7 @@ namespace GlobalArticleDatabaseAPI.Controllers
         }
 
         /// <summary>
-        /// Create article
+        /// Get Article Authors
         /// </summary>
         [Route("authors")]
         [HttpGet]
@@ -37,7 +37,7 @@ namespace GlobalArticleDatabaseAPI.Controllers
         }
 
         /// <summary>
-        /// Create article
+        /// Get Article Categories
         /// </summary>
         [Route("categories")]
         [HttpGet]
@@ -52,7 +52,7 @@ namespace GlobalArticleDatabaseAPI.Controllers
         }
 
         /// <summary>
-        /// Create article
+        /// Get Article Topics
         /// </summary>
         [Route("topics")]
         [HttpGet]
@@ -67,13 +67,28 @@ namespace GlobalArticleDatabaseAPI.Controllers
         }
 
         /// <summary>
-        /// Create article
+        /// Get Article Owners
         /// </summary>
         [Route("owners")]
         [HttpGet]
         public async Task<GetListResponse> GetOwners()
         {
             var result = await _referenceDataService.GetOwners();
+
+            return new GetListResponse
+            {
+                Items = result
+            };
+        }
+
+        /// <summary>
+        /// Get Translations Languages
+        /// </summary>
+        [Route("translation-languages")]
+        [HttpGet]
+        public async Task<GetListResponse> GetTranslationLanguages()
+        {
+            var result = await _referenceDataService.GetTranslationLanguages();
 
             return new GetListResponse
             {

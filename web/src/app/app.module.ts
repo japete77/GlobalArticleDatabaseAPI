@@ -52,6 +52,8 @@ import { SelectLanguageComponent } from './select-language/select-language.compo
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { SelectItemComponent } from './select-item/select-item.component';
+import { HomeComponent } from './home/home.component';
+import { TopBarComponent } from './top-bar/top-bar.component';
 
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
@@ -71,7 +73,9 @@ export function initializeApp(appConfig: AppConfig) {
     SecureDirective,
     SelectLanguageComponent,
     ConfirmDialogComponent,
-    SelectItemComponent
+    SelectItemComponent,
+    HomeComponent,
+    TopBarComponent
   ],
   imports: [
     BrowserModule,

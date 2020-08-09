@@ -150,6 +150,14 @@
             "EDITOR",
             "READER"
           ]
+        },
+        {
+          "name": "GetTranslationLanguages",
+          "roles": [
+            "ADMIN",
+            "EDITOR",
+            "READER"
+          ]
         }
       ]
     },

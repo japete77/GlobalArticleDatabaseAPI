@@ -8,9 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace GlobalArticleDatabaseAPI.Controllers
 {
@@ -49,15 +47,14 @@ namespace GlobalArticleDatabaseAPI.Controllers
                 {
                     Name = "All Asigned To Me",
                     Count = await _articlesService.SearchCount(new ArticleFilter { ReviewedBy = claimsHelper.UserName }),
-                    Reviewer = claimsHelper.UserName                }
+                    Reviewer = claimsHelper.UserName
+                }
             };
 
             var statuses = TranslationStatus.GetTraslationStatus();
 
             foreach (var status in statuses)
             {
-                if (status == TranslationStatus.PUBLISHED) continue;
-
                 workspaceEntries.Add(new WorkspaceEntry
                 {
                     Name = status,
