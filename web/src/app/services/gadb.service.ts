@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { GetListResponse } from 'src/app/models/get-list-response';
 import { ArticleSearchResponse } from 'src/app/models/article-search-response';
 import { Article } from 'src/app/models/article';
@@ -21,6 +20,7 @@ export class ApplicationService {
   private searchResponse = new BehaviorSubject<ArticleSearchResponse>(null)
   private searchRequest = new BehaviorSubject<ArticleFilter>(null)
   private totalResultsResponse = new BehaviorSubject<number>(null)
+  private initialized = new BehaviorSubject<boolean>(null)
   private currentFilter: ArticleFilter = { page: 0, pageSize: 25 }
   readonly PAGE_SIZE = 25
 
@@ -33,12 +33,25 @@ export class ApplicationService {
   sortedBy: string[] = [ "Newest", "Oldest" ]
 
   constructor(private http: HttpClient) {
-    this.refreshAuthors()
-    this.refreshCategories()
-    this.refreshTopics()
-    this.refreshOwners()
-    this.refreshTranslationLanguages()
-    this.refreshTranslationStatuses()
+    var allPromises = []
+
+    allPromises.push(this.refreshAuthors())
+    allPromises.push(this.refreshCategories())
+    allPromises.push(this.refreshTopics())
+    allPromises.push(this.refreshOwners())
+    allPromises.push(this.refreshTranslationLanguages())
+    allPromises.push(this.refreshTranslationStatuses())
+
+    Promise.all(allPromises).then(results => {
+      var i = 0;
+      this.authors = results[i++].items
+      this.categories = results[i++].items.filter(item => item && item.trim().length > 0)
+      this.topics = results[i++].items.filter(item => item && item.trim().length > 0)
+      this.owners = results[i++].items.filter(item => item && item.trim().length > 0)
+      this.translationLanguages = results[i++].items.filter(item => item && item.trim().length > 0)
+      this.translationStatuses = results[i++].filter(item => item && item.trim().length > 0)
+      this.initialized.next(true)
+    });
   }
 
   getSearchResponse() : Observable<ArticleSearchResponse> {
@@ -51,6 +64,10 @@ export class ApplicationService {
 
   getTotalResultsResponse() : Observable<number> {
     return this.totalResultsResponse.asObservable()
+  }
+
+  getInitialized() : Observable<boolean> {
+    return this.initialized.asObservable()
   }
 
   search(filter: ArticleFilter) {
@@ -71,72 +88,60 @@ export class ApplicationService {
     })
   }
 
-  refreshAuthors() {
-    this.http.get<GetListResponse>(
+  refreshAuthors() : Promise<GetListResponse> {
+    return this.http.get<GetListResponse>(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/authors`
-    ).subscribe(data => {
-      this.authors = data.items
-    })
+    ).toPromise()
   }
 
   getAuthors() : string[] {
     return this.authors
   }
 
-  refreshCategories() {
-    this.http.get<GetListResponse>(
+  refreshCategories() : Promise<GetListResponse> {
+    return this.http.get<GetListResponse>(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/categories`
-    ).subscribe(data => {
-      this.categories = data.items.filter(item => item && item.trim().length > 0)
-    })
+    ).toPromise()
   }
 
   getCategories() : string[] {
     return this.categories
   }
 
-  refreshTopics() {
-    this.http.get<GetListResponse>(
+  refreshTopics() : Promise<GetListResponse> {
+    return this.http.get<GetListResponse>(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/topics`
-    ).subscribe(data => {
-      this.topics = data.items.filter(item => item && item.trim().length > 0)
-    })
+    ).toPromise()
   }
 
   getTopics() {
     return this.topics
   }
 
-  refreshOwners() {
+  refreshOwners() : Promise<GetListResponse> {
     return this.http.get<GetListResponse>(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/owners`
-    ).subscribe(data => {
-      this.owners = data.items.filter(item => item && item.trim().length > 0)
-    })
+    ).toPromise()
   }
 
   getOwners() : string[] {
     return this.owners
   }
 
-  refreshTranslationLanguages() {
+  refreshTranslationLanguages() : Promise<GetListResponse> {
     return this.http.get<GetListResponse>(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/reference-data/translation-languages`
-    ).subscribe(data => {
-      this.translationLanguages = data.items.filter(item => item && item.trim().length > 0)
-    })
+    ).toPromise()
   }
 
   getTranslationLanguages() : string[] {
     return this.translationLanguages
   }
 
-  refreshTranslationStatuses() {
+  refreshTranslationStatuses() : Promise<string[]> {
     return this.http.get<string[]>(
       `${AppConfig.settings.api_base_url}${AppConfig.settings.api_version}/translation/status`
-    ).subscribe(data => {
-      this.translationStatuses = data.filter(item => item && item.trim().length > 0)
-    })
+    ).toPromise()
   }
 
   getTranslationStatuses() : string[] {

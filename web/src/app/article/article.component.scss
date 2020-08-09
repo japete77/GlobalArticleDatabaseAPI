@@ -1,4 +1,5 @@
 .article {
+    padding: 20px 10px 10px 10px;
     &-field {
         width: 100%;
         margin: 0 10px;
@@ -6,6 +7,9 @@
         &--shifted {
             padding-top: 12px;
         }
+    }
+    &-body {
+        padding: 0 10px;
     }
 }
 
@@ -59,4 +63,15 @@
 .mat-grid-tile .mat-figure {
    justify-content: left !important;
    align-items: flex-end !important;
+}
+
+.page-content {
+    &-scrollable {
+        overflow: auto;
+        position: absolute;
+        top: 155px;
+        left: 10px;
+        right: 0;
+        bottom: 10px;     
+    }
 }

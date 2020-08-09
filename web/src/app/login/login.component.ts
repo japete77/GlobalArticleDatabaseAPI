@@ -4,7 +4,7 @@ import { TdLoadingService } from '@covalent/core/loading';
 import { AuthenticationService } from '../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'login',
@@ -13,15 +13,23 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
+  subscription: any;
+  returnUrl: string;
   background: string;
   credentials: LoginRequest = { user: '', password: '' };
 
   constructor(private loadingService: TdLoadingService, 
     private authService: AuthenticationService, 
     private dialog: MatDialog,
+    private route: ActivatedRoute,
     private router: Router) { 
     const index = Math.floor(Math.random() * (5)) + 1;
-    this.background = `background-${index}`; 
+    this.background = `background-${index}`;
+
+    this.subscription = this.route.queryParams.subscribe(params => {
+      this.returnUrl = params['returnUrl']
+      console.log(this.returnUrl)
+    });
   }
 
   onSubmit() {
@@ -29,7 +37,11 @@ export class LoginComponent {
     this.authService.login(this.credentials.user, this.credentials.password)
       .toPromise()
       .then(data => {
-        this.router.navigateByUrl('/');
+        if (this.returnUrl) {
+          this.router.navigateByUrl(this.returnUrl);
+        } else {
+          this.router.navigateByUrl('/');
+        }        
       })
       .catch(data => {
         const dialogRef = this.dialog.open(DialogComponent, {

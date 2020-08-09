@@ -4,7 +4,7 @@
     <mat-card-subtitle class="title--no-overflow" title="{{article.subtitle}}">
       {{article.subtitle ? article.subtitle : '-'}}</mat-card-subtitle>
   </mat-card-header>
-  <div class="image-container" (click)="openArticle(article)">
+  <div class="image-container" (click)="openNewTab('/article/' + article.id)">
     <img mat-card-image src="{{article.imageLink}}">
   </div>
   <mat-card-content>

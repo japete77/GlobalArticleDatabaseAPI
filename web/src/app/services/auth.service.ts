@@ -26,20 +26,34 @@ export class AuthenticationService {
      * Returns the current security context
      */
     securityContext(): SecurityContext {
-        if (!this._securityContext) {
-            this._securityContext = JSON.parse(this.cookieService.getCookie(this.securityTokenKey))
+        var securityCookie = this.cookieService.getCookie(this.securityTokenKey);
+        if (securityCookie) {
+            return JSON.parse(securityCookie)
+        } else{
+            return null
         }
-        return this._securityContext
+        
+        // if (!this._securityContext) {
+        //     this._securityContext = JSON.parse(this.cookieService.getCookie(this.securityTokenKey))
+        // }
+        // return this._securityContext
     }
 
     currentToken(): AuthToken {
-        if (!this._decodedToken) {
-            var securityContext = this.securityContext();
-            if (securityContext) {
-                this._decodedToken = this.parseJwt(securityContext.token)
-            }
+        var context = this.securityContext()
+        if (context) {
+            return this.parseJwt(context.token)
+        } else {
+            return null
         }
-        return this._decodedToken
+        
+        // if (!this._decodedToken) {
+        //     var securityContext = this.securityContext();
+        //     if (securityContext) {
+        //         this._decodedToken = this.parseJwt(securityContext.token)
+        //     }
+        // }
+        // return this._decodedToken
     }
 
     /**

@@ -76,6 +76,10 @@ export class ArticlesComponent implements OnInit {
     this.appService.loadMore()
   }
 
+  openNewTab(link: string) {
+    window.open(link, "_blank");
+  }
+
   openArticle(article: Article) {
     const dialogConfig = new MatDialogConfig()
     dialogConfig.data = {
