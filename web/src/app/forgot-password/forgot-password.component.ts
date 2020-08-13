@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthenticationService } from '../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
-import { TdLoadingService } from '@covalent/core/loading';
 import { DialogComponent } from '../dialog/dialog.component';
 
 @Component({
@@ -14,8 +13,9 @@ export class ForgotPasswordComponent implements OnInit {
   background: string;
   email: string; 
   emailSent: boolean;
+  loading = false
 
-  constructor(private loadingService: TdLoadingService, 
+  constructor(
     private authService: AuthenticationService, 
     private dialog: MatDialog) { 
     const index = Math.floor(Math.random() * (5)) + 1;
@@ -27,7 +27,7 @@ export class ForgotPasswordComponent implements OnInit {
   }
 
   onSubmit() {
-    this.loadingService.register("loading");
+    this.loading = true
     this.authService.forgotPassword(this.email)
       .toPromise()
       .then(data => {
@@ -44,7 +44,7 @@ export class ForgotPasswordComponent implements OnInit {
         });
       })
       .finally(() => {
-        this.loadingService.resolve("loading");
+        this.loading = false
       });  
   }
 }

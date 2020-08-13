@@ -28,8 +28,7 @@
     </div>
   </mat-card-actions>
 </mat-card>
-<div *tdLoading="'loading'; type:'circular'; mode:'indeterminate'; strategy:'replace'; color:'primary'">
-  <div *ngIf="showMore" class="view-more">
-    <button mat-raised-button color="primary" (click)="loadMore()">More Articles</button>
-  </div>
+<mat-progress-spinner *ngIf="loading" class="spinner--full" [mode]="'indeterminate'"></mat-progress-spinner>
+<div *ngIf="showMore" class="view-more">
+  <button mat-raised-button color="primary" (click)="loadMore()">More Articles</button>
 </div>

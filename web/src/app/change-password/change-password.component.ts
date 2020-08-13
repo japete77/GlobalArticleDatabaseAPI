@@ -1,8 +1,7 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { AuthenticationService } from '../services/auth.service';
-import { TdLoadingService } from '@covalent/core/loading';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
 
@@ -21,10 +20,10 @@ export class ChangePasswordComponent implements OnInit {
   token: string;
   newpassword: string;
   renewpassword: string;
+  loading = false
 
-  constructor(private loadingService: TdLoadingService,
-    private dialog: MatDialog,
-    private formBuilder: FormBuilder, 
+  constructor(
+    private dialog: MatDialog,    
     private route: ActivatedRoute,
     private authenticationService: AuthenticationService) { 
     const index = Math.floor(Math.random() * (5)) + 1;
@@ -54,7 +53,7 @@ export class ChangePasswordComponent implements OnInit {
       return;
     }
 
-    this.loadingService.register("loading");
+    this.loading = true    
 
     this.authenticationService.changePassword(this.email, this.token, this.newpassword)
     .toPromise()
@@ -75,7 +74,7 @@ export class ChangePasswordComponent implements OnInit {
       });
     })
     .finally(() => {
-      this.loadingService.resolve("loading");
+      this.loading = false
     });
   }
 }

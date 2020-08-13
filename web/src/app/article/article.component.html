@@ -1,222 +1,223 @@
-<div *tdLoading="'loading-text'; type:'circular'; mode:'indeterminate'; strategy:'replace'; color:'primary'">
-    <div *ngIf="data && data.articleUpdated" class="article">
+<mat-progress-spinner *ngIf="loading" class="spinner--full" [mode]="'indeterminate'"></mat-progress-spinner>
+<div *ngIf="!loading" class="article">
+    <div class="page">
+        <div class="page-header">
+            <mat-grid-list cols="12" rowHeight="65px">
+                <mat-grid-tile [colspan]="4" [rowspan]="1">
+                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Article options">
+                        <mat-icon>menu</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="save()">
+                            <mat-icon>save</mat-icon>
+                            <span>Save Article</span>
+                        </button>
+                        <button mat-menu-item [cdkCopyToClipboard]="articleText">
+                            <mat-icon>file_copy</mat-icon>
+                            <span>Copy Raw Article</span>
+                        </button>
+                        <button mat-menu-item [cdkCopyToClipboard]="data.articleUpdated.sourceLink">
+                            <mat-icon>link</mat-icon>
+                            <span>Copy Source Link</span>
+                        </button>
+                        <button secure [roles]="['ADMIN', 'EDITOR']" mat-menu-item (click)="addTranslation()">
+                            <mat-icon>create</mat-icon>
+                            <span>Add Translation</span>
+                        </button>
+                        <button *ngIf="translationIndex > 0" secure [roles]="['ADMIN', 'EDITOR']" mat-menu-item
+                            (click)="deleteTranslation()">
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete Translation</span>
+                        </button>
+                    </mat-menu>
+                    <mat-form-field class="article-field">
+                        <mat-label>Authors</mat-label>
+                        <input matInput value="{{data.articleUpdated.author.join(', ')}}" disabled>
+                    </mat-form-field>
+                    <button mat-icon-button aria-label="Edit authors" (click)="editAuthors()">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="2" [rowspan]="1">
+                    <mat-form-field class="article-field">
+                        <mat-label>Category</mat-label>
+                        <input matInput [(ngModel)]="data.articleUpdated.category" [matAutocomplete]="autoCategory">
+                        <mat-autocomplete #autoCategory="matAutocomplete">
+                            <mat-option *ngFor="let category of data.categories" [value]="category">
+                                {{category}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="2" [rowspan]="1">
+                    <mat-form-field class="article-field">
+                        <mat-label>Source</mat-label>
+                        <input matInput [(ngModel)]="data.articleUpdated.owner" [matAutocomplete]="autoOwner">
+                        <mat-autocomplete #autoOwner="matAutocomplete">
+                            <mat-option *ngFor="let owner of data.owners" [value]="owner">
+                                {{owner}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="2" [rowspan]="1">
+                    <mat-form-field class="article-field">
+                        <mat-label>Creation Date</mat-label>
+                        <input matInput [(ngModel)]="data.articleUpdated.date" [matDatepicker]="dp3" disabled>
+                        <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                        <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                    </mat-form-field>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="2" [rowspan]="1">
+                    <mat-form-field class="article-field">
+                        <mat-label>Words / Chars</mat-label>
+                        <input matInput value="{{data.articleUpdated.words}} / {{data.articleUpdated.characters}}"
+                            disabled>
+                    </mat-form-field>
+                </mat-grid-tile>
+            </mat-grid-list>
+            <mat-grid-list cols="2" rowHeight="80px">
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field class="article-field">
+                        <mat-label>Topics</mat-label>
+                        <input matInput value="{{data.articleUpdated.topics.join(', ')}}" disabled>
+                    </mat-form-field>
+                    <button mat-icon-button aria-label="Edit topics" (click)="editTopics()">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </mat-grid-tile>
+                <mat-grid-tile [colspan]="1" [rowspan]="1">
+                    <mat-form-field class="article-field">
+                        <mat-label>Source Link</mat-label>
+                        <input matInput [(ngModel)]="data.articleUpdated.sourceLink">
+                    </mat-form-field>
+                    <button mat-icon-button aria-label="Open source link" (click)="openSourceLink()">
+                        <mat-icon>open_in_new</mat-icon>
+                    </button>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </div>
+        <div class="page-content--white page-content-scrollable">
+            <mat-dialog-content class="mat-typography">
+                <mat-tab-group (selectedTabChange)="onTabChanged($event)" [(selectedIndex)]="translationIndex">
+                    <mat-tab class="tab-content">
+                        <ng-template mat-tab-label>
+                            <span [ngClass]="['flag-icon', 'flag-icon-' + data.articleUpdated.language]"></span>
+                        </ng-template>
+                        &nbsp;
+                        <mat-grid-list cols="1" rowHeight="65px">
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field class="article-field">
+                                    <mat-label>Title</mat-label>
+                                    <input matInput [(ngModel)]="data.articleUpdated.title">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <mat-grid-list cols="1" rowHeight="65px">
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field class="article-field">
+                                    <mat-label>Subtitle</mat-label>
+                                    <input matInput [(ngModel)]="data.articleUpdated.subtitle">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <mat-grid-list cols="1" rowHeight="65px">
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field class="article-field">
+                                    <mat-label>Summary</mat-label>
+                                    <textarea class="form-textarea" matInput cdkTextareaAutosize
+                                        #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
+                                        [(ngModel)]="data.articleUpdated.summary">
+                                </textarea>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
 
-        <div class="page">
-            <div class="page-header">
-                <mat-grid-list cols="12" rowHeight="65px">
-                    <mat-grid-tile [colspan]="4" [rowspan]="1">
-                        <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Article options">
-                            <mat-icon>menu</mat-icon>
-                        </button>
-                        <mat-menu #menu="matMenu">
-                            <button mat-menu-item (click)="save()">
-                                <mat-icon>save</mat-icon>
-                                <span>Save Article</span>
-                            </button>
-                            <button mat-menu-item [cdkCopyToClipboard]="articleText">
-                                <mat-icon>file_copy</mat-icon>
-                                <span>Copy Raw Article</span>
-                            </button>
-                            <button mat-menu-item [cdkCopyToClipboard]="data.articleUpdated.sourceLink">
-                                <mat-icon>link</mat-icon>
-                                <span>Copy Source Link</span>
-                            </button>
-                            <button secure [roles]="['ADMIN', 'EDITOR']" mat-menu-item (click)="addTranslation()">
-                                <mat-icon>create</mat-icon>
-                                <span>Add Translation</span>
-                            </button>
-                            <button *ngIf="translationIndex > 0" secure [roles]="['ADMIN', 'EDITOR']" mat-menu-item
-                                (click)="deleteTranslation()">
-                                <mat-icon>delete</mat-icon>
-                                <span>Delete Translation</span>
-                            </button>
-                        </mat-menu>
-                        <mat-form-field class="article-field">
-                            <mat-label>Authors</mat-label>
-                            <input matInput value="{{data.articleUpdated.author.join(', ')}}" disabled>
-                        </mat-form-field>
-                        <button mat-icon-button aria-label="Edit authors" (click)="editAuthors()">
-                            <mat-icon>edit</mat-icon>
-                        </button>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="2" [rowspan]="1">
-                        <mat-form-field class="article-field">
-                            <mat-label>Category</mat-label>
-                            <input matInput [(ngModel)]="data.articleUpdated.category" [matAutocomplete]="autoCategory">
-                            <mat-autocomplete #autoCategory="matAutocomplete">
-                                <mat-option *ngFor="let category of data.categories" [value]="category">
-                                    {{category}}
-                                </mat-option>
-                            </mat-autocomplete>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="2" [rowspan]="1">
-                        <mat-form-field class="article-field">
-                            <mat-label>Source</mat-label>
-                            <input matInput [(ngModel)]="data.articleUpdated.owner" [matAutocomplete]="autoOwner">
-                            <mat-autocomplete #autoOwner="matAutocomplete">
-                                <mat-option *ngFor="let owner of data.owners" [value]="owner">
-                                    {{owner}}
-                                </mat-option>
-                            </mat-autocomplete>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="2" [rowspan]="1">
-                        <mat-form-field class="article-field">
-                            <mat-label>Creation Date</mat-label>
-                            <input matInput [(ngModel)]="data.articleUpdated.date" [matDatepicker]="dp3" disabled>
-                            <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
-                            <mat-datepicker #dp3 disabled="false"></mat-datepicker>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="2" [rowspan]="1">
-                        <mat-form-field class="article-field">
-                            <mat-label>Words / Chars</mat-label>
-                            <input matInput value="{{data.articleUpdated.words}} / {{data.articleUpdated.characters}}"
-                                disabled>
-                        </mat-form-field>
-                    </mat-grid-tile>
-                </mat-grid-list>
-                <mat-grid-list cols="2" rowHeight="80px">
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field class="article-field">
-                            <mat-label>Topics</mat-label>
-                            <input matInput value="{{data.articleUpdated.topics.join(', ')}}" disabled>
-                        </mat-form-field>
-                        <button mat-icon-button aria-label="Edit topics" (click)="editTopics()">
-                            <mat-icon>edit</mat-icon>
-                        </button>
-                    </mat-grid-tile>
-                    <mat-grid-tile [colspan]="1" [rowspan]="1">
-                        <mat-form-field class="article-field">
-                            <mat-label>Source Link</mat-label>
-                            <input matInput [(ngModel)]="data.articleUpdated.sourceLink">
-                        </mat-form-field>
-                        <button mat-icon-button aria-label="Open source link" (click)="openSourceLink()">
-                            <mat-icon>open_in_new</mat-icon>
-                        </button>
-                    </mat-grid-tile>
-                </mat-grid-list>
-            </div>
-            <div class="page-content--white page-content-scrollable">
-                <mat-dialog-content class="mat-typography">
-                    <mat-tab-group (selectedTabChange)="onTabChanged($event)" [(selectedIndex)]="translationIndex">
-                        <mat-tab class="tab-content">
-                            <ng-template mat-tab-label>
-                                <span [ngClass]="['flag-icon', 'flag-icon-' + data.articleUpdated.language]"></span>
-                            </ng-template>
-                            &nbsp;
-                            <mat-grid-list cols="1" rowHeight="65px">
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field class="article-field">
-                                        <mat-label>Title</mat-label>
-                                        <input matInput [(ngModel)]="data.articleUpdated.title">
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                            </mat-grid-list>
-                            <mat-grid-list cols="1" rowHeight="65px">
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field class="article-field">
-                                        <mat-label>Subtitle</mat-label>
-                                        <input matInput [(ngModel)]="data.articleUpdated.subtitle">
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                            </mat-grid-list>
-                            <mat-grid-list cols="1" rowHeight="65px">
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field class="article-field">
-                                        <mat-label>Summary</mat-label>
-                                        <textarea class="form-textarea" matInput cdkTextareaAutosize
-                                            #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
-                                            [(ngModel)]="data.articleUpdated.summary">
+                        <div class="article-body">
+                            <mat-label>Text</mat-label>
+                            <ckeditor 
+                                    [editor]="Editor" 
+                                    [(ngModel)]="data.textUpdated"
+                                >
+                                </ckeditor>
+                        </div>
+                    </mat-tab>
+                    <mat-tab class="tab-content" *ngFor="let translation of data.articleUpdated.translations">
+                        <ng-template mat-tab-label>
+                            <span [ngClass]="['flag-icon', 'flag-icon-' + translation.language]"></span>
+                        </ng-template>
+                        &nbsp;
+                        <mat-grid-list cols="4" rowHeight="65px">
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field class="article-field">
+                                    <mat-label>Cration Date</mat-label>
+                                    <input matInput [matDatepicker]="dp3" disabled [(ngModel)]="translation.date">
+                                    <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
+                                    <mat-datepicker #dp3 disabled="false"></mat-datepicker>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field class="article-field">
+                                    <mat-label>Translated By</mat-label>
+                                    <input matInput [(ngModel)]="translation.translatedBy">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field class="article-field">
+                                    <mat-label>Reviewed By</mat-label>
+                                    <input matInput [(ngModel)]="translation.reviewedBy">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field>
+                                    <mat-label>Status</mat-label>
+                                    <select matNativeControl [(ngModel)]="translation.status" name="status">
+                                        <option value=""></option>
+                                        <option *ngFor="let item of data.status" value="{{item}}">{{item}}</option>
+                                    </select>
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <mat-grid-list cols="1" rowHeight="65px">
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field class="article-field">
+                                    <mat-label>Title</mat-label>
+                                    <input matInput [(ngModel)]="translation.title">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <mat-grid-list cols="1" rowHeight="65px">
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field class="article-field">
+                                    <mat-label>Subtitle</mat-label>
+                                    <textarea class="form-textarea" matInput cdkTextareaAutosize
+                                        #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
+                                        [(ngModel)]="translation.subtitle">
                                 </textarea>
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                            </mat-grid-list>
-
-                            <div class="article-body">
-                                <mat-label>Text</mat-label>
-                                <ckeditor [editor]="Editor" [(ngModel)]="data.textUpdated"></ckeditor>
-                            </div>
-                        </mat-tab>
-                        <mat-tab class="tab-content" *ngFor="let translation of data.articleUpdated.translations">
-                            <ng-template mat-tab-label>
-                                <span [ngClass]="['flag-icon', 'flag-icon-' + translation.language]"></span>
-                            </ng-template>
-                            &nbsp;
-                            <mat-grid-list cols="4" rowHeight="65px">
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field class="article-field">
-                                        <mat-label>Cration Date</mat-label>
-                                        <input matInput [matDatepicker]="dp3" disabled [(ngModel)]="translation.date">
-                                        <mat-datepicker-toggle matSuffix [for]="dp3"></mat-datepicker-toggle>
-                                        <mat-datepicker #dp3 disabled="false"></mat-datepicker>
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field class="article-field">
-                                        <mat-label>Translated By</mat-label>
-                                        <input matInput [(ngModel)]="translation.translatedBy">
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field class="article-field">
-                                        <mat-label>Reviewed By</mat-label>
-                                        <input matInput [(ngModel)]="translation.reviewedBy">
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field>
-                                        <mat-label>Status</mat-label>
-                                        <select matNativeControl [(ngModel)]="translation.status" name="status">
-                                            <option value=""></option>
-                                            <option *ngFor="let item of data.status" value="{{item}}">{{item}}</option>
-                                        </select>
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                            </mat-grid-list>
-                            <mat-grid-list cols="1" rowHeight="65px">
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field class="article-field">
-                                        <mat-label>Title</mat-label>
-                                        <input matInput [(ngModel)]="translation.title">
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                            </mat-grid-list>
-                            <mat-grid-list cols="1" rowHeight="65px">
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field class="article-field">
-                                        <mat-label>Subtitle</mat-label>
-                                        <textarea class="form-textarea" matInput cdkTextareaAutosize
-                                            #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
-                                            [(ngModel)]="translation.subtitle">
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <mat-grid-list cols="1" rowHeight="65px">
+                            <mat-grid-tile [colspan]="1" [rowspan]="1">
+                                <mat-form-field class="article-field">
+                                    <mat-label>Summary</mat-label>
+                                    <textarea class="form-textarea" matInput cdkTextareaAutosize
+                                        #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
+                                        [(ngModel)]="translation.summary">
                                 </textarea>
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                            </mat-grid-list>
-                            <mat-grid-list cols="1" rowHeight="65px">
-                                <mat-grid-tile [colspan]="1" [rowspan]="1">
-                                    <mat-form-field class="article-field">
-                                        <mat-label>Summary</mat-label>
-                                        <textarea class="form-textarea" matInput cdkTextareaAutosize
-                                            #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
-                                            [(ngModel)]="translation.summary">
-                                </textarea>
-                                    </mat-form-field>
-                                </mat-grid-tile>
-                            </mat-grid-list>
-                            <div class="article-body">
-                                <mat-label>Text</mat-label>
-                                <ckeditor [editor]="Editor"
-                                    [(ngModel)]="data.translationTextUpdated[translation.language]"></ckeditor>
-                            </div>
-                        </mat-tab>
-                    </mat-tab-group>
-                </mat-dialog-content>
-            </div>
-            <!-- <mat-dialog-actions align="end">
-                <button secure [roles]="['ADMIN', 'EDITOR']" mat-raised-button color="primary" [mat-dialog-close]="data">Update</button>
-                <button mat-raised-button [mat-dialog-close]>Close</button>
-            </mat-dialog-actions> -->
+                                </mat-form-field>
+                            </mat-grid-tile>
+                        </mat-grid-list>
+                        <div class="article-body">
+                            <mat-label>Text</mat-label>
+                            <ckeditor 
+                                [editor]="Editor"
+                                [(ngModel)]="data.translationTextUpdated[translation.language]">
+                            </ckeditor>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </mat-dialog-content>
         </div>
     </div>
+</div>

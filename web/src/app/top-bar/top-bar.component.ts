@@ -130,7 +130,7 @@ export class TopBarComponent implements OnInit {
       if (item.type == this.AUTHOR) {
         this.searchFilter.author = item.name
       } else if (item.type == this.CATEGORY) {
-        this.searchFilter.category = item.names
+        this.searchFilter.category = item.name
       } else if (item.type == this.SOURCE) {
         this.searchFilter.owner = item.name
       } else if (item.type == this.TOPIC) {

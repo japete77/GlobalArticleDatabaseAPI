@@ -31,12 +31,7 @@ export class AuthenticationService {
             return JSON.parse(securityCookie)
         } else{
             return null
-        }
-        
-        // if (!this._securityContext) {
-        //     this._securityContext = JSON.parse(this.cookieService.getCookie(this.securityTokenKey))
-        // }
-        // return this._securityContext
+        }        
     }
 
     currentToken(): AuthToken {
@@ -46,14 +41,6 @@ export class AuthenticationService {
         } else {
             return null
         }
-        
-        // if (!this._decodedToken) {
-        //     var securityContext = this.securityContext();
-        //     if (securityContext) {
-        //         this._decodedToken = this.parseJwt(securityContext.token)
-        //     }
-        // }
-        // return this._decodedToken
     }
 
     /**

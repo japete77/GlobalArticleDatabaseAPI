@@ -1,7 +1,6 @@
 {
-  "api_base_url": "http://localhost:5000",
+  "api_base_url": "https://ig24hiba4k.execute-api.eu-west-1.amazonaws.com/Prod",
   "api_version": "/api/v1",
   "s3_url": "https://gadb-articles.s3-eu-west-1.amazonaws.com/",
   "app_renew_before_mins": 5
 }
-  

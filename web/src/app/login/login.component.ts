@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { LoginRequest } from '../models/requests/login.request.model';
-import { TdLoadingService } from '@covalent/core/loading';
 import { AuthenticationService } from '../services/auth.service';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
@@ -17,8 +16,9 @@ export class LoginComponent {
   returnUrl: string;
   background: string;
   credentials: LoginRequest = { user: '', password: '' };
+  loading = false
 
-  constructor(private loadingService: TdLoadingService, 
+  constructor(
     private authService: AuthenticationService, 
     private dialog: MatDialog,
     private route: ActivatedRoute,
@@ -33,7 +33,7 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    this.loadingService.register("loading-login");
+    this.loading = true
     this.authService.login(this.credentials.user, this.credentials.password)
       .toPromise()
       .then(data => {
@@ -55,7 +55,7 @@ export class LoginComponent {
         });
       })
       .finally(() => {
-        this.loadingService.resolve("loading-login");
+        this.loading = false
       });
   }
 }

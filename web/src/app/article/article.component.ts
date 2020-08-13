@@ -1,17 +1,14 @@
-import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { ApplicationService } from 'src/app/services/gadb.service';
-import { TdLoadingService } from '@covalent/core/loading';
 import { ArticleContext } from '../models/article-context';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { SelectLanguageComponent } from '../select-language/select-language.component';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { SelectItemComponent } from '../select-item/select-item.component';
-import * as BalloonEditor from '@ckeditor/ckeditor5-build-balloon';
-import { ActivatedRoute, Params } from '@angular/router';
-import { Observable, pipe } from 'rxjs';
+import * as BallonEditor from '@ckeditor/ckeditor5-build-balloon';
+import { ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
 
 @Component({
@@ -28,12 +25,12 @@ export class ArticleComponent implements OnInit, OnDestroy {
   id: string
   subscription: any
   data: ArticleContext
+  loading = true
 
-  public Editor = BalloonEditor;
+  public Editor = BallonEditor;
 
   constructor(
     private appService: ApplicationService,
-    private loadingService: TdLoadingService,
     private route: ActivatedRoute,
     private dialog: MatDialog
   ) {
@@ -80,7 +77,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
               });
 
               if (promises.length == 0) {
-                this.loadingService.resolve("loading-text");
+                this.loading = false
               } else {
                 Promise.all(promises).then(results => {
                   var index = 1;
@@ -99,7 +96,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
                     }
                   }
 
-                  this.loadingService.resolve("loading-text");
+                  this.loading = false
                 })
               }
             })
@@ -113,7 +110,7 @@ export class ArticleComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.loadingService.register("loading-text")
+    this.loading = true
   }
 
   onTabChanged(event: MatTabChangeEvent) {
@@ -267,7 +264,7 @@ ${this.data.textUpdated ?? ''}
   }
 
   save() {
-    this.loadingService.register("loading-text")
+    this.loading = true
 
     var allPromises = []
 
@@ -299,10 +296,10 @@ ${this.data.textUpdated ?? ''}
 
       if (allPromises.length > 0) {
         Promise.all(allPromises).then(() => {
-          this.loadingService.resolve("loading-text");
+          this.loading = false
         })
       } else {
-        this.loadingService.resolve("loading-text");
+        this.loading = false
       }
     }
   }

@@ -4,11 +4,6 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 @import '~@angular/material/theming';
-@import '~@covalent/core/theming/all-theme';
-
-// (optional) Additional themes
-@import '~@covalent/markdown/markdown-theme';
-@import '~@covalent/highlight/highlight-theme';
 
 // Define a custom typography config that overrides the font-family
 // or any typography level.
@@ -27,11 +22,11 @@ $warn:    mat-palette($mat-red, 600, 100, 900);
 $theme: mat-light-theme($primary, $accent, $warn);
 
 @include angular-material-theme($theme);
-@include covalent-theme($theme, $typography); // $typography is an **optional** argument for the covalent-theme
+// @include covalent-theme($theme, $typography); // $typography is an **optional** argument for the covalent-theme
 
 // (optional) Additional themes
-@include covalent-markdown-theme($theme);
-@include covalent-highlight-theme();
+// @include covalent-markdown-theme($theme);
+// @include covalent-highlight-theme();
 
 a {
   text-decoration: none;
@@ -70,4 +65,17 @@ p {
   &--white {
     background-color: white;
   }
+}
+
+.spinner--full {
+  margin: 20px auto;
+}
+
+.mat-card {
+  margin: 5px;
+}
+
+.mat-card-image:first-child {
+  margin-top: 0 !important;      
+  max-width: unset !important;
 }

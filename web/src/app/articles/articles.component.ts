@@ -1,7 +1,6 @@
-import { Component, OnInit, HostListener, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ApplicationService } from 'src/app/services/gadb.service';
 import { Article } from '../models/article';
-import { TdLoadingService } from '@covalent/core/loading';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
@@ -9,7 +8,6 @@ import { ArticleComponent } from '../article/article.component';
 import { ArticleContext } from '../models/article-context';
 import { AuthenticationService } from '../services/auth.service';
 import { ActivatedRoute } from '@angular/router';
-import { MatSelectionList } from '@angular/material/list';
 
 @Component({
   selector: 'articles',
@@ -20,7 +18,6 @@ export class ArticlesComponent implements OnInit {
 
   constructor(
     private appService: ApplicationService,
-    private loadingService: TdLoadingService,
     private _iconRegistry: MatIconRegistry, 
     private _domSanitizer:DomSanitizer,
     public dialog: MatDialog,
@@ -29,10 +26,11 @@ export class ArticlesComponent implements OnInit {
     this._iconRegistry.addSvgIconInNamespace('assets', 'gadb',
     this._domSanitizer.bypassSecurityTrustResourceUrl('assets/gadb.svg'));
   }
-    
+  
   PAGE_SIZE = 25
   currentPage = 1
   showMore = false
+  loading = true
   total = 0
   articles: Article[] = []
  
@@ -53,7 +51,7 @@ export class ArticlesComponent implements OnInit {
         this.currentPage = data.currentPage
         if (data.currentPage == 1) this.articles = []
         this.articles = this.articles.concat(data.articles)
-        this.loadingService.resolve("loading");
+        this.loading = false
         this.showMore = (this.currentPage * this.PAGE_SIZE) < data.total
       }
     });
@@ -61,15 +59,16 @@ export class ArticlesComponent implements OnInit {
     this.appService.getSearchRequest().subscribe(filter => {
       if (filter && filter.page < 2) this.articles = []
       this.showMore = false
-      this.loadingService.register("loading")
+      this.loading = true      
     });
 
     this.authService.getLogoutRequest().subscribe(() => {
       this.articles = []
-      this.loadingService.register("loading")
+      this.showMore = false
+      this.loading = true
     })
 
-    this.loadingService.register("loading")
+    this.loading = true
   }
 
   loadMore() {

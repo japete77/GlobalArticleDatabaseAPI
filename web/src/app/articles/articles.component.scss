@@ -1,4 +1,4 @@
-@import '~@covalent/highlight/highlight-theme';
+@import '~@angular/material/theming';
 
 .filter-panel {
     margin: 15px;
@@ -43,13 +43,6 @@
         background-color: transparent;
     }
 }
-
-// .example-card {
-//     display: inline-block;
-//     max-width: 400px;
-//     height: 500px;
-//     background-color: white;
-// }
 
 .image-container {
     cursor: pointer; 
