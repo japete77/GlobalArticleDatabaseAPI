@@ -1,4 +1,12 @@
-﻿using System;
+﻿using DesiringGodArticlesCrawler.Models;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Google.Api.Gax.ResourceNames;
+using Google.Cloud.Translate.V3;
+using HtmlAgilityPack;
+using Newtonsoft.Json;
+using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,12 +17,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using DesiringGodArticlesCrawler.Models;
-using Google.Api.Gax.ResourceNames;
-using Google.Cloud.Translate.V3;
-using HtmlAgilityPack;
-using Newtonsoft.Json;
-using RestSharp;
 
 namespace DesiringGodArticlesCrawler
 {
@@ -22,14 +24,93 @@ namespace DesiringGodArticlesCrawler
     {
         static async Task Main(string[] args)
         {
-            // var updater = new DGContentUpdater();
-            // await updater.Update(new DateTime(2020, 5, 1));
+            //var updater = new DGContentUpdater();
+            //await updater.Update(new DateTime(2020, 7, 10));
 
             //var soldadosExtractor = new SoldadosContentExtractor();
             //await soldadosExtractor.Extract();
 
             var updater = new IXMarksContentUpdater();
-            await updater.Update(new DateTime(1, 1, 1));
+            await updater.Update(new DateTime(2020, 7, 9));
+
+            //await GetLinksFromPxEArticles(@"c:\temp\ask_pastor_john.xlsx");
+        }
+
+        static async Task GetLinksFromPxEArticles(string fileName)
+        {
+            var client = await new ClientHelper().GetLoggedClient();
+
+            using (FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+            {
+                using (SpreadsheetDocument doc = SpreadsheetDocument.Open(fs, false))
+                {
+                    WorkbookPart workbookPart = doc.WorkbookPart;
+                    SharedStringTablePart sstpart = workbookPart.GetPartsOfType<SharedStringTablePart>().First();
+                    SharedStringTable sst = sstpart.SharedStringTable;
+
+                    WorksheetPart worksheetPart = workbookPart.WorksheetParts.ToList()[0];
+                    Worksheet sheet = worksheetPart.Worksheet;
+
+                    var cells = sheet.Descendants<Cell>();
+                    var rows = sheet.Descendants<Row>();
+
+                    Console.WriteLine("Row count = {0}", rows.LongCount());
+                    Console.WriteLine("Cell count = {0}", cells.LongCount());
+
+                    // each row
+                    int line = 0;
+                    foreach (Row row in rows)
+                    {
+                        Cell c = row.Elements<Cell>().First();
+                        string link = null;
+                        if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
+                        {
+                            int ssid = int.Parse(c.CellValue.Text);
+                            link = sst.ChildElements[ssid].InnerText.Trim();
+                        }
+                        else if (c.CellValue != null)
+                        {
+                            link = c.CellValue.Text.Trim();
+                        }
+                        line++;
+
+                        if (!string.IsNullOrEmpty(link))
+                        {
+                            // Check if already exists in the database
+                            var searchUrl = $"articles?SourceLink={HttpUtility.UrlEncode(link, Encoding.UTF8)}&page=1&pageSize=1";
+                            var responseGet = await client.GetAsync(searchUrl);
+                            if (responseGet.StatusCode == System.Net.HttpStatusCode.OK)
+                            {
+                                var data = await responseGet.Content.ReadAsStringAsync();
+                                var dbArticles = JsonConvert.DeserializeObject<GlobalArticleDatabaseAPI.Models.ArticleSearchResponse>(data);
+
+                                if (dbArticles.Total == 1)
+                                {
+                                    Console.WriteLine($"http://gadb.ibgracia.es/?article={dbArticles.Articles.First().Id}");
+                                }
+                                else
+                                {
+                                    Console.WriteLine();
+                                }
+                            }
+
+                            //foreach (Cell c in row.Elements<Cell>())
+                            //{
+                            //    if ((c.DataType != null) && (c.DataType == CellValues.SharedString))
+                            //    {
+                            //        int ssid = int.Parse(c.CellValue.Text);
+                            //        string str = sst.ChildElements[ssid].InnerText;
+                            //        Console.WriteLine("Shared string {0}: {1}", ssid, str);
+                            //    }
+                            //    else if (c.CellValue != null)
+                            //    {
+                            //        Console.WriteLine("Cell contents: {0}", c.CellValue.Text);
+                            //    }
+                            //}
+                        }
+                    }
+                }
+            }
         }
 
         static void SetupParagraphsFromFiles(string path)

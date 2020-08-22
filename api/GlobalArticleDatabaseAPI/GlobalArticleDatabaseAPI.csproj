@@ -70,7 +70,6 @@
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.105.1" />
     <PackageReference Include="AWSSDK.S3" Version="3.3.110.25" />
     <PackageReference Include="DotNetEnv" Version="1.2.0" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
     <PackageReference Include="MailKit" Version="2.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.1" />
@@ -87,11 +86,13 @@
   <ItemGroup>
     <Folder Include="Identity\Helpers\" />
     <Folder Include="Identity\Implementation\" />
-    <Folder Include="Models\Translation\Responses\" />
-    <Folder Include="Models\Workspace\Requests\" />
     <Folder Include="Services\Config\" />
     <Folder Include="Services\Users\Interfaces\" />
     <Folder Include="Services\Users\Implementations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GlobalArticleDatabaseAPI.Models\GlobalArticleDatabaseAPI.Models.csproj" />
   </ItemGroup>
 
 </Project>

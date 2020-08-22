@@ -9,6 +9,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DesiringGodArticlesCrawler"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GlobalArticleDatabaseAPITests", "GlobalArticleDatabaseApiTests\GlobalArticleDatabaseAPITests.csproj", "{5DCEABEC-F455-4034-9BB2-745AD1B11609}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LambdaCreatePxESolidJoysPosts", "..\aws\LambdaCreatePxESolidJoysPosts\LambdaCreatePxESolidJoysPosts.csproj", "{A013FCA3-8C13-4AB0-B758-687FA32D9DBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LambdaCore", "..\aws\LambdaCore\LambdaCore.csproj", "{79BFEE56-23FF-445F-BDBF-3A8A4AF1DFA2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GlobalArticleDatabaseAPI.Models", "GlobalArticleDatabaseAPI.Models\GlobalArticleDatabaseAPI.Models.csproj", "{DF6A57B7-A75B-469A-9C58-A9F025189B47}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LambdaCreatePxEArticlePosts", "..\aws\LambdaCreatePxEArticlePosts\LambdaCreatePxEArticlePosts.csproj", "{B9B7F1D8-7729-41B7-9492-9A0AED2C0425}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LambdaTest", "..\aws\LambdaTest\LambdaTest.csproj", "{917BA6F2-2F1A-452E-A5F6-420F17C4A7F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +37,26 @@ Global
 		{5DCEABEC-F455-4034-9BB2-745AD1B11609}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DCEABEC-F455-4034-9BB2-745AD1B11609}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DCEABEC-F455-4034-9BB2-745AD1B11609}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A013FCA3-8C13-4AB0-B758-687FA32D9DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A013FCA3-8C13-4AB0-B758-687FA32D9DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A013FCA3-8C13-4AB0-B758-687FA32D9DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A013FCA3-8C13-4AB0-B758-687FA32D9DBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79BFEE56-23FF-445F-BDBF-3A8A4AF1DFA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79BFEE56-23FF-445F-BDBF-3A8A4AF1DFA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79BFEE56-23FF-445F-BDBF-3A8A4AF1DFA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79BFEE56-23FF-445F-BDBF-3A8A4AF1DFA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF6A57B7-A75B-469A-9C58-A9F025189B47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF6A57B7-A75B-469A-9C58-A9F025189B47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF6A57B7-A75B-469A-9C58-A9F025189B47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF6A57B7-A75B-469A-9C58-A9F025189B47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9B7F1D8-7729-41B7-9492-9A0AED2C0425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B7F1D8-7729-41B7-9492-9A0AED2C0425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B7F1D8-7729-41B7-9492-9A0AED2C0425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B7F1D8-7729-41B7-9492-9A0AED2C0425}.Release|Any CPU.Build.0 = Release|Any CPU
+		{917BA6F2-2F1A-452E-A5F6-420F17C4A7F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{917BA6F2-2F1A-452E-A5F6-420F17C4A7F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{917BA6F2-2F1A-452E-A5F6-420F17C4A7F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{917BA6F2-2F1A-452E-A5F6-420F17C4A7F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

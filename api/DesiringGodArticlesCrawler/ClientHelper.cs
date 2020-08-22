@@ -3,7 +3,6 @@ using GlobalArticleDatabaseAPI.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,7 +13,7 @@ namespace DesiringGodArticlesCrawler
 {
     public class ClientHelper
     {
-        public async Task<HttpClient> GetLoggedClient(string username = "admin", string password = "admin")
+        public async Task<HttpClient> GetLoggedClient(string username = "admin", string password = "Fou0rier!")
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://ig24hiba4k.execute-api.eu-west-1.amazonaws.com/Prod/api/v1/");

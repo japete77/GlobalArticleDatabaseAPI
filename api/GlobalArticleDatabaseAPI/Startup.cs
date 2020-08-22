@@ -4,7 +4,7 @@ using AutoMapper;
 using Config.Implementations;
 using FluentValidation;
 using GlobalArticleDatabaseAPI.Api.Identity.Implementation;
-using GlobalArticleDatabaseAPI.DataAccess.Repositories.MongoDB;
+using GlobalArticleDatabaseAPI.Configuration.AutoMapperProfiles;
 using GlobalArticleDatabaseAPI.DbContext.MongoDB.Implementations;
 using GlobalArticleDatabaseAPI.DbContext.MongoDB.Interfaces;
 using GlobalArticleDatabaseAPI.Filters;
@@ -12,9 +12,8 @@ using GlobalArticleDatabaseAPI.Helper;
 using GlobalArticleDatabaseAPI.Helpers;
 using GlobalArticleDatabaseAPI.Helpers.Framework.Helpers.Threads;
 using GlobalArticleDatabaseAPI.Middleware;
-using GlobalArticleDatabaseAPI.Modules;
-using GlobalArticleDatabaseAPI.Configuration.AutoMapperProfiles;
 using GlobalArticleDatabaseAPI.Models;
+using GlobalArticleDatabaseAPI.Modules;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -132,7 +131,7 @@ namespace GlobalArticleDatabaseAPI
                 .AddApiExplorer()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
-            ValidatorOptions.LanguageManager.Enabled = false;
+            ValidatorOptions.Global.LanguageManager.Enabled = false;
 
             // Identity service setup
             services
@@ -146,7 +145,7 @@ namespace GlobalArticleDatabaseAPI
                     options.Password.RequireLowercase = true;
                 })
                 .AddTokenProvider<UserTokenProvider>("Default");
-            
+
             // Configure token provider expiry time (1 hour)
             services.Configure<DataProtectionTokenProviderOptions>(options =>
             {

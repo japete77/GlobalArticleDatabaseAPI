@@ -45,7 +45,7 @@ namespace DesiringGodArticlesCrawler
             var articles = JsonConvert.DeserializeObject<List<Article>>(File.ReadAllText("9marks_all.json"));
 
             var authors = articles.SelectMany(s => s.Author).Distinct().OrderBy(o => o).ToList();
-            
+
             //// Vamos a mapear la nueva lista de artículos con soporte para multiple autores
             //List<Article> newArticles = new List<Article>();
 
@@ -199,8 +199,10 @@ namespace DesiringGodArticlesCrawler
                     if (!File.Exists(articlesFile))
                     {
                         // Retrieve articles
-                        allArticles = await GetContentByCategory(category, from);
-                        File.WriteAllText(articlesFile, JsonConvert.SerializeObject(allArticles));
+                        var articles = await GetContentByCategory(category, from);
+                        File.WriteAllText(articlesFile, JsonConvert.SerializeObject(articles));
+
+                        allArticles.AddRange(articles);
                     }
                     else
                     {

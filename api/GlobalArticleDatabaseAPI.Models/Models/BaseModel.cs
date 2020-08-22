@@ -1,8 +1,5 @@
 ﻿using FluentValidation;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GlobalArticleDatabaseAPI.Models
 {
@@ -34,7 +31,7 @@ namespace GlobalArticleDatabaseAPI.Models
         {
             if (_validator == null) return true;
 
-            var result = _validator.Validate<T>(this as T);
+            var result = _validator.Validate(this as T);
 
             return result.IsValid;
         }
