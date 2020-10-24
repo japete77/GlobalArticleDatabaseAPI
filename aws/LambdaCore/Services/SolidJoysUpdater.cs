@@ -116,12 +116,15 @@ namespace LambdaCore.Services
         private string CleanSolidJoysTitle(string title)
         {
             var sections = title.Split("-");
-            return sections[2].Trim();
+            if (sections.Length < 3) return "";
+            else return sections[2].Trim();
         }
 
         private DateTime GetSolidJoysDate(string title)
         {
             var sections = title.Split("-");
+            if (sections.Length < 3) return new DateTime();
+
             var monthDay = sections[1].Trim().Split(" ");
             var day = Convert.ToInt32(monthDay[1]);
 

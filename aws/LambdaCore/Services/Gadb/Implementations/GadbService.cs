@@ -77,5 +77,16 @@ namespace LambdaCore.Services.Gadb.Implementations
                 }
             }
         }
+
+        public async Task DeletePublishDate(string articleId, string language, string publisher)
+        {
+            using (var httpResponse = await _client.DeleteAsync($"api/v1/publication?articleId={articleId}&language={language}&publisher={publisher}"))
+            {
+                if (httpResponse.StatusCode != HttpStatusCode.OK)
+                {
+                    throw new Exception($"Error creating deleteing publication for article id {articleId} language {language} and publisher {publisher}");
+                }
+            }
+        }
     }
 }

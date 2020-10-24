@@ -191,7 +191,7 @@ namespace LambdaCore.Services.Wordpress.Implementations
                 }
                 else
                 {
-                    throw new Exception($"Error retrieving topics from wordpress: {content}");
+                    throw new Exception($"Error retrieving authors from wordpress: {content}");
                 }
 
             } while (entries != null && entries.Count == PAGE_SIZE);

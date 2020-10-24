@@ -23,6 +23,8 @@ namespace LambdaCore.Services
 
         private Dictionary<string, string> _topicsTranslator;
 
+        private const string PUBLISHER_PXE = "PxE";
+
         public ArticlesUpdater()
         {
             _wordpressService = new WordpressService();
@@ -84,6 +86,19 @@ namespace LambdaCore.Services
 
                         Console.WriteLine($"Created new article: {translation.Title}");
 
+                        bool registeredPublication =
+                            translation.Publications != null &&
+                            translation.Publications
+                                .Where(w => w.Publisher == PUBLISHER_PXE &&
+                                            DateTime.Compare(w.Date, item.Date) == 0)
+                                .Count() > 0;
+
+                        if (registeredPublication)
+                        {
+                            // Delete previous publication
+                            await gadbService.DeletePublishDate(article.Id, translation.Language, PUBLISHER_PXE);
+                        }
+
                         // Add publish entry in gadb database
                         await gadbService.AddPublishDate(new CreatePublicationRequest
                         {
@@ -93,7 +108,7 @@ namespace LambdaCore.Services
                             {
                                 Date = item.Date,
                                 Link = createdPost.Link,
-                                Publisher = "PxE",
+                                Publisher = PUBLISHER_PXE,
                                 Status = "Published"
                             }
                         });
@@ -161,7 +176,12 @@ namespace LambdaCore.Services
             //// Download image
             var data = await GetContentFromUrlBinary(url);
 
-            url = url.Substring(0, url.IndexOf("?"));
+            var queryParamsIndex = url.IndexOf("?");
+            if (queryParamsIndex > 0)
+            {
+                url = url.Substring(0, url.IndexOf("?"));
+            }
+
             string filename = url.Substring(url.LastIndexOf("/") + 1);
 
             // Upload to wordpress
