@@ -1,8 +1,6 @@
 ﻿using DesiringGodArticlesCrawler.Models;
 using HtmlAgilityPack;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DesiringGodArticlesCrawler
 {
@@ -15,23 +13,37 @@ namespace DesiringGodArticlesCrawler
             HtmlWeb web = new HtmlWeb();
             var topicsHtml = web.Load(url);
 
-            var topicColumns = topicsHtml.DocumentNode.SelectNodes("//div[@class='topic-column']");
+            var topicColumnsLevel1 = topicsHtml.DocumentNode.SelectNodes("//div[@class='grouping-index topic-index']/ol/li/ol/li");
+            var topicColumnsLevel2 = topicsHtml.DocumentNode.SelectNodes("//div[@class='grouping-index topic-index']/ol/li/ol/li/ol/li");
 
-            foreach (var column in topicColumns)
+            foreach (var column in topicColumnsLevel1)
             {
                 var topicColumnHtml = new HtmlDocument();
                 topicColumnHtml.LoadHtml(column.InnerHtml);
 
-                var topicNodes = topicColumnHtml.DocumentNode.SelectNodes("//ul[@class='link-list']/li/a");
+                var topicNode = topicColumnHtml.DocumentNode.SelectSingleNode("a");
+                var topicName = topicColumnHtml.DocumentNode.SelectSingleNode("a/div/h3");
 
-                foreach (var topic in topicNodes)
+                results.Add(new Topic
                 {
-                    results.Add(new Topic
-                    {
-                        Name = System.Web.HttpUtility.HtmlDecode(topic.InnerText),
-                        Link = $"https://www.desiringgod.org{topic.Attributes["href"].Value}"
-                    });
-                }
+                    Name = System.Web.HttpUtility.HtmlDecode(topicName.InnerText.Trim()),
+                    Link = $"https://www.desiringgod.org{topicNode.Attributes["href"].Value.Trim()}"
+                });
+            }
+
+            foreach (var column in topicColumnsLevel2)
+            {
+                var topicColumnHtml = new HtmlDocument();
+                topicColumnHtml.LoadHtml(column.InnerHtml);
+
+                var topicNode = topicColumnHtml.DocumentNode.SelectSingleNode("a");
+                var topicName = topicColumnHtml.DocumentNode.SelectSingleNode("a/div/h3");
+
+                results.Add(new Topic
+                {
+                    Name = System.Web.HttpUtility.HtmlDecode(topicName.InnerText.Trim()),
+                    Link = $"https://www.desiringgod.org{topicNode.Attributes["href"].Value.Trim()}"
+                });
             }
 
             return results;

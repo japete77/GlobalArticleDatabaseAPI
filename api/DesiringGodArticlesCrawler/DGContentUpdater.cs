@@ -1,7 +1,6 @@
 ﻿using DesiringGodArticlesCrawler.Models;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
-using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -79,7 +78,7 @@ namespace DesiringGodArticlesCrawler
 
             Console.WriteLine(">> Start creating articles...");
 
-            await CreateArticles(allArticles);            
+            await CreateArticles(allArticles);
         }
 
         private async Task CreateArticles(List<Article> articles)
@@ -151,7 +150,7 @@ namespace DesiringGodArticlesCrawler
                     else
                     {
                         // Finish the update...
-                        Console.WriteLine($"Found article {article.Link}");                        
+                        Console.WriteLine($"Found article {article.Link}");
                     }
                 }
                 else
@@ -167,7 +166,7 @@ namespace DesiringGodArticlesCrawler
             if (text != null)
             {
                 var m = Regex.Match(text, @"<[^>]*?>");
-                
+
                 if (!m.Success)
                 {
                     var paragraphs = Regex.Split(text, @"(\r\n?|\n){2}")
@@ -190,7 +189,7 @@ namespace DesiringGodArticlesCrawler
         private Dictionary<string, List<Article>> GetArticlesByTopic(List<Topic> topics, DateTime from)
         {
             var result = new Dictionary<string, List<Article>>();
-            
+
             foreach (var topic in topics)
             {
                 Console.WriteLine($"Retrieving articles from {topic.Link}");
@@ -213,18 +212,18 @@ namespace DesiringGodArticlesCrawler
 
             var authorHtml = web.Load("https://www.desiringgod.org/authors");
 
-            var authorColumns = authorHtml.DocumentNode.SelectNodes("//div[@class='author']");
+            var authorColumns = authorHtml.DocumentNode.SelectNodes("//div[@class='grouping-index author-index']/ol/li");
 
             foreach (var column in authorColumns)
             {
                 var authorColumnHtml = new HtmlDocument();
                 authorColumnHtml.LoadHtml(column.InnerHtml);
 
-                var authorNode = authorColumnHtml.DocumentNode.SelectNodes("//h4/a");
+                var authorNode = authorColumnHtml.DocumentNode.SelectNodes("//ol/li/a");
 
                 foreach (var author in authorNode)
                 {
-                    var name = System.Web.HttpUtility.HtmlDecode(author.InnerText).Trim();
+                    var name = System.Web.HttpUtility.HtmlDecode(author.SelectSingleNode("div/h3").InnerText.Trim()).Trim();
                     if (authors.Contains(name))
                     {
                         authorLinks.Add(new Author
@@ -236,6 +235,16 @@ namespace DesiringGodArticlesCrawler
                 }
             }
 
+            var authorsFound = authorLinks.Select(s => s.Name).ToList();
+            var authorsNotFound = authors.Where(w => !authorsFound.Contains(w)).ToList();
+
+            var guessedAuthorLinks = authorsNotFound.Select(s => new Author
+            {
+                Name = s,
+                Link = $"https://www.desiringgod.org/authors/{s.ToLower().Replace(" ", "-").Replace(".", "")}"
+            });
+
+            authorLinks.AddRange(guessedAuthorLinks);
             return authorLinks;
         }
 
