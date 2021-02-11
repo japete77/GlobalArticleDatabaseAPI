@@ -131,29 +131,29 @@ namespace LambdaCore.Services
             switch (monthDay[0].Trim())
             {
                 case "Enero":
-                    return new DateTime(DateTime.Now.Year, 1, day);
+                    return new DateTime(2021, 1, day);
                 case "Febrero":
-                    return new DateTime(DateTime.Now.Year, 2, day);
+                    return new DateTime(2021, 2, day);
                 case "Marzo":
-                    return new DateTime(DateTime.Now.Year, 3, day);
+                    return new DateTime(2021, 3, day);
                 case "Abril":
-                    return new DateTime(DateTime.Now.Year, 4, day);
+                    return new DateTime(2021, 4, day);
                 case "Mayo":
-                    return new DateTime(DateTime.Now.Year, 5, day);
+                    return new DateTime(2021, 5, day);
                 case "Junio":
-                    return new DateTime(DateTime.Now.Year, 6, day);
+                    return new DateTime(2021, 6, day);
                 case "Julio":
-                    return new DateTime(DateTime.Now.Year, 7, day);
+                    return new DateTime(2020, 7, day);
                 case "Agosto":
-                    return new DateTime(DateTime.Now.Year, 8, day);
+                    return new DateTime(2020, 8, day);
                 case "Septiembre":
-                    return new DateTime(DateTime.Now.Year, 9, day);
+                    return new DateTime(2020, 9, day);
                 case "Octubre":
-                    return new DateTime(DateTime.Now.Year, 10, day);
+                    return new DateTime(2020, 10, day);
                 case "Noviembre":
-                    return new DateTime(DateTime.Now.Year, 11, day);
+                    return new DateTime(2020, 11, day);
                 case "Diciembre":
-                    return new DateTime(DateTime.Now.Year, 12, day);
+                    return new DateTime(2020, 12, day);
                 default:
                     return DateTime.Now;
             }
